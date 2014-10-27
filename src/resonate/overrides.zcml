@@ -1,0 +1,8 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="nd.syndication">
+
+  <!-- include any dependent packages -->
+  <include package="sixfeetup.workflow.chained" file="overrides.zcml"/>
+
+</configure>

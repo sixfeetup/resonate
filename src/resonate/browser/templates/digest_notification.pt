@@ -1,0 +1,49 @@
+<div xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+     xmlns:tal="http://xml.zope.org/namespaces/tal"
+     xmlns:metal="http://xml.zope.org/namespaces/metal"
+     xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+     i18n:domain="nd.syndication"
+     tal:omit-tag=""
+     tal:define="lt string:&lt;;
+                 gt string:&gt;;
+                 DateTime python:modules['DateTime'].DateTime;
+                 toLocalizedTime nocall:context/@@plone/toLocalizedTime;
+                 now python: toLocalizedTime(DateTime(), long_format=1);
+                 items view/items_by_date;"
+><p i18n:translate="digest_notification_start">
+This is an automatically generated email. Please do not reply to this email; instead, contact your site administrator with any questions.</p
+><p i18n:translate="digest_notification_heading">
+Items that were pending review in the College of Engineering website (for publication, move or syndication) as of <span
+i18n:name="current_time" tal:omit-tag="" tal:replace="now" /> are:</p><br/>
+
+<table border="1">
+  <tr>
+    <td i18n:translate="title">Title</td>
+    <td i18n:translate="organization">Organization</td>
+    <td i18n:translate="state_changes">Status</td>
+    <td i18n:translate="last_changed">Last Changed (*)</td>
+  </tr>
+  <tr tal:repeat="item items">
+    <td><a href="" tal:attributes="href string:${context/portal_url}/@@redirect-to-uuid/${item/object_uid}" tal:content="item/object_title">title</a></td>
+    <td tal:content="item/organization_title"></td>
+    <td><tal:state repeat="state item/state_changes"
+      ><span i18n:translate="" tal:replace="state"></span
+      ><span tal:omit-tag="" tal:condition="not: repeat/state/end">, </span
+      ></tal:state>
+    </td>
+    <td tal:content="python: toLocalizedTime(item['last_changed'])"></td>
+  </tr>
+</table>
+<br/>
+<p i18n:translate="digest_notification_note">(*) Most recent first</p><br/>
+<p i18n:translate="digest_notification_unsubscribe">To unsubscribe from this daily digest, go to your profile to edit your preferences.</p><br/>
+
+<p>
+The College of Engineering at the University of Notre Dame<br/>
+257 Fitzpatrick Hall<br/>
+Notre Dame, IN 46556-5637<br/>
+Phone: (574) 631-0101<br/>
+E-mail: <a href="mailto:help@esc.nd.edu">help@esc.nd.edu</a><br/>
+Web: <a href="http://engineering.nd.edu" target="_blank">http://engineering.nd.edu/</a>
+</p>
+</div>

@@ -1,0 +1,58 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="nd.syndication">
+<head>
+<metal:block fill-slot="javascript_head_slot">
+<script type="text/javascript">
+(function($) { $(function() {
+    $(".chzn-select").chosen()
+}); })(jQuery);
+</script>
+</metal:block>
+</head>
+<body>
+<div metal:fill-slot="content-core" id="select-organization">
+
+  <label for="organizations" class="documentFirstHeading" i18n:translate="">Select Organization(s)</label>
+  <span class="fieldRequired" title="Required"
+        i18n:translate="label_required"
+        i18n:attributes="title title_required;">
+    (Required)
+  </span>
+  <p i18n:translate="">Choose the organization(s) you would like to request syndication to.</p>
+
+  <form action="" method="post" id="select-organization-form"
+        tal:define="transition request/transition | nothing">
+
+    <select data-placeholder="Choose an Organization..." class="chzn-select"
+            style="width:350px;" name="organizations" tabindex="1" multiple=""
+            tal:condition="python:transition=='request_syndication'">
+        <tal:organizations repeat="term view/available_organizations">
+          <option tal:attributes="value term/value" tal:content="term/title">Organization Name</option>
+        </tal:organizations>
+    </select>
+
+    <select data-placeholder="Choose an Organization..." class="chzn-select"
+            style="width:350px;" name="organizations" tabindex="1"
+            tal:condition="python:transition=='request_move'">
+        <tal:organizations repeat="term view/available_organizations">
+          <option tal:attributes="value term/value" tal:content="term/title">Organization Name</option>
+        </tal:organizations>
+    </select>
+
+    <input class="context"
+           type="submit"
+           id="submit"
+           name="submit"
+           value="Save"
+           i18n:attributes="value"
+           />
+
+  </form>
+
+</div>
+</body>
+</html>

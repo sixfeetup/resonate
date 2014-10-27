@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<tool-setup>
+  <!--
+    BBB Disabled in favor of "real time" notifications instead of digests.
+    Kept in place in case we want to enable it later. -->
+  <required tool_id="portal_syn_notification" class="nd.syndication.utilities.SyndicationNotificationTool" />
+</tool-setup>

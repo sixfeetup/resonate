@@ -1,0 +1,43 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="nd.syndication">
+
+  <browser:page
+      for="*"
+      name="syndication_status_notification"
+      template="templates/syndication_status_notification.pt"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IContentish"
+      name="select-organizations"
+      class="nd.syndication.browser.select.SelectOrganizations"
+      template="templates/select.pt"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IContentish"
+      name="digest_notification"
+      class="nd.syndication.browser.digest_notification.DigestNotification"
+      template="templates/syn_notification.pt"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IContentish"
+      name="move-content"
+      class="nd.syndication.browser.move.MoveContent"
+      permission="cmf.ReviewPortalContent"
+      />
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IContentish"
+      name="reject-syndication"
+      class="nd.syndication.browser.reject.RejectSyndication"
+      permission="cmf.ReviewPortalContent"
+      />
+
+</configure>

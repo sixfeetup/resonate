@@ -1,0 +1,37 @@
+<tal:root define="lt string:&lt;;
+                  gt string:&gt;;
+                  fullname options/fullname;
+                  portal_title options/portal_title;
+                  status options/status;
+                  comment options/comment;
+                  source options/source_url;
+                  portal context/@@plone_portal_state/portal;
+                  portal_url portal/portal_url;
+                  comment_punctuation python:comment and ':' or '.'">
+
+<tal:accepted tal:condition="python:status=='accepted'">
+Dear <span tal:replace="fullname">User Full Name</span>,
+
+We are happy to inform you that your request for syndication of <span tal:replace="source">Source URL</span> has been approved<span tal:replace="comment_punctuation">:</span>
+<span tal:replace="comment"/>
+
+</tal:accepted>
+<tal:rejected tal:condition="python:status=='rejected'">
+Dear <span tal:replace="fullname">User Full Name</span>,
+
+We regret to inform you that your request for syndication of <span tal:replace="source">Source URL</span> has not been approved<span tal:replace="comment_punctuation">:</span>
+<span tal:replace="comment"/>
+
+If you feel that there has been an error please contact the website
+administrator at <span tal:replace="structure lt"/>help@esc.nd.edu<span tal:replace="structure gt"/>.
+</tal:rejected>
+Best Regards,
+<span tal:replace="portal_title">Portal Title</span> Administrator
+
+The College of Engineering at the University of Notre Dame
+257 Fitzpatrick Hall
+Notre Dame, IN 46556-5637
+Phone: (574) 631-0101
+E-mail: <span tal:replace="structure lt"/>help@esc.nd.edu<span tal:replace="structure gt"/>
+Web: <span tal:replace="structure lt"/>http://engineering.nd.edu/<span tal:replace="structure gt"/>
+</tal:root>

@@ -1,0 +1,47 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="nd.syndication">
+
+  <!-- Set up z3c.autoinlcude to scan dependencies and plugins of this package -->
+  <includePlugins package="." />
+  <includeDependencies package="." />
+  <include package=".browser" />
+  <include file="subscribers.zcml" />
+  <include file="adapters.zcml" />
+
+  <five:registerPackage package="." initialize=".initialize" />
+
+  <genericsetup:registerProfile
+      name="default"
+      title="nd.syndication"
+      directory="profiles/default"
+      description="Installs the nd.syndication package"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:upgradeStep
+      title="nd.syndication: Enable subtyper for syndication"
+      description="Enable new subtype descriptors nd.syndication"
+      source="0001"
+      destination="0002"
+      handler="nd.syndication.upgrades.enable_subtyper_for_syndication"
+      sortkey="1"
+      profile="nd.syndication:default"
+      />
+
+  <genericsetup:upgradeStep
+      title="nd.syndication: Enable nd.syndication.proxy type"
+      description="Enable new dexterity type nd.syndication.proxy #948"
+      source="0002"
+      destination="0003"
+      handler="nd.syndication.upgrades.add_proxy_content_type"
+      sortkey="1"
+      profile="nd.syndication:default"
+      />
+
+  <!-- -*- extra stuff goes here -*- -->
+
+</configure>

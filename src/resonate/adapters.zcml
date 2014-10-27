@@ -1,0 +1,30 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="nd.syndication">
+
+   <adapter
+       factory="nd.syndication.adapters.MemberFolderRoleAdapter"
+       name="nd.syndication.roleadapter.memberfolder"
+      />
+   <adapter
+       for="Products.ATContentTypes.interfaces.IATNewsItem"
+       factory="nd.syndication.adapters.NonMemberSourceRoleAdapter"
+       name="nd.syndication.roleadapter.nonmembersource_news"
+      />
+   <adapter
+       for="Products.ATContentTypes.interfaces.IATEvent"
+       factory="nd.syndication.adapters.NonMemberSourceRoleAdapter"
+       name="nd.syndication.roleadapter.nonmembersource_event"
+      />
+   <adapter
+       for="nd.content.content.seminar.ISeminar"
+       factory="nd.syndication.adapters.NonMemberSourceRoleAdapter"
+       name="nd.syndication.roleadapter.nonmembersource_seminar"
+      />
+   <adapter
+       factory="nd.syndication.adapters.NonMemberRoleAdapter"
+       name="nd.syndication.roleadapter.nonmember"
+     />
+
+</configure>

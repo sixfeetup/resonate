@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<dc-workflow workflow_id="syndication_workflow" title="Syndication Workflow" description="Add this workflow as a chain to be able to syndicate items" state_variable="syndication_state" initial_state="not_syndicated" manager_bypass="True">
+ <state state_id="not_syndicated" title="Not syndicated">
+  <description>Not a syndicated item</description>
+  <exit-transition transition_id="request_move"/>
+  <exit-transition transition_id="request_syndication"/>
+  <exit-transition transition_id="accept_syndication"/>
+ </state>
+ <state state_id="pending_move" title="Pending Content Move">
+  <description>An item pending move</description>
+  <exit-transition transition_id="move"/>
+  <exit-transition transition_id="reject_syndication"/>
+ </state>
+ <state state_id="pending_syndication" title="Pending Syndication">
+  <description>A syndication request has been sent for this item.</description>
+  <exit-transition transition_id="accept_syndication"/>
+  <exit-transition transition_id="reject_syndication"/>
+ </state>
+ <state state_id="syndicated" title="Syndicated">
+  <description>A syndicated item.</description>
+  <exit-transition transition_id="reject_syndication"/>
+  <exit-transition transition_id="request_move"/>
+  <exit-transition transition_id="request_syndication"/>
+ </state>
+ <transition transition_id="accept_syndication" title="Reviewer accepts item for syndication" new_state="syndicated" trigger="USER" before_script="" after_script="">
+  <description>Syndicate this item</description>
+  <action url="%(content_url)s/content_status_modify?workflow_action=accept_syndication" category="workflow" icon="">Accept syndication</action>
+  <guard>
+   <guard-permission>Review portal content</guard-permission>
+   <guard-expression>python:object.portal_type == 'nd.syndication.proxy'</guard-expression>
+  </guard>
+ </transition>
+ <transition transition_id="move" title="Reviewer accepts item move request" new_state="" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/@@move-content" category="workflow" icon="">Accept move</action>
+  <guard>
+   <guard-expression>python:object.portal_type == 'nd.syndication.proxy'</guard-expression>
+  </guard>
+ </transition>
+ <transition transition_id="reject_syndication" title="Reviewer rejects item for syndication" new_state="" trigger="USER" before_script="" after_script="">
+  <description>Reject this item for syndication.</description>
+  <action url="%(content_url)s/@@reject-syndication" category="workflow" icon="">Reject syndication</action>
+  <guard>
+   <guard-permission>Review portal content</guard-permission>
+   <guard-expression>python:object.portal_type == 'nd.syndication.proxy'</guard-expression>
+  </guard>
+ </transition>
+ <transition transition_id="request_move" title="Member submits content for move" new_state="pending_move" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/@@select-organizations?transition=request_move" category="workflow" icon="">Request move</action>
+  <guard>
+   <guard-permission>Request review</guard-permission>
+   <guard-expression>python:object.portal_type != 'nd.syndication.proxy'</guard-expression>
+  </guard>
+ </transition>
+ <transition transition_id="request_syndication" title="Member submits content for syndication" new_state="pending_syndication" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/@@select-organizations?transition=request_syndication" category="workflow" icon="">Request syndication</action>
+  <guard>
+   <guard-permission>Request review</guard-permission>
+   <guard-expression>python:object.portal_type != 'nd.syndication.proxy'</guard-expression>
+  </guard>
+ </transition>
+ <worklist worklist_id="reviewer_queue" title="">
+  <description>Reviewer tasks</description>
+  <action url="%(portal_url)s/search?syndication_state:list=pending_move&amp;syndication_state:list=pending_syndication" category="global" icon="">Pending (%(count)d)</action>
+  <guard>
+   <guard-permission>Review portal content</guard-permission>
+  </guard>
+  <match name="syndication_state" values="pending"/>
+ </worklist>
+ <variable variable_id="action" for_catalog="False" for_status="True" update_always="True">
+  <description>Previous transition</description>
+  <default>
+   
+   <expression>transition/getId|nothing</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="actor" for_catalog="False" for_status="True" update_always="True">
+  <description>The ID of the user who performed the previous transition</description>
+  <default>
+   
+   <expression>user/getId</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="comments" for_catalog="False" for_status="True" update_always="True">
+  <description>Comment about the last transition</description>
+  <default>
+   
+   <expression>python:state_change.kwargs.get('comment', '')</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="review_history" for_catalog="False" for_status="False" update_always="False">
+  <description>Provides access to workflow history</description>
+  <default>
+   
+   <expression>state_change/getHistory</expression>
+  </default>
+  <guard>
+   <guard-permission>Request review</guard-permission>
+   <guard-permission>Review portal content</guard-permission>
+  </guard>
+ </variable>
+ <variable variable_id="time" for_catalog="False" for_status="True" update_always="True">
+  <description>When the previous transition was performed</description>
+  <default>
+   
+   <expression>state_change/getDateTime</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="organization" for_catalog="False" for_status="True" update_always="True">
+  <default>
+   
+   <expression>python:state_change.kwargs.get('organization', '')</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+</dc-workflow>

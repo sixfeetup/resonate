@@ -1,0 +1,17 @@
+<componentregistry>
+  <utilities>
+    <!--
+        BBB Disabled in favor of "real time" notifications instead of digests.
+        Kept in place in case we want to enable it later. -->
+    <utility interface="nd.syndication.interfaces.ISyndicationNotificationTool" object="portal_syn_notification" />
+    <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
+             name="nd.syndication.event"
+             factory="nd.syndication.descriptors.EventDescriptor" />
+    <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
+             name="nd.syndication.news"
+             factory="nd.syndication.descriptors.NewsDescriptor" />
+    <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
+             name="nd.syndication.seminar"
+             factory="nd.syndication.descriptors.SeminarDescriptor" />
+  </utilities>
+</componentregistry>
