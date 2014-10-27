@@ -2,7 +2,7 @@
     - Adapt source to ISyndicationTarget
     - Enabling sites would provide adapter that returns desired subtype interface
     - Use INavigationRoot to find microsites?
-* Move containing_organization index / metadata from nd.content to nd.syndication
-* Move portlet from nd.content to nd.syndication
+* Move containing_organization index / metadata from nd.content to resonate
+* Move portlet from nd.content to resonate
 * Check if local role adapters can be moved to nd.content
-* Move current_syndication_targets field from nd.extenders to nd.syndication
+* Move current_syndication_targets field from nd.extenders to resonate

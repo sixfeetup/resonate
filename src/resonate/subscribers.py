@@ -21,22 +21,21 @@ from plone.dexterity.interfaces import IDexterityContent
 
 from z3c.relationfield import RelationValue
 
-from nd.content.content.seminar import ISeminar
+# from nd.content.content.seminar import ISeminar
 
-from nd.syndication.content.proxy import IProxy
-from nd.syndication.interfaces import ISyndicationTarget
-from nd.syndication.interfaces import IEventSyndicationTarget
-from nd.syndication.interfaces import INewsSyndicationTarget
-from nd.syndication.interfaces import ISeminarSyndicationTarget
-from nd.syndication.utils import getRefs
-from nd.syndication.utils import get_organizations_by_target
-from nd.syndication.utils import safe_uid
-from nd.syndication.utils import sendEmailToMember
-from nd.syndication.utils import setRef
-from nd.syndication.utils import sudo
-from nd.syndication.utils import update_payload
-from nd.syndication.utils import update_syndication_state
-from nd.syndication import MessageFactory as _
+from resonate.content.proxy import IProxy
+from resonate.interfaces import ISyndicationTarget
+from resonate.interfaces import IEventSyndicationTarget
+from resonate.interfaces import INewsSyndicationTarget
+from resonate.utils import getRefs
+from resonate.utils import get_organizations_by_target
+from resonate.utils import safe_uid
+from resonate.utils import sendEmailToMember
+from resonate.utils import setRef
+from resonate.utils import sudo
+from resonate.utils import update_payload
+from resonate.utils import update_syndication_state
+from resonate import MessageFactory as _
 
 logger = logging.getLogger(__name__)
 
@@ -103,9 +102,7 @@ def send_syndication_notification(obj, event):
         proxy = sudo(uuidToObject, payload['object_uid'])
         update_payload(proxy, payload)
 
-    subject = (
-        'Pending review status for {0!r} in the College of Engineering'.format(
-            obj))
+    subject = ('Pending review status for {0!r}'.format(obj))
     # Create the enclosing (outer) message
     outer = email.mime.multipart.MIMEMultipart()
     # Create the HTML
@@ -154,8 +151,7 @@ def update_proxy_fields(obj, event):
     """Update proxy title when source title is modified
     """
     if not (IATEvent.providedBy(obj) or
-            IATNewsItem.providedBy(obj) or
-            ISeminar.providedBy(obj)):
+            IATNewsItem.providedBy(obj)):
         return
     proxies = getRefs(obj, 'current_syndication_targets')
 
@@ -222,8 +218,7 @@ def unpublish_proxy(obj, event):
     """Unpublish proxy after source object is unpublished
     """
     if not (IATEvent.providedBy(obj) or
-            IATNewsItem.providedBy(obj) or
-            ISeminar.providedBy(obj)):
+            IATNewsItem.providedBy(obj)):
         return
     proxies = getRefs(obj, 'current_syndication_targets')
 
@@ -252,13 +247,14 @@ def cleanup_source_after_proxy_remove(obj, event):
 
     #  only Seminar (dexterity type) needs actual cleanup
     #  AT based objects are doing it by themselves
-    if ISeminar.providedBy(source):
-        cleaned_up = [
-            rv
-            for rv in source.current_syndication_targets
-            if safe_uid(rv.to_object) != safe_uid(obj)
-        ]
-        source.current_syndication_targets = cleaned_up
+    # TODO: replace with generic test for dexterity types?
+    # if ISeminar.providedBy(source):
+    #     cleaned_up = [
+    #         rv
+    #         for rv in source.current_syndication_targets
+    #         if safe_uid(rv.to_object) != safe_uid(obj)
+    #     ]
+    #     source.current_syndication_targets = cleaned_up
 
 
 def accept_syndication(obj, event):
@@ -309,8 +305,7 @@ def reject_syndication(obj, event):
     sudo(event.workflow.doActionFor, source, 'reject_syndication')
     sudo(update_syndication_state, source, obj)
     if not (IATEvent.providedBy(source) or
-            IATNewsItem.providedBy(source) or
-            ISeminar.providedBy(source)):
+            IATNewsItem.providedBy(source)):
         return
     org_id = intids.getId(organization)
     sudo(setRef, source, 'rejected_syndication_sites', RelationValue(org_id))
@@ -340,8 +335,6 @@ def accept_move(proxy, event):
         target_iface = IEventSyndicationTarget
     elif IATNewsItem.providedBy(proxy.source_object.to_object):
         target_iface = INewsSyndicationTarget
-    elif ISeminar.providedBy(proxy.source_object.to_object):
-        target_iface = ISeminarSyndicationTarget
     else:
         return
     wft = getToolByName(proxy, 'portal_workflow')
@@ -473,7 +466,7 @@ def request_syndication(obj, event):
         else:
             oid = INameChooser(target)._findUniqueName(obj.getId(), None)
         proxy = sudo(target.invokeFactory,
-                     type_name='nd.syndication.proxy',
+                     type_name='resonate.proxy',
                      id=oid)
         proxy = target[proxy]
         proxy.source_object = RelationValue(source_id)

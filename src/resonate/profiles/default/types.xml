@@ -9,5 +9,5 @@
 <object name="portal_types" meta_type="Plone Types Tool">
   <!-- -*- extra stuff goes here -*- -->
   <!-- Dexterity content types -->
-  <object name="nd.syndication.proxy" meta_type="Dexterity FTI" />
+  <object name="resonate.proxy" meta_type="Dexterity FTI" />
 </object>

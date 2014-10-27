@@ -5,7 +5,7 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 
-from zope.app.component.hooks import getSite
+from zope.component.hooks import getSite
 
 from Products.CMFCore.tests.base.security import OmnipotentUser as \
             CMFOmnipotentUser
@@ -21,10 +21,8 @@ from plone.app.layout.navigation.root import getNavigationRoot
 
 from plone.uuid.interfaces import IUUID
 
-from nd.content.content.seminar import ISeminar
-from nd.syndication.interfaces import IEventSyndicationTarget
-from nd.syndication.interfaces import INewsSyndicationTarget
-from nd.syndication.interfaces import ISeminarSyndicationTarget
+from resonate.interfaces import IEventSyndicationTarget
+from resonate.interfaces import INewsSyndicationTarget
 
 
 class OmnipotentUser(CMFOmnipotentUser):
@@ -133,8 +131,6 @@ def get_organizations_by_target(context, uids):
         target_iface = IEventSyndicationTarget
     elif IATNewsItem.providedBy(context):
         target_iface = INewsSyndicationTarget
-    elif ISeminar.providedBy(context):
-        target_iface = ISeminarSyndicationTarget
 
     organizations = [
         brain.getObject()

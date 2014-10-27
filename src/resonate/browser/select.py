@@ -12,9 +12,9 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from plone.app.layout.navigation.root import getNavigationRoot
 
-from nd.syndication.utils import getRefs
-from nd.syndication.utils import get_organizations_by_target
-from nd.syndication.utils import safe_uid
+from resonate.utils import getRefs
+from resonate.utils import get_organizations_by_target
+from resonate.utils import safe_uid
 
 logger = logging.getLogger(__name__)
 
@@ -123,7 +123,7 @@ class SelectOrganizations(BrowserView):
         current_syndication_targets = getRefs(self.context,
                                               'current_syndication_targets')
         kw = dict(
-            portal_type='nd.syndication.proxy',
+            portal_type='resonate.proxy',
             UID=[safe_uid(t)
                  for t in current_syndication_targets],
         )

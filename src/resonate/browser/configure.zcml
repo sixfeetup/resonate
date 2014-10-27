@@ -1,7 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    i18n_domain="nd.syndication">
+    i18n_domain="resonate">
 
   <browser:page
       for="*"
@@ -13,7 +13,7 @@
   <browser:page
       for="Products.CMFCore.interfaces.IContentish"
       name="select-organizations"
-      class="nd.syndication.browser.select.SelectOrganizations"
+      class="resonate.browser.select.SelectOrganizations"
       template="templates/select.pt"
       permission="zope2.View"
       />
@@ -21,7 +21,7 @@
   <browser:page
       for="Products.CMFCore.interfaces.IContentish"
       name="digest_notification"
-      class="nd.syndication.browser.digest_notification.DigestNotification"
+      class="resonate.browser.digest_notification.DigestNotification"
       template="templates/syn_notification.pt"
       permission="zope2.View"
       />
@@ -29,14 +29,14 @@
   <browser:page
       for="Products.CMFCore.interfaces.IContentish"
       name="move-content"
-      class="nd.syndication.browser.move.MoveContent"
+      class="resonate.browser.move.MoveContent"
       permission="cmf.ReviewPortalContent"
       />
 
   <browser:page
       for="Products.CMFCore.interfaces.IContentish"
       name="reject-syndication"
-      class="nd.syndication.browser.reject.RejectSyndication"
+      class="resonate.browser.reject.RejectSyndication"
       permission="cmf.ReviewPortalContent"
       />
 

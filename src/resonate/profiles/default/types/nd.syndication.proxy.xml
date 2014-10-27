@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<object name="nd.syndication.proxy" meta_type="Dexterity FTI"
+<object name="resonate.proxy" meta_type="Dexterity FTI"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title">Proxy</property>
  <property name="description">Proxy</property>
  <property name="icon_expr">string:${portal_url}/document_icon.png</property>
- <property name="factory">nd.syndication.proxy</property>
+ <property name="factory">resonate.proxy</property>
  <property name="link_target"></property>
  <property name="immediate_view">view</property>
  <property name="global_allow">True</property>
@@ -23,7 +23,7 @@
   <element value="plone.app.referenceablebehavior.referenceable.IReferenceable" />
  </property>
  <!-- schema interface FIXME: this is ugly -->
- <property name="schema">nd.syndication.content.proxy.IProxy</property>
+ <property name="schema">resonate.content.proxy.IProxy</property>
  <property name="model_source">
   &lt;model xmlns="http://namespaces.plone.org/supermodel/schema"&gt;
       &lt;schema&gt;

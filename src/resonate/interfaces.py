@@ -39,7 +39,3 @@ class IEventSyndicationTarget(ISyndicationTarget):
 
 class INewsSyndicationTarget(ISyndicationTarget):
     """A marker interface for News syndication target."""
-
-
-class ISeminarSyndicationTarget(ISyndicationTarget):
-    """A marker interface for Seminar syndication target."""

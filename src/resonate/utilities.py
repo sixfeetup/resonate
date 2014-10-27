@@ -7,10 +7,10 @@ from zope.interface import implements
 
 from zc.queue import CompositeQueue
 
-from nd.syndication.interfaces import ISyndicationNotificationTool
-from nd.syndication.utils import safe_uid
+from resonate.interfaces import ISyndicationNotificationTool
+from resonate.utils import safe_uid
 
-logger = logging.getLogger('nd.syndication.notifications')
+logger = logging.getLogger('resonate.notifications')
 
 
 # BBB Disabled in favor of "real time" notifications instead of digests.

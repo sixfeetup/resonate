@@ -3,6 +3,10 @@ Changelog
 
 Product Conversion
 ------------------
+- rename nd.syndication to resonate
+- remove references to "College of Engineering"
+- remove references to "nd.edu"
+- remove IMemberFolder and ISeminar, ISeminarSyndicationTarget
 
 1.0-dev (unreleased)
 --------------------

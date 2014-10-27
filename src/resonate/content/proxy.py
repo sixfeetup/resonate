@@ -1,12 +1,10 @@
 from zope import schema
-from five import grok
 
 from z3c.relationfield.schema import RelationChoice
 from plone.directives import form
-from plone.directives import dexterity
 from plone.formwidget.contenttree import ObjPathSourceBinder
 
-from nd.syndication import MessageFactory as _
+from resonate import MessageFactory as _
 
 
 class IProxy(form.Schema):

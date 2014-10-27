@@ -2,19 +2,19 @@ from plone.app.testing import PloneWithPackageLayer
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import FunctionalTesting
 
-import nd.syndication
+import resonate
 
 
-ND_SYNDICATION = PloneWithPackageLayer(
-    zcml_package=nd.syndication,
+RESONATE = PloneWithPackageLayer(
+    zcml_package=resonate,
     zcml_filename='testing.zcml',
-    gs_profile_id='nd.syndication:testing',
-    name="ND_SYNDICATION")
+    gs_profile_id='resonate:testing',
+    name="RESONATE")
 
-ND_SYNDICATION_INTEGRATION = IntegrationTesting(
-    bases=(ND_SYNDICATION, ),
-    name="ND_SYNDICATION_INTEGRATION")
+RESONATE_INTEGRATION = IntegrationTesting(
+    bases=(RESONATE, ),
+    name="RESONATE_INTEGRATION")
 
-ND_SYNDICATION_FUNCTIONAL = FunctionalTesting(
-    bases=(ND_SYNDICATION, ),
-    name="ND_SYNDICATION_FUNCTIONAL")
+RESONATE_FUNCTIONAL = FunctionalTesting(
+    bases=(RESONATE, ),
+    name="RESONATE_FUNCTIONAL")

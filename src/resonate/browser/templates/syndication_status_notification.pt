@@ -23,15 +23,6 @@ We regret to inform you that your request for syndication of <span tal:replace="
 <span tal:replace="comment"/>
 
 If you feel that there has been an error please contact the website
-administrator at <span tal:replace="structure lt"/>help@esc.nd.edu<span tal:replace="structure gt"/>.
+administrator.
 </tal:rejected>
-Best Regards,
-<span tal:replace="portal_title">Portal Title</span> Administrator
-
-The College of Engineering at the University of Notre Dame
-257 Fitzpatrick Hall
-Notre Dame, IN 46556-5637
-Phone: (574) 631-0101
-E-mail: <span tal:replace="structure lt"/>help@esc.nd.edu<span tal:replace="structure gt"/>
-Web: <span tal:replace="structure lt"/>http://engineering.nd.edu/<span tal:replace="structure gt"/>
 </tal:root>

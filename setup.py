@@ -14,7 +14,7 @@ long_description = (
     open('CHANGES.txt').read()
     + '\n')
 
-setup(name='nd.syndication',
+setup(name='resonate',
       version=version,
       description="Package for syndicating content between micro-sites.",
       long_description=long_description,
@@ -35,7 +35,6 @@ setup(name='nd.syndication',
       license='gpl',
       packages=find_packages('src'),
       package_dir={'': 'src'},
-      namespace_packages=['nd', ],
       include_package_data=True,
       zip_safe=False,
       install_requires=[
@@ -46,8 +45,11 @@ setup(name='nd.syndication',
           'sixfeetup.utils',
           'sixfeetup.workflow.chained',
           'plone.app.dexterity',
-          'nd.content',
           'collective.js.chosen',
+          'collective.lineage',
+          'z3c.relationfield',
+          'plone.directives.form',
+          'plone.formwidget.contenttree',
       ],
       extras_require={'test': ['plone.app.testing']},
       entry_points="""
@@ -55,6 +57,6 @@ setup(name='nd.syndication',
       [z3c.autoinclude.plugin]
       target = plone
       [console_scripts]
-      create_syndication_digest = nd.syndication.scripts.digest:create_digest
+      create_syndication_digest = resonate.scripts.digest:create_digest
       """,
       )

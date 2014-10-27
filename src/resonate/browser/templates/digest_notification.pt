@@ -2,7 +2,7 @@
      xmlns:tal="http://xml.zope.org/namespaces/tal"
      xmlns:metal="http://xml.zope.org/namespaces/metal"
      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-     i18n:domain="nd.syndication"
+     i18n:domain="resonate"
      tal:omit-tag=""
      tal:define="lt string:&lt;;
                  gt string:&gt;;
@@ -13,7 +13,7 @@
 ><p i18n:translate="digest_notification_start">
 This is an automatically generated email. Please do not reply to this email; instead, contact your site administrator with any questions.</p
 ><p i18n:translate="digest_notification_heading">
-Items that were pending review in the College of Engineering website (for publication, move or syndication) as of <span
+Items that were pending review (for publication, move or syndication) as of <span
 i18n:name="current_time" tal:omit-tag="" tal:replace="now" /> are:</p><br/>
 
 <table border="1">
@@ -36,14 +36,5 @@ i18n:name="current_time" tal:omit-tag="" tal:replace="now" /> are:</p><br/>
 </table>
 <br/>
 <p i18n:translate="digest_notification_note">(*) Most recent first</p><br/>
-<p i18n:translate="digest_notification_unsubscribe">To unsubscribe from this daily digest, go to your profile to edit your preferences.</p><br/>
-
-<p>
-The College of Engineering at the University of Notre Dame<br/>
-257 Fitzpatrick Hall<br/>
-Notre Dame, IN 46556-5637<br/>
-Phone: (574) 631-0101<br/>
-E-mail: <a href="mailto:help@esc.nd.edu">help@esc.nd.edu</a><br/>
-Web: <a href="http://engineering.nd.edu" target="_blank">http://engineering.nd.edu/</a>
-</p>
+<p i18n:translate="digest_notification_unsubscribe">To unsubscribe from this daily digest, go to your profile to edit your preferences.</p>
 </div>

@@ -25,7 +25,7 @@ Here is an example of interacting with the queue for a micro-site:
     from pprint import pprint
     from Products.CMFCore.utils import getToolByName
     from plone.app.layout.navigation.root import getNavigationRoot
-    from nd.syndication.interfaces import ISyndicationNotificationTool
+    from resonate.interfaces import ISyndicationNotificationTool
 
     nav_root_path = getNavigationRoot(context)
     nav_root = context.restrictedTraverse(nav_root_path)

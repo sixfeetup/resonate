@@ -11,13 +11,12 @@ from AccessControl.SecurityManagement import setSecurityManager
 from Products.CMFCore.utils import getToolByName
 from Testing.makerequest import makerequest
 from zope.component import getMultiAdapter
-from zope.app.component.hooks import setSite
+from zope.component.hooks import setSite
 from plone.app.uuid.utils import uuidToObject
 
-from nd.content.content.member import IMember
-from nd.syndication.utils import sudo
-from nd.syndication.utils import upgrade_logger
-from nd.syndication.utils import update_payload
+from resonate.utils import sudo
+from resonate.utils import upgrade_logger
+from resonate.utils import update_payload
 
 logger = logging.getLogger(__name__)
 
@@ -27,17 +26,20 @@ def usage():
 This script will send digest notification to subscribers.
 Options that are available:
 
-    -s, --site=:    Choose an alternative id for your plone site - default 'nd'
-    -d  --domain=:  Choose URL SERVER_NAME, defalut 'www.nd.edu'
+    -s, --site=:    Choose an alternative id for your site - default 'Plone'
+    -d  --domain=:  Choose URL SERVER_NAME, defalut 'localhost'
     -h, --help:     Prints this message to stdout.
 """
 
+
 def arg_handler():
-    site_id = 'nd'
-    domain = 'www.nd.edu'
+    site_id = 'Plone'
+    domain = 'localhost'
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hd:s:',
-                  ['help', 'site=', 'domain='])
+        opts, args = getopt.getopt(
+            sys.argv[1:], 'hd:s:',
+            ['help', 'site=', 'domain=']
+        )
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -67,15 +69,7 @@ def create_digest(app):
     notification_tool = getToolByName(portal, 'portal_syn_notification')
     acl_users = getToolByName(portal, 'acl_users')
     mailhost = getToolByName(portal, 'MailHost')
-    membrane = getToolByName(portal, 'membrane_tool')
     all_user_ids = acl_users.getUserIds()
-    membrane_brains = membrane(exact_getUserId=all_user_ids)
-    membrane_users = {}
-    for brain in membrane_brains:
-        try:
-            membrane_users[brain.getId] = IMember(brain.getObject())
-        except (AttributeError,), err:
-            logger.warning("Couldn't find membrane object for user: %s", err)
 
     managers = {
         'curr': getSecurityManager()
@@ -93,8 +87,7 @@ def create_digest(app):
         setSecurityManager(managers['curr'])
         organization = uuidToObject(nav_root_uid)
         org_path = '/'.join(organization.getPhysicalPath())
-        subject = 'Pending review status daily digest ' \
-                  'for College of Engineering'
+        subject = 'Pending review status daily digest'
         while queue:
             payload = queue.pull()
             if '/' in payload['object_uid']:
@@ -131,16 +124,14 @@ def create_digest(app):
             user = acl_users.getUserById(user_id)
             newSecurityManager(portal.REQUEST, user)
             can_review = user is not None and \
-                         getSecurityManager().checkPermission(review_perm,
-                                                              organization)
-            receive_digest = user_id in membrane_users and \
-                             membrane_users[user_id].receive_daily_digest
+                getSecurityManager().checkPermission(review_perm,
+                                                     organization)
             user_email = user is not None and user.getProperty('email')
             # Retain this check for failed_user_ids, as the user's permissions
             # might have changed
-            if can_review and receive_digest and user_email:
-                msg = 'Notifying %s: can_review=%s, receive_daily_digest=%s, email=%s'
-                logger.info(msg, user, can_review, receive_digest, user_email)
+            if can_review and user_email:
+                msg = 'Notifying %s: can_review=%s, email=%s'
+                logger.info(msg, user, can_review, user_email)
                 try:
                     mailhost.send(outer,
                                   subject=subject,
@@ -149,7 +140,7 @@ def create_digest(app):
                     email_counter.setdefault(org_path, []).append(user_id)
                     if user_id in payload['failed_user_ids']:
                         payload['failed_user_ids'].remove(user_id)
-                except Exception, e:
+                except Exception:
                     msg = 'Problem notifying user %r; re-queueing.'
                     logger.exception(msg, user)
                     payload['failed_user_ids'].add(user_id)
@@ -157,9 +148,11 @@ def create_digest(app):
                                                            payload)
                     continue
 
-    logger.info('Syndication digest creation finished: %d message(s) sent (%s).',
-                sum([len(user_ids)
-                     for user_ids in email_counter.values()]),
-                email_counter)
+    logger.info(
+        'Syndication digest creation finished: %d message(s) sent (%s).',
+        sum([len(user_ids)
+             for user_ids in email_counter.values()]),
+        email_counter
+    )
 
     transaction.commit()

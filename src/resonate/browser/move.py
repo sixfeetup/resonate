@@ -4,8 +4,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
-from nd.syndication.content.proxy import IProxy
-from nd.syndication.utils import get_organizations_by_target
+from resonate.content.proxy import IProxy
+from resonate.utils import get_organizations_by_target
 
 
 logger = logging.getLogger(__name__)

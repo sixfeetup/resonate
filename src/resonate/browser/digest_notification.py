@@ -3,8 +3,8 @@ from Products.CMFCore.utils import getToolByName
 from plone.app.uuid.utils import uuidToObject
 from plone.app.layout.navigation.root import getNavigationRootObject
 
-from nd.syndication.utils import getRefs
-from nd.syndication.content.proxy import IProxy
+from resonate.utils import getRefs
+from resonate.content.proxy import IProxy
 
 
 class DigestNotification(BrowserView):

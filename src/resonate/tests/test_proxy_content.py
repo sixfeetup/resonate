@@ -16,10 +16,10 @@ class TestProxyContent(TestCase):
 
     def test_source_object_removed(self):
         # create source object and related with proxy
-        p1 = self._createType(self.portal, 'nd.syndication.proxy', 'p1')
-        p2 = self._createType(self.portal, 'nd.syndication.proxy', 'p2')
-        p3 = self._createType(self.portal, 'nd.syndication.proxy', 'p3')
-        p4 = self._createType(self.portal, 'nd.syndication.proxy', 'p4')
+        p1 = self._createType(self.portal, 'resonate.proxy', 'p1')
+        p2 = self._createType(self.portal, 'resonate.proxy', 'p2')
+        p3 = self._createType(self.portal, 'resonate.proxy', 'p3')
+        p4 = self._createType(self.portal, 'resonate.proxy', 'p4')
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
@@ -50,10 +50,10 @@ class TestProxyContent(TestCase):
 
     def test_source_object_title_modified(self):
         # create source object and related with proxy
-        p1 = self._createType(self.portal, 'nd.syndication.proxy', 'p1')
-        p2 = self._createType(self.portal, 'nd.syndication.proxy', 'p2')
-        p3 = self._createType(self.portal, 'nd.syndication.proxy', 'p3')
-        p4 = self._createType(self.portal, 'nd.syndication.proxy', 'p4')
+        p1 = self._createType(self.portal, 'resonate.proxy', 'p1')
+        p2 = self._createType(self.portal, 'resonate.proxy', 'p2')
+        p3 = self._createType(self.portal, 'resonate.proxy', 'p3')
+        p4 = self._createType(self.portal, 'resonate.proxy', 'p4')
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
@@ -91,8 +91,8 @@ class TestProxyContent(TestCase):
         wft = getToolByName(self.portal, 'portal_workflow')
 
         # create source object and related with proxy
-        p1 = self._createType(self.portal, 'nd.syndication.proxy', 'p1')
-        p2 = self._createType(self.portal, 'nd.syndication.proxy', 'p2')
+        p1 = self._createType(self.portal, 'resonate.proxy', 'p1')
+        p2 = self._createType(self.portal, 'resonate.proxy', 'p2')
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
@@ -117,8 +117,8 @@ class TestProxyContent(TestCase):
 
     def test_proxy_object_removed(self):
         # create source object and related with proxy
-        p1 = self._createType(self.portal, 'nd.syndication.proxy', 'p1')
-        p2 = self._createType(self.portal, 'nd.syndication.proxy', 'p2')
+        p1 = self._createType(self.portal, 'resonate.proxy', 'p1')
+        p2 = self._createType(self.portal, 'resonate.proxy', 'p2')
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')

@@ -1,7 +1,7 @@
 # -*- extra stuff goes here -*-
 from zope.i18nmessageid import MessageFactory as MF
 
-MessageFactory = MF('nd.syndication')
+MessageFactory = MF('resonate')
 
 
 def initialize(context):

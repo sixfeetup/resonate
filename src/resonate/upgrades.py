@@ -3,11 +3,11 @@ import logging
 
 def enable_subtyper_for_syndication(context):
     logger = logging.getLogger(__name__)
-    context.runImportStepFromProfile('profile-nd.syndication:default', 'componentregistry')
-    logger.warn('nd.syndication subtypers enabled')
+    context.runImportStepFromProfile('profile-resonate:default', 'componentregistry')
+    logger.warn('resonate subtypers enabled')
 
 
 def add_proxy_content_type(context):
     logger = logging.getLogger(__name__)
-    context.runImportStepFromProfile('profile-nd.syndication:default', 'typeinfo')
-    logger.warn('nd.syndication.proxy type enabled')
+    context.runImportStepFromProfile('profile-resonate:default', 'typeinfo')
+    logger.warn('resonate.proxy type enabled')

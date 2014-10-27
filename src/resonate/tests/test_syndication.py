@@ -8,7 +8,7 @@ from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 
 from nd.policy.tests.base import TestCase
-from nd.syndication.utils import update_payload
+from resonate.utils import update_payload
 
 
 def fake_send(self, mail_text, *args, **kwargs):
@@ -264,7 +264,7 @@ class TestSyndication(TestCase):
         wft.doActionFor(s1, "request_syndication")
         wft.doActionFor(s1, "accept_syndication")
 
-        p1 = self._createType(c2.events, 'nd.syndication.proxy', 'p1')
+        p1 = self._createType(c2.events, 'resonate.proxy', 'p1')
 
         digest = c1.unrestrictedTraverse('@@digest_notification')
         payload = {
