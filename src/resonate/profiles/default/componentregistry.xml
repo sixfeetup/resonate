@@ -10,9 +10,6 @@
     <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
              name="resonate.news"
              factory="resonate.descriptors.NewsDescriptor" />
-    <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
-             name="resonate.seminar"
-             factory="resonate.descriptors.SeminarDescriptor" />
   </utilities>
   <adapters>
     <adapter
