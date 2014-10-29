@@ -7,6 +7,7 @@ Product Conversion
 - remove references to "College of Engineering"
 - remove references to "nd.edu"
 - remove IMemberFolder and ISeminar, ISeminarSyndicationTarget
+- current_syndication_targets and rejected_syndication_sites fields moved from nd.extenders to resonate
 
 1.0-dev (unreleased)
 --------------------
