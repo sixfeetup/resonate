@@ -14,4 +14,30 @@
              name="resonate.seminar"
              factory="resonate.descriptors.SeminarDescriptor" />
   </utilities>
+  <adapters>
+    <adapter
+      factory="resonate.content.news_item.NewsItemCurrentSyndicationTargetsModifier"
+      provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+      for="Products.ATContentTypes.interfaces.IATNewsItem"
+      name="news_item_cst"
+      />
+    <adapter
+      factory="resonate.content.news_item.NewsItemRejectedSyndicationSitesModifier"
+      provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+      for="Products.ATContentTypes.interfaces.IATNewsItem"
+      name="news_item_rss"
+      />
+    <adapter
+      factory="resonate.content.event.EventCurrentSyndicationTargetsModifier"
+      provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+      for="Products.ATContentTypes.interfaces.IATEvent"
+      name="event_cst"
+      />
+    <adapter
+      factory="resonate.content.event.EventRejectedSyndicationSitesModifier"
+      provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+      for="Products.ATContentTypes.interfaces.IATEvent"
+      name="event_rss"
+      />
+  </adapters>
 </componentregistry>

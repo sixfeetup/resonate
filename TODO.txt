@@ -5,4 +5,3 @@
 * Move containing_organization index / metadata from nd.content to resonate
 * Move portlet from nd.content to resonate
 * Check if local role adapters can be moved to nd.content
-* Move current_syndication_targets field from nd.extenders to resonate
