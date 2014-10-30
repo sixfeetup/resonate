@@ -9,6 +9,7 @@
   <includePlugins package="." />
   <includeDependencies package="." />
   <include package=".browser" />
+  <include package="plone.app.relationfield" />
   <include file="subscribers.zcml" />
 
   <five:registerPackage package="." initialize=".initialize" />

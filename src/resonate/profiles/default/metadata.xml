@@ -4,6 +4,7 @@
   <dependencies>
     <dependency>profile-p4a.subtyper:default</dependency>
     <dependency>profile-plone.app.dexterity:default</dependency>
+    <dependency>profile-plone.app.relationfield:default</dependency>
     <dependency>profile-collective.js.chosen:default</dependency>
     <dependency>profile-Products.OrderableReferenceField:default</dependency>
   </dependencies>
