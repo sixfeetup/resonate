@@ -58,9 +58,17 @@ def send_syndication_notification(obj, event):
     mfrom = portal.email_from_address
     source = hooks.getSite()
     organizations = (event.kwargs or {}).get('organizations', ())
-    bccs = source.notification_emails + ', '.join(
-        target_brain.getObject().notification_emails
-        for target_brain in catalog(UID=organizations))
+    bccs = getattr(source, 'notification_emails', '')
+    for target_brain in catalog(UID=organizations):
+        target_addr = getattr(
+            target_brain.getObject(),
+            'notification_emails',
+            None
+        )
+        if target_addr:
+            bccs += ', ' + target_addr
+    if bccs == '':
+        return
     bccs_by_addr = {}
     for name, addr in rfc822.AddressList(bccs).addresslist:
         if not bccs_by_addr.get(addr):
@@ -427,7 +435,7 @@ def notify_syndication_change(obj, event):
 
 def request_syndication(obj, event):
     """
-    When an Event, News Item or Seminar completes the request_syndication
+    When an Event or News Item completes the request_syndication
     transition, create the proxy object in each target organization's
     folder.
     """
