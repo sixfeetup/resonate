@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<portlets
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="plone">
+
+    <portlet
+        addview="resonate.portlets.SyndicationStatusPortlet"
+        title="Syndication status" 
+        description="This portlet will display the syndication status for current context"
+        i18n:attributes="title; description"
+        />
+
+    <assignment
+        manager="plone.rightcolumn"
+        category="content_type"
+        key="Event"
+        type="resonate.portlets.SyndicationStatusPortlet"
+        name="syndication_status"
+        />
+
+    <assignment
+        manager="plone.rightcolumn"
+        category="content_type"
+        key="News Item"
+        type="resonate.portlets.SyndicationStatusPortlet"
+        name="syndication_status"
+        />
+
+</portlets>

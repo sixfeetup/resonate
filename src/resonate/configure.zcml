@@ -9,6 +9,7 @@
   <includePlugins package="." />
   <includeDependencies package="." />
   <include package=".browser" />
+  <include package=".portlets" />
   <include package="plone.app.relationfield" />
   <include file="subscribers.zcml" />
 

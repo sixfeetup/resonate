@@ -1,0 +1,55 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      tal:omit-tag="">
+<dl class="portlet portletSyndicationStatus"
+    i18n:domain="plone"
+    tal:define="syndication_targets view/syndication_targets;
+                submitted_syndications view/submitted_syndications;
+                rejected_syndications view/rejected_syndications;">
+
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        <span tal:replace="view/title"/>
+        <span class="portletTopRight"></span>
+    </dt>
+    <dd class="border">&nbsp;</dd>
+    <dd tal:condition="syndication_targets" class="syn-title">Currently syndicated to:</dd>
+    <tal:items tal:repeat="item syndication_targets">
+        <dd class="portletItem">
+            <a href="#"
+                tal:attributes="href string:${item/absolute_url}"
+                class="tile">
+                <span tal:replace="item/title_or_id">
+                    Title
+                </span>
+            </a>
+        </dd>
+    </tal:items>
+    <dd tal:condition="submitted_syndications" class="syn-title">Currently submitted to:</dd>
+    <tal:items tal:repeat="item submitted_syndications">
+        <dd class="portletItem">
+            <a href="#"
+                tal:attributes="href string:${item/absolute_url}"
+                class="tile">
+                <span tal:replace="item/title_or_id">
+                    Title
+                </span>
+            </a>
+        </dd>
+    </tal:items>
+    <dd tal:condition="rejected_syndications" class="syn-title">Previously rejected from:</dd>
+    <tal:items tal:repeat="item rejected_syndications">
+        <dd class="portletItem">
+            <a href="#"
+                tal:attributes="href string:${item/absolute_url}"
+                class="tile">
+                <span tal:replace="item/title_or_id">
+                    Title
+                </span>
+            </a>
+        </dd>
+    </tal:items>
+</dl>
+</html>
+

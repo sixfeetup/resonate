@@ -8,6 +8,7 @@ Product Conversion
 - remove references to "nd.edu"
 - remove IMemberFolder and ISeminar, ISeminarSyndicationTarget
 - current_syndication_targets and rejected_syndication_sites fields moved from nd.extenders to resonate
+- Syndication status portlet moved to resonate
 
 1.0-dev (unreleased)
 --------------------
