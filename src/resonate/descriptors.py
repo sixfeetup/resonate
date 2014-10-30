@@ -10,7 +10,7 @@ class EventDescriptor(object):
     """
     interface.implements(stifaces.IFolderishContentTypeDescriptor)
     title = _(u'Event syndication')
-    description = _(u'Event target syndication')
+    description = _(u'Event syndication target')
     type_interface = interfaces.IEventSyndicationTarget
 
 
@@ -19,5 +19,5 @@ class NewsDescriptor(object):
     """
     interface.implements(stifaces.IFolderishContentTypeDescriptor)
     title = _(u'News syndication')
-    description = _(u'News target syndication')
+    description = _(u'News syndication target')
     type_interface = interfaces.INewsSyndicationTarget

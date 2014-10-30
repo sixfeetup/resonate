@@ -53,6 +53,7 @@ setup(name='resonate',
           'archetypes.schemaextender',
           'archetypes.referencebrowserwidget',
           'Products.OrderableReferenceField',
+          'plone.api',
       ],
       extras_require={'test': ['plone.app.testing']},
       entry_points="""

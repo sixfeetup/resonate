@@ -87,8 +87,9 @@ class SelectOrganizations(BrowserView):
         """Return a list of available organizations to syndicate content to,
         formatted for display as a combo-box.
         """
+        
         org_vocab = getUtility(IVocabularyFactory,
-                               'faceted_organization_vocabulary')
+                               'resonate.vocabulary.childsites')
         terms = org_vocab(self.context)
 
         portal = getSite()

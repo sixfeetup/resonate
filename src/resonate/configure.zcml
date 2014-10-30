@@ -42,5 +42,9 @@
       />
 
   <!-- -*- extra stuff goes here -*- -->
+  <utility
+      component=".content.csvocabulary.ChildSitesVocabularyFactory"
+      name="resonate.vocabulary.childsites"
+      />
 
 </configure>
