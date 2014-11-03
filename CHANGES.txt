@@ -9,6 +9,7 @@ Product Conversion
 - remove IMemberFolder and ISeminar, ISeminarSyndicationTarget
 - current_syndication_targets and rejected_syndication_sites fields moved from nd.extenders to resonate
 - Syndication status portlet moved to resonate
+- We no longer use a custom view for lists of syndicated items. Proxy objects now redirect users without "modify" permissions to the original item. Users with "modify" are shown a summary.
 
 1.0-dev (unreleased)
 --------------------

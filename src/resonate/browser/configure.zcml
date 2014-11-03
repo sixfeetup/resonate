@@ -40,4 +40,10 @@
       permission="cmf.ReviewPortalContent"
       />
 
+  <browser:page
+      for="resonate.content.proxy.IProxy"
+      name="proxy_redirect_view"
+      class="resonate.browser.redirect.ProxyRedirect"
+      permission="zope2.View"
+      />
 </configure>
