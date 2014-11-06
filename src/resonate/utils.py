@@ -107,6 +107,26 @@ def setDTRef(obj, fname, value):
     setattr(obj, fname, ref_field)
 
 
+def delRef(obj, fname, value):
+    if IBaseObject.providedBy(obj):
+        delATRef(obj, fname, value)
+    else:
+        delDTRef(obj, fname, value)
+
+
+def delATRef(obj, fname, value):
+    field = obj.getField(fname)
+    existing = [safe_uid(a) for a in field.get(obj)]
+    existing.remove(safe_uid(value.to_object))
+    field.set(obj, existing)
+
+
+def delDTRef(obj, fname, value):
+    ref_field = getattr(obj, fname)
+    ref_field.remove(value)
+    setattr(obj, fname, ref_field)
+
+
 def upgrade_logger(logger_name, level,
                    fmt="%(asctime)s %(levelname)s - %(name)s - %(message)s"):
     # Force application logging level and log output to stdout for all
