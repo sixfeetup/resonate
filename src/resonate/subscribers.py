@@ -32,6 +32,7 @@ from resonate.utils import get_organizations_by_target
 from resonate.utils import safe_uid
 from resonate.utils import sendEmailToMember
 from resonate.utils import setRef
+from resonate.utils import delRef
 from resonate.utils import sudo
 from resonate.utils import update_payload
 from resonate.utils import update_syndication_state
@@ -317,8 +318,11 @@ def reject_syndication(obj, event):
         return
     org_id = intids.getId(organization)
     sudo(setRef, source, 'rejected_syndication_sites', RelationValue(org_id))
-    parent_folder = aq_parent(obj)
-    parent_folder.manage_delObjects([obj.getId()])
+    # Deleting the source/proxy relationship triggers deletion of the proxy
+    # Deleting the proxy directly would delete the relationship, which would
+    # attempt (and fail) to delete the proxy a second time
+    proxy_id = intids.getId(obj)
+    delRef(source, 'current_syndication_targets', RelationValue(proxy_id))
 
 
 def accept_move(proxy, event):
