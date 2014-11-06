@@ -1,8 +1,9 @@
 Changelog
 =========
 
-Product Conversion
+2.0
 ------------------
+
 - rename nd.syndication to resonate
 - remove references to "College of Engineering"
 - remove references to "nd.edu"
@@ -10,6 +11,7 @@ Product Conversion
 - current_syndication_targets and rejected_syndication_sites fields moved from nd.extenders to resonate
 - Syndication status portlet moved to resonate
 - We no longer use a custom view for lists of syndicated items. Proxy objects now redirect users without "modify" permissions to the original item. Users with "modify" are shown a summary.
+- rejecting syndication no longer deletes the proxy directly, but deletes the relationship between source and proxy
 
 1.0-dev (unreleased)
 --------------------
