@@ -3,7 +3,7 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="resonate">
 
-  <subscriber
+  <!-- <subscriber
       for="Products.CMFCore.interfaces.IContentish
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.notify_syndication_change"
@@ -12,7 +12,7 @@
       for="Products.CMFCore.interfaces.IContentish
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.send_syndication_notification"
-      />
+      /> -->
   <subscriber
       for="p4a.subtyper.interfaces.ISubtypeAddedEvent"
       handler="resonate.subscribers.check_unique_subtype"

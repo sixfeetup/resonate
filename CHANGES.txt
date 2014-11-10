@@ -4,8 +4,9 @@ Changelog
 2.1
 ---
 
-- include various text files in the package
+- include text files in the package
 - disable "Move" workflow
+- disable e-mail notifications
 
 2.0
 ---
