@@ -5,6 +5,7 @@ Changelog
 ---
 
 - include various text files in the package
+- disable "Move" workflow
 
 2.0
 ---
