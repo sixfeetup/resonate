@@ -15,7 +15,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 from Products.Archetypes.interfaces import IBaseObject
 from Products.Archetypes.interfaces import IReference
-from Products.ATContentTypes.interfaces import IATEvent, IATNewsItem
 from Products.ATContentTypes.utils import DT2dt
 from plone.dexterity.interfaces import IDexterityContent
 
@@ -23,10 +22,9 @@ from z3c.relationfield import RelationValue
 
 # from nd.content.content.seminar import ISeminar
 
+from resonate import syndication_types
 from resonate.content.proxy import IProxy
 from resonate.interfaces import ISyndicationTarget
-from resonate.interfaces import IEventSyndicationTarget
-from resonate.interfaces import INewsSyndicationTarget
 from resonate.utils import getRefs
 from resonate.utils import get_organizations_by_target
 from resonate.utils import safe_uid
@@ -36,6 +34,7 @@ from resonate.utils import delRef
 from resonate.utils import sudo
 from resonate.utils import update_payload
 from resonate.utils import update_syndication_state
+from resonate.utils import target_interface
 from resonate import MessageFactory as _
 
 logger = logging.getLogger(__name__)
@@ -159,8 +158,7 @@ def check_unique_subtype(event):
 def update_proxy_fields(obj, event):
     """Update proxy title when source title is modified
     """
-    if not (IATEvent.providedBy(obj) or
-            IATNewsItem.providedBy(obj)):
+    if not any([st.providedBy(obj) for st in syndication_types]):
         return
     proxies = getRefs(obj, 'current_syndication_targets')
 
@@ -226,8 +224,7 @@ def remove_dexterity_proxies(obj, event):
 def unpublish_proxy(obj, event):
     """Unpublish proxy after source object is unpublished
     """
-    if not (IATEvent.providedBy(obj) or
-            IATNewsItem.providedBy(obj)):
+    if not any([st.providedBy(obj) for st in syndication_types]):
         return
     proxies = getRefs(obj, 'current_syndication_targets')
 
@@ -313,8 +310,7 @@ def reject_syndication(obj, event):
     # gets fired correctly
     sudo(event.workflow.doActionFor, source, 'reject_syndication')
     sudo(update_syndication_state, source, obj)
-    if not (IATEvent.providedBy(source) or
-            IATNewsItem.providedBy(source)):
+    if not any([st.providedBy(source) for st in syndication_types]):
         return
     org_id = intids.getId(organization)
     sudo(setRef, source, 'rejected_syndication_sites', RelationValue(org_id))
@@ -342,12 +338,8 @@ def accept_move(proxy, event):
     # Use original object for target / history
     if not IProxy.providedBy(proxy):
         return
-    # FIXME: these adapters should be in their respective packages
-    elif IATEvent.providedBy(proxy.source_object.to_object):
-        target_iface = IEventSyndicationTarget
-    elif IATNewsItem.providedBy(proxy.source_object.to_object):
-        target_iface = INewsSyndicationTarget
-    else:
+    target_iface = target_interface(proxy.source_object.to_object)
+    if target_iface is None:
         return
     wft = getToolByName(proxy, 'portal_workflow')
     history = wft.getHistoryOf('syndication_workflow',

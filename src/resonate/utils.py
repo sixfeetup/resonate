@@ -146,11 +146,7 @@ def get_organizations_by_target(context, uids):
     uid_catalog = getToolByName(context, 'uid_catalog')
     home_folder_path = '/'.join(context.getPhysicalPath())
     context_path = '/'.join(context.getPhysicalPath())
-    # FIXME: these adapters should be in their respective packages
-    if IATEvent.providedBy(context):
-        target_iface = IEventSyndicationTarget
-    elif IATNewsItem.providedBy(context):
-        target_iface = INewsSyndicationTarget
+    target_iface = target_interface(context)
 
     organizations = [
         brain.getObject()
@@ -286,3 +282,11 @@ def update_syndication_state(source, proxy=None):
     # at that point if it should be. We update their respective
     # history record here to the correct value.
     history[-1]['syndication_state'] = state_id
+
+
+def target_interface(source):
+    if IATEvent.providedBy(source):
+        return IEventSyndicationTarget
+    if IATNewsItem.providedBy(source):
+        return INewsSyndicationTarget
+    return None
