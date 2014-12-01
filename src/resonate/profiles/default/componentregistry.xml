@@ -10,6 +10,9 @@
     <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
              name="resonate.news"
              factory="resonate.descriptors.NewsDescriptor" />
+    <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
+             name="resonate.file"
+             factory="resonate.descriptors.FileTargetDescriptor" />
   </utilities>
   <adapters>
     <adapter
@@ -35,6 +38,18 @@
       provides="archetypes.schemaextender.interfaces.ISchemaModifier"
       for="Products.ATContentTypes.interfaces.IATEvent"
       name="event_rss"
+      />
+    <adapter
+      factory="resonate.content.file.FileCurrentSyndicationTargetsModifier"
+      provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+      for="Products.ATContentTypes.interfaces.IATFile"
+      name="file_cst"
+      />
+    <adapter
+      factory="resonate.content.file.FileRejectedSyndicationSitesModifier"
+      provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+      for="Products.ATContentTypes.interfaces.IATFile"
+      name="file_rss"
       />
   </adapters>
 </componentregistry>

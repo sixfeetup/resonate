@@ -26,4 +26,12 @@
         name="syndication_status"
         />
 
+    <assignment
+        manager="plone.rightcolumn"
+        category="content_type"
+        key="File"
+        type="resonate.portlets.SyndicationStatusPortlet"
+        name="syndication_status"
+        />
+
 </portlets>

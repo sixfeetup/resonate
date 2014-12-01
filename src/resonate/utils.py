@@ -15,6 +15,7 @@ from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.Archetypes.interfaces import IBaseObject
 from Products.ATContentTypes.interfaces import IATEvent
 from Products.ATContentTypes.interfaces import IATNewsItem
+from Products.ATContentTypes.interfaces import IATFile
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.layout.navigation.root import getNavigationRoot
@@ -23,6 +24,7 @@ from plone.uuid.interfaces import IUUID
 
 from resonate.interfaces import IEventSyndicationTarget
 from resonate.interfaces import INewsSyndicationTarget
+from resonate.interfaces import IFileSyndicationTarget
 
 
 class OmnipotentUser(CMFOmnipotentUser):
@@ -289,4 +291,6 @@ def target_interface(source):
         return IEventSyndicationTarget
     if IATNewsItem.providedBy(source):
         return INewsSyndicationTarget
+    if IATFile.providedBy(source):
+        return IFileSyndicationTarget
     return None

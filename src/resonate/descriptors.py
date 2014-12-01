@@ -21,3 +21,12 @@ class NewsDescriptor(object):
     title = _(u'News syndication')
     description = _(u'News syndication target')
     type_interface = interfaces.INewsSyndicationTarget
+
+
+class FileTargetDescriptor(object):
+    """A descriptor for the File subtype.
+    """
+    interface.implements(stifaces.IFolderishContentTypeDescriptor)
+    title = _(u'File syndication')
+    description = _(u'File syndication target')
+    type_interface = interfaces.IFileSyndicationTarget
