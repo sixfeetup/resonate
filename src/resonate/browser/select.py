@@ -3,6 +3,7 @@ import logging
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_inner
 from zope.component import getUtility
+from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -61,7 +62,7 @@ class SelectOrganizations(BrowserView):
         if 'syndication_workflow' not in wf_chain:
             status.addStatusMessage(not_supported_msg, type='warn')
             if current_transition is None:
-                return self.request.RESPONSE.redirect(context.absolute_url())
+                return self.request.RESPONSE.redirect(self.default_view_url)
             else:
                 # Use the standard action url
                 return self.request.RESPONSE.redirect(
@@ -81,13 +82,13 @@ class SelectOrganizations(BrowserView):
             wf_tool.doActionFor(context, 'request_syndication',
                                 organizations=self.organization_uids)
 
-        return self.request.RESPONSE.redirect(context.absolute_url())
+        return self.request.RESPONSE.redirect(self.default_view_url)
 
     def available_organizations(self):
         """Return a list of available organizations to syndicate content to,
         formatted for display as a combo-box.
         """
-        
+
         org_vocab = getUtility(IVocabularyFactory,
                                'resonate.vocabulary.childsites')
         terms = org_vocab(self.context)
@@ -143,3 +144,12 @@ class SelectOrganizations(BrowserView):
         if isinstance(organization_uids, basestring):
             organization_uids = [organization_uids]
         return organization_uids
+
+    @property
+    def default_view_url(self):
+        context = aq_inner(self.context)
+        cstate = getMultiAdapter(
+            (context, self.request),
+            name='plone_context_state',
+        )
+        return cstate.view_url()
