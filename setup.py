@@ -41,7 +41,7 @@ setup(name='resonate',
           'setuptools',
           # -*- Extra requirements: -*-
           'p4a.subtyper',
-          'zc.queue',
+          'zc.queue<2dev',
           'sixfeetup.utils',
           'sixfeetup.workflow.chained',
           'plone.app.dexterity [relations]',
