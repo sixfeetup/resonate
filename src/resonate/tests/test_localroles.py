@@ -8,10 +8,10 @@ from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.event import ObjectInitializedEvent
 
-from plone.app.testing import bbb as ptc
+from .. import testing
 
 
-class TestLocalRoles(ptc.PloneTestCase):
+class TestLocalRoles(testing.TestCase):
 
     def set_member_field(self, member, field, val):
         setattr(member, field, val)
