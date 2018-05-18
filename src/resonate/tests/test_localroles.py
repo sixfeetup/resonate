@@ -1,5 +1,3 @@
-# For most cases it is easiest to reuse the test setup from nd.policy.
-
 import unittest
 
 from zope.event import notify
@@ -10,11 +8,10 @@ from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.event import ObjectInitializedEvent
 
-from nd.content.behavior.memberextras import IStudent
-from nd.policy.tests.base import TestCase
+from plone.app.testing import bbb as ptc
 
 
-class TestLocalRoles(TestCase):
+class TestLocalRoles(ptc.PloneTestCase):
 
     def set_member_field(self, member, field, val):
         setattr(member, field, val)

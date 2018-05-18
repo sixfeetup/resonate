@@ -7,7 +7,8 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 
-from nd.policy.tests.base import TestCase
+from plone.app.testing import bbb as ptc
+
 from resonate.utils import update_payload
 
 
@@ -21,7 +22,7 @@ def fake_send(self, mail_text, *args, **kwargs):
     self.mails.append(mail_text)
 
 
-class TestSyndication(TestCase):
+class TestSyndication(ptc.PloneTestCase):
 
     def afterSetUp(self):
         self.portal.MailHost.send = types.MethodType(fake_send,

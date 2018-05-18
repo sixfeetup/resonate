@@ -6,12 +6,13 @@ from zope.component import getUtility
 from p4a.subtyper.interfaces import ISubtyper
 from plone.app.layout.navigation.interfaces import INavigationRoot
 
+from plone.app.testing import bbb as ptc
+
 from resonate.interfaces import IEventSyndicationTarget, \
     INewsSyndicationTarget
-from nd.policy.tests.base import TestCase
 
 
-class TestSubtyper(TestCase):
+class TestSubtyper(ptc.PloneTestCase):
 
     def test_subscription_subtyper(self):
         # create three content types and test the descriptors

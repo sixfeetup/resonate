@@ -9,10 +9,10 @@ from zope.lifecycleevent import ObjectModifiedEvent
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 
-from nd.policy.tests.base import TestCase
+from plone.app.testing import bbb as ptc
 
 
-class TestProxyContent(TestCase):
+class TestProxyContent(ptc.PloneTestCase):
 
     def test_source_object_removed(self):
         # create source object and related with proxy
