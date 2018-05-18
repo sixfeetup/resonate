@@ -40,6 +40,7 @@ setup(name='resonate',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
+          'Products.membrane<4',
           'p4a.subtyper',
           'zc.queue<2dev',
           'sixfeetup.utils',

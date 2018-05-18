@@ -2,6 +2,8 @@ from plone.app.testing import PloneWithPackageLayer
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import FunctionalTesting
 
+from Products.membrane import testing as membrane
+
 import resonate
 
 
@@ -12,9 +14,9 @@ RESONATE = PloneWithPackageLayer(
     name="RESONATE")
 
 RESONATE_INTEGRATION = IntegrationTesting(
-    bases=(RESONATE, ),
+    bases=(membrane.MEMBRANE_PROFILES_FIXTURE, RESONATE),
     name="RESONATE_INTEGRATION")
 
 RESONATE_FUNCTIONAL = FunctionalTesting(
-    bases=(RESONATE, ),
+    bases=(membrane.MEMBRANE_PROFILES_FIXTURE, RESONATE),
     name="RESONATE_FUNCTIONAL")

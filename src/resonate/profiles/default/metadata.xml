@@ -2,6 +2,7 @@
 <metadata>
   <version>0003</version>
   <dependencies>
+    <dependency>profile-Products.membrane:default</dependency>
     <dependency>profile-p4a.subtyper:default</dependency>
     <dependency>profile-plone.app.dexterity:default</dependency>
     <dependency>profile-plone.app.relationfield:default</dependency>
