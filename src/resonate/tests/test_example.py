@@ -21,5 +21,5 @@ class TestExample(unittest.TestCase):
         """
         pid = 'resonate'
         installed = [p['id'] for p in self.qi_tool.listInstalledProducts()]
-        self.assertTrue(pid in installed,
-                        'package appears not to have been installed')
+        self.assertIn(
+            pid, installed, 'package appears not to have been installed')

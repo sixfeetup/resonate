@@ -162,7 +162,7 @@ class TestSyndication(testing.TestCase):
             wft.doActionFor(s1, "request_move", organization=IUUID(c1))
             self.logout()
             wft.doActionFor(s1, "move")
-            self.assertTrue(_id % 's' in c1[target].objectIds())
+            self.assertIn(_id % 's', c1[target].objectIds())
 
     def test_syndication_notifications(self):
         self.loginAsPortalOwner()
@@ -185,15 +185,13 @@ class TestSyndication(testing.TestCase):
 
         wft.doActionFor(s1, "reject_syndication", organization=c1)
         self.assertEqual(len(self.portal.MailHost.mails), 1)
-        self.assertTrue('John Smith' in self.portal.MailHost.mails[0])
-        self.assertTrue('has not been approved' \
-                                            in self.portal.MailHost.mails[0])
+        self.assertIn('John Smith', self.portal.MailHost.mails[0])
+        self.assertIn('has not been approved', self.portal.MailHost.mails[0])
 
         wft.doActionFor(s2, "accept_syndication", organizations=[c1])
         self.assertEqual(len(self.portal.MailHost.mails), 2)
-        self.assertTrue('John Smith' in self.portal.MailHost.mails[1])
-        self.assertTrue('has been approved' \
-                                            in self.portal.MailHost.mails[1])
+        self.assertIn('John Smith', self.portal.MailHost.mails[1])
+        self.assertIn('has been approved', self.portal.MailHost.mails[1])
 
         self.logout()
 
@@ -301,10 +299,10 @@ class TestSyndication(testing.TestCase):
         update_payload(s1, payload)
         digest.update(payload)
         html = digest()
-        self.assertTrue("Last Changed (*)" in html)
-        self.assertTrue("border=\"1\"" in html)
+        self.assertIn("Last Changed (*)", html)
+        self.assertIn("border=\"1\"", html)
         link = '<a href="http://nohost/plone/@@redirect-to-uuid/%s">Event1</a>'
-        self.assertTrue(link % IUUID(s1) in html)
+        self.assertIn(link % IUUID(s1), html)
 
 
 def test_suite():
