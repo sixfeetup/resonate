@@ -5,8 +5,6 @@ from plone.app.testing import IntegrationTesting
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import bbb as ptc
 
-from Products.membrane import testing as membrane
-
 import resonate
 
 
@@ -17,12 +15,10 @@ RESONATE = PloneWithPackageLayer(
     name="RESONATE")
 
 RESONATE_INTEGRATION = IntegrationTesting(
-    bases=(membrane.MEMBRANE_PROFILES_FIXTURE, RESONATE),
-    name="RESONATE_INTEGRATION")
+    bases=(RESONATE, ), name="RESONATE_INTEGRATION")
 
 RESONATE_FUNCTIONAL = FunctionalTesting(
-    bases=(membrane.MEMBRANE_PROFILES_FIXTURE, RESONATE),
-    name="RESONATE_FUNCTIONAL")
+    bases=(RESONATE, ), name="RESONATE_FUNCTIONAL")
 
 
 class TestCase(ptc.PloneTestCase):

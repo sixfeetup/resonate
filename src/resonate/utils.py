@@ -28,7 +28,9 @@ from resonate.interfaces import IFileSyndicationTarget
 
 
 class OmnipotentUser(CMFOmnipotentUser):
-    """Omnipotent User for checking membrane catalog.
+    """
+    Super user to workaround issues when operating as the system user.
+
     Instancemanger has this class and tells us this:
 
       Adapted from Products.CMFCore.tests.base.security.  Using that

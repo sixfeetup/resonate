@@ -2,10 +2,10 @@
 
 import unittest
 import types
-from zope.event import notify
-from zope.lifecycleevent import ObjectCreatedEvent
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
+
+from plone.app import testing as plone_testing
 
 from resonate.utils import update_payload
 
@@ -29,26 +29,8 @@ class TestSyndication(testing.TestCase):
                                                      self.portal.MailHost)
 
     def add_and_approve_member(self):
-        membrane = self.portal.membrane_tool
-        member = self._createType(
-            self.portal,
-            'nd.content.member',
-            'm1',
-        )
-        member.first_name = 'John'
-        member.last_name = 'Smith'
-        member.username = 'jsmith'
-        member.email = 'john@example.org'
-        notify(ObjectCreatedEvent(member))
-
-        wft = self.portal.portal_workflow
-        self.setRoles(('Reviewer', ))
-        wft.doActionFor(member, 'approve')
-        membrane.reindexObject(member)
-
-        uid_c = self.portal.uid_catalog
-        uid_c.manage_reindexIndex('UID')
-
+        registration = getToolByName(self.portal, 'portal_registration')
+        member = registration.addMember('m1', plone_testing.TEST_USER_PASSWORD)
         # give user contributor rights for portal
         self.folder.manage_setLocalRoles(
             member.unique_userid, ['Contributor', ])
