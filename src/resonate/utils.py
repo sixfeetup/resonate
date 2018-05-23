@@ -13,18 +13,13 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
 
 from Products.Archetypes.interfaces import IBaseObject
-from Products.ATContentTypes.interfaces import IATEvent
-from Products.ATContentTypes.interfaces import IATNewsItem
-from Products.ATContentTypes.interfaces import IATFile
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.layout.navigation.root import getNavigationRoot
 
 from plone.uuid.interfaces import IUUID
 
-from resonate.interfaces import IEventSyndicationTarget
-from resonate.interfaces import INewsSyndicationTarget
-from resonate.interfaces import IFileSyndicationTarget
+from collective.lineage import interfaces as lineage_ifaces
 
 
 class OmnipotentUser(CMFOmnipotentUser):
@@ -150,7 +145,6 @@ def get_organizations_by_target(context, uids):
     uid_catalog = getToolByName(context, 'uid_catalog')
     home_folder_path = '/'.join(context.getPhysicalPath())
     context_path = '/'.join(context.getPhysicalPath())
-    target_iface = target_interface(context)
 
     organizations = [
         brain.getObject()
@@ -169,8 +163,9 @@ def get_organizations_by_target(context, uids):
         elif organization_path == getNavigationRoot(context):
             # Always exclude the current organization
             continue
-        targets = portal_catalog(path=organization_path,
-                                 object_provides=target_iface.__identifier__)
+        targets = portal_catalog(
+            path=organization_path,
+            object_provides=lineage_ifaces.IChildSite.__identifier__)
         for target in targets:
             if getNavigationRoot(target.getObject()) == organization_path:
                 result[organization] = target.getObject()
@@ -286,13 +281,3 @@ def update_syndication_state(source, proxy=None):
     # at that point if it should be. We update their respective
     # history record here to the correct value.
     history[-1]['syndication_state'] = state_id
-
-
-def target_interface(source):
-    if IATEvent.providedBy(source):
-        return IEventSyndicationTarget
-    if IATNewsItem.providedBy(source):
-        return INewsSyndicationTarget
-    if IATFile.providedBy(source):
-        return IFileSyndicationTarget
-    return None

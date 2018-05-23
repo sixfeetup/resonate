@@ -8,11 +8,9 @@ from zope.intid.interfaces import IIntIds
 from zope import component
 from zope.component import getUtility
 from zope.component import hooks
-from p4a.subtyper.interfaces import ISubtyper
 from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFCore.utils import getToolByName
-from Products.statusmessages.interfaces import IStatusMessage
 from Products.Archetypes.interfaces import IBaseObject
 from Products.Archetypes.interfaces import IReference
 from Products.ATContentTypes.utils import DT2dt
@@ -20,11 +18,8 @@ from plone.dexterity.interfaces import IDexterityContent
 
 from z3c.relationfield import RelationValue
 
-# from nd.content.content.seminar import ISeminar
-
 from resonate import syndication_types
 from resonate.content.proxy import IProxy
-from resonate.interfaces import ISyndicationTarget
 from resonate.utils import getRefs
 from resonate.utils import get_organizations_by_target
 from resonate.utils import safe_uid
@@ -34,8 +29,6 @@ from resonate.utils import delRef
 from resonate.utils import sudo
 from resonate.utils import update_payload
 from resonate.utils import update_syndication_state
-from resonate.utils import target_interface
-from resonate import MessageFactory as _
 
 logger = logging.getLogger(__name__)
 
@@ -128,31 +121,6 @@ def send_syndication_notification(obj, event):
 
     logger.debug('Syndication notification queued to be sent %s for %s: %s',
                  nav_root, obj, payload)
-
-
-def check_unique_subtype(event):
-    """Make sure there is only one subtyped folder in organization for
-       given interface.
-    """
-    if not ISyndicationTarget in event.subtype.type_interface.__bases__:
-        return
-    catalog = getToolByName(event.object, 'portal_catalog')
-    organization_path = getNavigationRoot(event.object)
-    already_subtyped = catalog(path=organization_path,
-                object_provides=event.subtype.type_interface.__identifier__)
-    already_subtyped = [
-        a
-        for a in already_subtyped
-        if getNavigationRoot(a.getObject()) == organization_path and
-           a.UID != safe_uid(event.object)
-    ]
-    if already_subtyped:
-        subtyper = getUtility(ISubtyper)
-        subtyper._remove_type(event.object)
-        msg = _(u'%s target folder already exists for this Organization.' %
-                event.subtype.title)
-        request = event.object.REQUEST
-        IStatusMessage(request).addStatusMessage(msg, type='info')
 
 
 def update_proxy_fields(obj, event):
@@ -251,17 +219,6 @@ def cleanup_source_after_proxy_remove(obj, event):
     if not source:
         return
 
-    #  only Seminar (dexterity type) needs actual cleanup
-    #  AT based objects are doing it by themselves
-    # TODO: replace with generic test for dexterity types?
-    # if ISeminar.providedBy(source):
-    #     cleaned_up = [
-    #         rv
-    #         for rv in source.current_syndication_targets
-    #         if safe_uid(rv.to_object) != safe_uid(obj)
-    #     ]
-    #     source.current_syndication_targets = cleaned_up
-
 
 def accept_syndication(obj, event):
     """
@@ -337,9 +294,6 @@ def accept_move(proxy, event):
 
     # Use original object for target / history
     if not IProxy.providedBy(proxy):
-        return
-    target_iface = target_interface(proxy.source_object.to_object)
-    if target_iface is None:
         return
     wft = getToolByName(proxy, 'portal_workflow')
     history = wft.getHistoryOf('syndication_workflow',

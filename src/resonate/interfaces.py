@@ -26,20 +26,3 @@ class ISyndicationNotificationTool(Interface):
         """Re-queue a notification with an arbitrary payload for an object
         (must support IUUID).
         """
-
-
-class ISyndicationTarget(Interface):
-    """A marker interface."""
-
-
-# FIXME: these adapters should be in their respective packages
-class IEventSyndicationTarget(ISyndicationTarget):
-    """A marker interface for Event syndication target."""
-
-
-class INewsSyndicationTarget(ISyndicationTarget):
-    """A marker interface for News syndication target."""
-
-
-class IFileSyndicationTarget(ISyndicationTarget):
-    """A marker interface for File syndication target."""

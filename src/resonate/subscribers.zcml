@@ -14,10 +14,6 @@
       handler="resonate.subscribers.send_syndication_notification"
       /> -->
   <subscriber
-      for="p4a.subtyper.interfaces.ISubtypeAddedEvent"
-      handler="resonate.subscribers.check_unique_subtype"
-      />
-  <subscriber
       for="Products.CMFCore.interfaces.IContentish
            zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler="resonate.subscribers.update_proxy_fields"

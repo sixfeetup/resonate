@@ -24,19 +24,9 @@
       />
 
   <genericsetup:upgradeStep
-      title="resonate: Enable subtyper for syndication"
-      description="Enable new subtype descriptors resonate"
-      source="0001"
-      destination="0002"
-      handler="resonate.upgrades.enable_subtyper_for_syndication"
-      sortkey="1"
-      profile="resonate:default"
-      />
-
-  <genericsetup:upgradeStep
       title="resonate: Enable resonate.proxy type"
       description="Enable new dexterity type resonate.proxy #948"
-      source="0002"
+      source="0001"
       destination="0003"
       handler="resonate.upgrades.add_proxy_content_type"
       sortkey="1"

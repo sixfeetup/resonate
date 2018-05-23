@@ -4,15 +4,6 @@
         BBB Disabled in favor of "real time" notifications instead of digests.
         Kept in place in case we want to enable it later. -->
     <utility interface="resonate.interfaces.ISyndicationNotificationTool" object="portal_syn_notification" />
-    <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
-             name="resonate.event"
-             factory="resonate.descriptors.EventDescriptor" />
-    <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
-             name="resonate.news"
-             factory="resonate.descriptors.NewsDescriptor" />
-    <utility interface="p4a.subtyper.interfaces.IFolderishContentTypeDescriptor"
-             name="resonate.file"
-             factory="resonate.descriptors.FileTargetDescriptor" />
   </utilities>
   <adapters>
     <adapter
