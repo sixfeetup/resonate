@@ -7,5 +7,6 @@
   <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
   <element value="plone.app.referenceablebehavior.referenceable.IReferenceable" />
+  <element value="resonate.behaviors.ISyndicationSource"/>
  </property>
 </object>

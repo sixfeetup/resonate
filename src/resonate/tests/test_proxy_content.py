@@ -37,7 +37,9 @@ class TestProxyContent(testing.TestCase):
 
         # Seminar source object
         s2 = self._createType(self.portal, 'Folder', 's2')
-        s2.current_syndication_targets = [IUUID(p3), IUUID(p4)]
+        s2.current_syndication_targets = [
+            RelationValue(getUtility(IIntIds).getId(p3)),
+            RelationValue(getUtility(IIntIds).getId(p4))]
 
         p3.source_object = RelationValue(getUtility(IIntIds).getId(s2))
         notify(ObjectModifiedEvent(p3))
@@ -76,7 +78,9 @@ class TestProxyContent(testing.TestCase):
         s2.setTitle('Old title')
         notify(ObjectModifiedEvent(s2))
 
-        s2.current_syndication_targets = [IUUID(p3), IUUID(p4)]
+        s2.current_syndication_targets = [
+            RelationValue(getUtility(IIntIds).getId(p3)),
+            RelationValue(getUtility(IIntIds).getId(p4))]
 
         self.assertNotEqual(p3.title, 'New title')
         self.assertNotEqual(p4.title, 'New title')

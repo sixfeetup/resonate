@@ -12,14 +12,13 @@ from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.interfaces import IBaseObject
-from Products.Archetypes.interfaces import IReference
 from Products.ATContentTypes.utils import DT2dt
-from plone.dexterity.interfaces import IDexterityContent
 
 from z3c.relationfield import RelationValue
 
 from resonate import syndication_types
 from resonate.content.proxy import IProxy
+from . import behaviors
 from resonate.utils import getRefs
 from resonate.utils import get_organizations_by_target
 from resonate.utils import safe_uid
@@ -126,7 +125,9 @@ def send_syndication_notification(obj, event):
 def update_proxy_fields(obj, event):
     """Update proxy title when source title is modified
     """
-    if not any([st.providedBy(obj) for st in syndication_types]):
+    if (
+            IBaseObject.providedBy(obj) and
+            not any([st.providedBy(obj) for st in syndication_types])):
         return
     proxies = getRefs(obj, 'current_syndication_targets')
 
@@ -163,8 +164,6 @@ def update_proxy_fields(obj, event):
 def remove_at_proxy(obj, event):
     """Remove proxy after reference is removed
     """
-    if not IReference.providedBy(obj):
-        return
     source = obj.getSourceObject()
     if not IBaseObject.providedBy(source):
         return
@@ -180,7 +179,7 @@ def remove_at_proxy(obj, event):
 def remove_dexterity_proxies(obj, event):
     """Remove proxy after source object is removed
     """
-    if not IDexterityContent.providedBy(obj):
+    if IProxy.providedBy(obj):
         return
     for rv in obj.current_syndication_targets:
         proxy = rv.to_object
@@ -310,8 +309,9 @@ def accept_move(proxy, event):
     organization = sudo(uuidToObject, last_request_move['organization'])
     catalog = getToolByName(proxy, 'portal_catalog')
     organization_path = getNavigationRoot(organization)
-    targets = catalog(path=organization_path,
-                      object_provides=target_iface.__identifier__)
+    targets = catalog(
+        path=organization_path,
+        object_provides=behaviors.ISyndicationTarget.__identifier__)
     for target in targets:
         target_obj = target.getObject()
         if getNavigationRoot(target_obj) == organization_path:

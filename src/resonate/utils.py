@@ -1,8 +1,6 @@
 import logging
 import sys
 
-from Acquisition import aq_parent
-
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
@@ -21,7 +19,7 @@ from plone.app.layout.navigation.root import getNavigationRoot
 
 from plone.uuid.interfaces import IUUID
 
-from collective.lineage import interfaces as lineage_ifaces
+from . import behaviors
 
 
 class OmnipotentUser(CMFOmnipotentUser):
@@ -168,10 +166,9 @@ def get_organizations_by_target(context, uids):
             continue
         targets = portal_catalog(
             path=organization_path,
-            object_provides=lineage_ifaces.IChildSite.__identifier__)
+            object_provides=behaviors.ISyndicationTarget.__identifier__)
         for target in targets:
-            if getNavigationRoot(aq_parent(
-                    target.getObject())) == organization_path:
+            if getNavigationRoot(target.getObject()) == organization_path:
                 result[organization] = target.getObject()
 
     return result

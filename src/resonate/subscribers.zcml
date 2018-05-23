@@ -14,7 +14,7 @@
       handler="resonate.subscribers.send_syndication_notification"
       /> -->
   <subscriber
-      for="Products.CMFCore.interfaces.IContentish
+      for=".behaviors.ISyndicationSource
            zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler="resonate.subscribers.update_proxy_fields"
       />
@@ -22,6 +22,11 @@
       for="Products.Archetypes.interfaces.IReference
            OFS.interfaces.IObjectWillBeRemovedEvent"
       handler="resonate.subscribers.remove_at_proxy"
+      />
+  <subscriber
+      for=".behaviors.ISyndicationSource
+           OFS.interfaces.IObjectWillBeRemovedEvent"
+      handler=".subscribers.remove_dexterity_proxies"
       />
   <subscriber
       for="Products.CMFCore.interfaces.IContentish
