@@ -27,13 +27,13 @@
   <action url="%(content_url)s/content_status_modify?workflow_action=accept_syndication" category="workflow" icon="">Accept syndication</action>
   <guard>
    <guard-permission>Review portal content</guard-permission>
-   <guard-expression>python:object.portal_type == 'resonate.proxy'</guard-expression>
+   <guard-expression>python:object.getPortalTypeName() == 'resonate.proxy'</guard-expression>
   </guard>
  </transition>
  <transition transition_id="move" title="Reviewer accepts item move request" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/@@move-content" category="workflow" icon="">Accept move</action>
   <guard>
-   <guard-expression>python:object.portal_type == 'resonate.proxy'</guard-expression>
+   <guard-expression>python:object.getPortalTypeName() == 'resonate.proxy'</guard-expression>
   </guard>
  </transition>
  <transition transition_id="reject_syndication" title="Reviewer rejects item for syndication" new_state="" trigger="USER" before_script="" after_script="">
@@ -41,21 +41,21 @@
   <action url="%(content_url)s/@@reject-syndication" category="workflow" icon="">Reject syndication</action>
   <guard>
    <guard-permission>Review portal content</guard-permission>
-   <guard-expression>python:object.portal_type == 'resonate.proxy'</guard-expression>
+   <guard-expression>python:object.getPortalTypeName() == 'resonate.proxy'</guard-expression>
   </guard>
  </transition>
  <transition transition_id="request_move" title="Member submits content for move" new_state="pending_move" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/@@select-organizations?transition=request_move" category="workflow" icon="">Request move</action>
   <guard>
    <guard-permission>Request review</guard-permission>
-   <guard-expression>python:object.portal_type != 'resonate.proxy'</guard-expression>
+   <guard-expression>python:object.getPortalTypeName() != 'resonate.proxy'</guard-expression>
   </guard>
  </transition>
  <transition transition_id="request_syndication" title="Member submits content for syndication" new_state="pending_syndication" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/@@select-organizations?transition=request_syndication" category="workflow" icon="">Request syndication</action>
   <guard>
    <guard-permission>Request review</guard-permission>
-   <guard-expression>python:object.portal_type != 'resonate.proxy'</guard-expression>
+   <guard-expression>python:object.getPortalTypeName() != 'resonate.proxy'</guard-expression>
   </guard>
  </transition>
  <worklist worklist_id="reviewer_queue" title="">
