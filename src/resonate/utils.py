@@ -73,7 +73,7 @@ def sudo(func, *args, **kwargs):
 def safe_uid(obj):
     try:
         uid = IUUID(obj)
-    except (TypeError,), err:
+    except (TypeError,) as err:
         # special-case Plone site objects
         if not IPloneSiteRoot.providedBy(obj):
             raise err
@@ -208,7 +208,7 @@ def sendEmailToMember(member, source, status, comment):
     template = '@@syndication_status_notification'
     try:
         message_template = source.restrictedTraverse(template)
-    except NotFound, e:
+    except NotFound as e:
         # notify the user that we were unable to notify by email
         msg = base_error_msg % "message template cannot be found"
         status_messages.add(msg, type=u'warning')
@@ -223,7 +223,7 @@ def sendEmailToMember(member, source, status, comment):
                       mfrom=mfrom,
                       charset=charset,
                       subject=subject)
-    except Exception, e:
+    except Exception as e:
         # naked try/excepts are bad, but I have no idea what exceptions might
         # be raised by sending the email, and the source is no help so far
         logger = logging.getLogger('sendEmailToMember')

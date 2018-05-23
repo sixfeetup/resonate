@@ -428,8 +428,8 @@ def request_syndication(obj, event):
                      id=oid)
         proxy = target[proxy]
         proxy.source_object = RelationValue(source_id)
-        proxy.title = unicode(obj.Title(), encoding)
-        proxy.description = unicode(obj.Description(), encoding)
+        proxy.title = obj.Title().decode(encoding)
+        proxy.description = obj.Description().decode(encoding)
         proxy.source_type = obj.portal_type
         # Submit for publication, so the item shows up in the review list
         sudo(wf_tool.doActionFor, proxy, 'submit')

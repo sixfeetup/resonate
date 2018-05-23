@@ -41,16 +41,17 @@ class TestSyndication(testing.TestCase):
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        types = [('Folder',
-                  'seminars',
-                  lambda x: x.current_syndication_targets),
-                 ('Event',
-                  'events',
-                  lambda x: x.getField('current_syndication_targets').get(x)),
-                 ('News Item',
-                  'news',
-                  lambda x: x.getField('current_syndication_targets').get(x)),
-                  ]
+        types = [
+            ('Folder',
+             'seminars',
+             lambda x: x.current_syndication_targets),
+            ('Event',
+             'events',
+             lambda x: x.getField('current_syndication_targets').get(x)),
+            ('News Item',
+             'news',
+             lambda x: x.getField('current_syndication_targets').get(x)),
+        ]
 
         for idx, _type in enumerate(types):
             typename, target, syndication_targets = _type
@@ -81,16 +82,17 @@ class TestSyndication(testing.TestCase):
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        types = [('Folder',
-                  'seminars',
-                  lambda x: x.rejected_syndication_sites),
-                 ('Event',
-                  'events',
-                  lambda x: x.getField('rejected_syndication_sites').get(x)),
-                 ('News Item',
-                  'news',
-                  lambda x: x.getField('rejected_syndication_sites').get(x)),
-                  ]
+        types = [
+            ('Folder',
+             'seminars',
+             lambda x: x.rejected_syndication_sites),
+            ('Event',
+             'events',
+             lambda x: x.getField('rejected_syndication_sites').get(x)),
+            ('News Item',
+             'news',
+             lambda x: x.getField('rejected_syndication_sites').get(x)),
+        ]
 
         for idx, _type in enumerate(types):
             typename, target, rejected_sites = _type
@@ -124,13 +126,11 @@ class TestSyndication(testing.TestCase):
     def test_accept_move_transition(self):
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        types = [('Folder',
-                  'seminars'),
-                 ('Event',
-                  'events'),
-                 ('News Item',
-                  'news'),
-                  ]
+        types = [
+            ('Folder', 'seminars'),
+            ('Event', 'events'),
+            ('News Item', 'news'),
+        ]
 
         for idx, _type in enumerate(types):
             typename, target = _type
