@@ -10,6 +10,14 @@
    <bound-workflow workflow_id="simple_publication_workflow"/>
    <bound-workflow workflow_id="syndication_workflow"/>
   </type>
+  <type type_id="Event">
+   <bound-workflow workflow_id="simple_publication_workflow"/>
+   <bound-workflow workflow_id="syndication_workflow"/>
+  </type>
+  <type type_id="News Item">
+   <bound-workflow workflow_id="simple_publication_workflow"/>
+   <bound-workflow workflow_id="syndication_workflow"/>
+  </type>
   <type type_id="resonate.proxy">
    <bound-workflow workflow_id="simple_publication_workflow"/>
    <bound-workflow workflow_id="syndication_workflow"/>

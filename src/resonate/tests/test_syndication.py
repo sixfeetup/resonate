@@ -2,12 +2,18 @@
 
 import unittest
 import types
+
+from zope import interface
+
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 
 from plone.app import testing as plone_testing
 
+from collective.lineage import utils as lineage_utils
+
 from resonate.utils import update_payload
+from .. import behaviors
 
 from .. import testing
 
@@ -37,6 +43,17 @@ class TestSyndication(testing.TestCase):
             member.unique_userid, ['Contributor', ])
         return member, member.unique_userid
 
+    def _createChildSiteAndTarget(self, context, type_name, id_, target):
+        """
+        Create a container as a navigation root with a child site target.
+        """
+        obj = self._createType(context, type_name, id_)
+        lineage_utils.enable_childsite(obj)
+        target_obj = self._createType(obj, 'Folder', target)
+        interface.alsoProvides(target_obj, behaviors.ISyndicationTarget)
+        target_obj.reindexObject()
+        return obj
+
     def test_accept_syndication_transition(self):
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
@@ -59,21 +76,25 @@ class TestSyndication(testing.TestCase):
 
             # create source object and two organization foldes
             s1 = self._createType(self.portal, typename, _id % 's1')
-            c1 = self._createType(self.portal, 'Folder', _id % 'c1')
-            c2 = self._createType(self.portal, 'Folder', _id % 'c2')
+            c1 = self._createChildSiteAndTarget(
+                self.portal, 'Folder', _id % 'c1', target)
+            c2 = self._createChildSiteAndTarget(
+                self.portal, 'Folder', _id % 'c2', target)
 
             # perform accept_syndication transition
-            wft.doActionFor(s1, "request_syndication")
-            wft.doActionFor(s1, "accept_syndication", organizations=[c1, c2])
-
+            wft.doActionFor(
+                s1, "request_syndication",
+                organizations=[IUUID(c1), IUUID(c2)])
             self.assertTrue(c1[target].objectIds())
             self.assertTrue(c2[target].objectIds())
 
             p1 = c1[target].objectValues()[0]
+            wft.doActionFor(p1, "accept_syndication")
             p2 = c2[target].objectValues()[0]
+            wft.doActionFor(p2, "accept_syndication")
 
-            self.assertEqual(p1.source_object, IUUID(s1))
-            self.assertEqual(p2.source_object, IUUID(s1))
+            self.assertEqual(IUUID(p1.source_object.to_object), IUUID(s1))
+            self.assertEqual(IUUID(p2.source_object.to_object), IUUID(s1))
             self.assertEqual(len(syndication_targets(s1)), 2)
 
         self.logout()
@@ -132,21 +153,31 @@ class TestSyndication(testing.TestCase):
             ('News Item', 'news'),
         ]
 
+        self.loginAsPortalOwner()
         for idx, _type in enumerate(types):
             typename, target = _type
             _id = '%s_obj' + str(idx)
 
-            self.loginAsPortalOwner()
             s1 = self._createType(self.portal, typename, _id % 's')
-            c1 = self._createType(self.portal, 'Folder', _id % 'c')
-            self._createType(c1, 'Folder', target)
+            c1 = self._createChildSiteAndTarget(
+                self.portal, 'Folder', _id % 'c1', target)
+            c2 = self._createChildSiteAndTarget(
+                self.portal, 'Folder', _id % 'c2', target)
+
+            # perform accept_syndication transition
+            wft.doActionFor(
+                s1, "request_syndication", organizations=[IUUID(c2)])
+            p2 = c2[target].objectValues()[0]
+            wft.doActionFor(p2, "accept_syndication")
 
             self.assertFalse(c1[target].objectIds())
 
             wft.doActionFor(s1, "request_move", organization=IUUID(c1))
-            self.logout()
-            wft.doActionFor(s1, "move")
-            self.assertIn(_id % 's', c1[target].objectIds())
+            p1_id = (_id % 's') + '-proxy'
+            self.assertIn(p1_id, c1[target].objectIds())
+            p1 = c1[target][p1_id]
+            wft.doActionFor(p1, "move")
+            self.assertNotIn(s1.id, self.portal.objectIds())
 
     def test_syndication_notifications(self):
         self.loginAsPortalOwner()
