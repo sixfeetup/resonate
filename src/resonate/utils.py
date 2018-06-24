@@ -1,6 +1,8 @@
 import logging
 import sys
 
+from Acquisition import aq_parent
+
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
@@ -168,7 +170,8 @@ def get_organizations_by_target(context, uids):
             path=organization_path,
             object_provides=lineage_ifaces.IChildSite.__identifier__)
         for target in targets:
-            if getNavigationRoot(target.getObject()) == organization_path:
+            if getNavigationRoot(aq_parent(
+                    target.getObject())) == organization_path:
                 result[organization] = target.getObject()
 
     return result
