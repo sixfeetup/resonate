@@ -2,7 +2,7 @@
 <dc-workflow workflow_id="syndication_workflow" title="Syndication Workflow" description="Add this workflow as a chain to be able to syndicate items" state_variable="syndication_state" initial_state="not_syndicated" manager_bypass="True">
  <state state_id="not_syndicated" title="Not syndicated">
   <description>Not a syndicated item</description>
-  <!-- <exit-transition transition_id="request_move"/> -->
+  <exit-transition transition_id="request_move"/>
   <exit-transition transition_id="request_syndication"/>
   <exit-transition transition_id="accept_syndication"/>
  </state>
@@ -19,7 +19,7 @@
  <state state_id="syndicated" title="Syndicated">
   <description>A syndicated item.</description>
   <exit-transition transition_id="reject_syndication"/>
-  <!-- <exit-transition transition_id="request_move"/> -->
+  <exit-transition transition_id="request_move"/>
   <exit-transition transition_id="request_syndication"/>
  </state>
  <transition transition_id="accept_syndication" title="Reviewer accepts item for syndication" new_state="syndicated" trigger="USER" before_script="" after_script="">
