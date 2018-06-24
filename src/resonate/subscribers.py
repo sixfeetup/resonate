@@ -316,6 +316,9 @@ def accept_move(proxy, event):
         target_obj = target.getObject()
         if getNavigationRoot(target_obj) == organization_path:
             break
+    else:
+        raise ValueError(
+            'Could not find organization for target of {0!r}'.format(proxy))
 
     # Delete the proxy
     proxy_parent = aq_parent(proxy)
