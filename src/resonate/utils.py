@@ -140,10 +140,11 @@ def upgrade_logger(logger_name, level,
 
 
 def get_organizations_by_target(context, uids):
-    mtool = getToolByName(context, 'portal_membership')
+    members = getToolByName(context, 'portal_membership').getMembersFolder()
     portal_catalog = getToolByName(context, 'portal_catalog')
     uid_catalog = getToolByName(context, 'uid_catalog')
-    home_folder_path = '/'.join(context.getPhysicalPath())
+    home_folder_path = members is not None and '/'.join(
+        members.getPhysicalPath())
     context_path = '/'.join(context.getPhysicalPath())
 
     organizations = [
@@ -155,7 +156,7 @@ def get_organizations_by_target(context, uids):
         if organization is None:
             continue
         organization_path = getNavigationRoot(organization)
-        if context_path.startswith(home_folder_path):
+        if members is not None and context_path.startswith(home_folder_path):
             # Special-case the member's home folder, since it is not a
             # navigation root but we still want to be able to request
             # syndication to the containing portal
