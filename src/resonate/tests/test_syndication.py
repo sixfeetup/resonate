@@ -30,7 +30,8 @@ class TestSyndication(testing.TestCase):
 
     def add_and_approve_member(self):
         registration = getToolByName(self.portal, 'portal_registration')
-        member = registration.addMember('m1', plone_testing.TEST_USER_PASSWORD)
+        member = registration.addMember(
+            'first_member', plone_testing.TEST_USER_PASSWORD)
         # give user contributor rights for portal
         self.folder.manage_setLocalRoles(
             member.unique_userid, ['Contributor', ])
@@ -40,7 +41,7 @@ class TestSyndication(testing.TestCase):
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        types = [('nd.content.seminar',
+        types = [('Folder',
                   'seminars',
                   lambda x: x.current_syndication_targets),
                  ('Event',
@@ -57,8 +58,8 @@ class TestSyndication(testing.TestCase):
 
             # create source object and two organization foldes
             s1 = self._createType(self.portal, typename, _id % 's1')
-            c1 = self._createType(self.portal, 'nd.content.center', _id % 'c1')
-            c2 = self._createType(self.portal, 'nd.content.center', _id % 'c2')
+            c1 = self._createType(self.portal, 'Folder', _id % 'c1')
+            c2 = self._createType(self.portal, 'Folder', _id % 'c2')
 
             # perform accept_syndication transition
             wft.doActionFor(s1, "request_syndication")
@@ -80,7 +81,7 @@ class TestSyndication(testing.TestCase):
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        types = [('nd.content.seminar',
+        types = [('Folder',
                   'seminars',
                   lambda x: x.rejected_syndication_sites),
                  ('Event',
@@ -97,7 +98,7 @@ class TestSyndication(testing.TestCase):
 
             # create source object and two organization foldes
             s1 = self._createType(self.portal, typename, _id % 's1')
-            c1 = self._createType(self.portal, 'nd.content.center', _id % 'c1')
+            c1 = self._createType(self.portal, 'Folder', _id % 'c1')
             self.assertFalse(rejected_sites(s1))
 
             # perform reject_syndication transition
@@ -113,7 +114,7 @@ class TestSyndication(testing.TestCase):
         wft = getToolByName(self.portal, 'portal_workflow')
 
         s1 = self._createType(self.portal, 'Event', 's1')
-        c1 = self._createType(self.portal, 'nd.content.center', 'c1')
+        c1 = self._createType(self.portal, 'Folder', 'c1')
         wft.doActionFor(s1, "request_move", organization=IUUID(c1))
 
         self.assertEqual(wft.getStatusOf('syndication_workflow',
@@ -123,7 +124,7 @@ class TestSyndication(testing.TestCase):
     def test_accept_move_transition(self):
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        types = [('nd.content.seminar',
+        types = [('Folder',
                   'seminars'),
                  ('Event',
                   'events'),
@@ -137,9 +138,10 @@ class TestSyndication(testing.TestCase):
 
             self.loginAsPortalOwner()
             s1 = self._createType(self.portal, typename, _id % 's')
-            c1 = self._createType(self.portal, 'nd.content.center', _id % 'c')
+            c1 = self._createType(self.portal, 'Folder', _id % 'c')
+            self._createType(c1, 'Folder', target)
 
-            self.assertFalse(c1.events.objectIds())
+            self.assertFalse(c1[target].objectIds())
 
             wft.doActionFor(s1, "request_move", organization=IUUID(c1))
             self.logout()
@@ -152,7 +154,7 @@ class TestSyndication(testing.TestCase):
 
         s1 = self._createType(self.portal, 'Event', 's1')
         s2 = self._createType(self.portal, 'Event', 's2')
-        c1 = self._createType(self.portal, 'nd.content.center', 'c1')
+        c1 = self._createType(self.portal, 'Folder', 'c1')
         m1, mid1 = self.add_and_approve_member()
         self.logout()
 
@@ -182,11 +184,11 @@ class TestSyndication(testing.TestCase):
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        c1 = self._createType(self.portal, 'nd.content.center', 'c1')
+        c1 = self._createType(self.portal, 'Folder', 'c1')
         c1.setTitle('Center1')
-        c2 = self._createType(self.portal, 'nd.content.center', 'c2')
+        c2 = self._createType(self.portal, 'Folder', 'c2')
         c2.setTitle('Center2')
-        c3 = self._createType(self.portal, 'nd.content.center', 'c3')
+        c3 = self._createType(self.portal, 'Folder', 'c3')
         c3.setTitle('Center3')
 
         s1 = self._createType(c1, 'Event', 's1')
@@ -234,9 +236,9 @@ class TestSyndication(testing.TestCase):
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        c1 = self._createType(self.portal, 'nd.content.center', 'c1')
+        c1 = self._createType(self.portal, 'Folder', 'c1')
         c1.setTitle('Center1')
-        c2 = self._createType(self.portal, 'nd.content.center', 'c2')
+        c2 = self._createType(self.portal, 'Folder', 'c2')
         c2.setTitle('Center2')
 
         s1 = self._createType(c1, 'Event', 's1')
@@ -265,7 +267,7 @@ class TestSyndication(testing.TestCase):
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        c1 = self._createType(self.portal, 'nd.content.center', 'c1')
+        c1 = self._createType(self.portal, 'Folder', 'c1')
         c1.setTitle('Center1')
 
         s1 = self._createType(c1, 'Event', 's1')
