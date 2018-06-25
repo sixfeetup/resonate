@@ -104,7 +104,7 @@ def send_syndication_notification(obj, event):
 
     subject = ('Pending review status for {0!r}'.format(obj))
     # Create the enclosing (outer) message
-    outer = email.mime.multipart.MIMEMultipart()
+    outer = email.mime.Multipart.MIMEMultipart()
     # Create the HTML
     digest_notification = component.getMultiAdapter(
         (obj, obj.REQUEST), name='digest_notification')
