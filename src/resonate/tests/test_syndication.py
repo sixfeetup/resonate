@@ -120,12 +120,14 @@ class TestSyndication(testing.TestCase):
 
             # create source object and two organization foldes
             s1 = self._createType(self.portal, typename, _id % 's1')
-            c1 = self._createType(self.portal, 'Folder', _id % 'c1')
+            c1 = self._createChildSiteAndTarget(
+                self.portal, 'Folder', _id % 'c1', target)
             self.assertFalse(rejected_sites(s1))
 
             # perform reject_syndication transition
-            wft.doActionFor(s1, "request_syndication")
-            wft.doActionFor(s1, "reject_syndication", organization=c1)
+            wft.doActionFor(s1, "request_syndication", organization=IUUID(c1))
+            p1 = c1[target][s1.id]
+            wft.doActionFor(p1, "reject_syndication")
 
             self.assertEqual(len(rejected_sites(s1)), 1)
 
@@ -187,93 +189,39 @@ class TestSyndication(testing.TestCase):
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
 
+        self.folder = self._createType(self.portal, 'Folder', 'foo_folder')
         s1 = self._createType(self.portal, 'Event', 's1')
         s2 = self._createType(self.portal, 'Event', 's2')
-        c1 = self._createType(self.portal, 'Folder', 'c1')
+        c1 = self._createChildSiteAndTarget(
+            self.portal, 'Folder', 'c1', 'target')
         m1, mid1 = self.add_and_approve_member()
-        self.logout()
 
-        self.assertFalse(getattr(self.portal.MailHost, 'mails', None))
+        self.assertFalse(getattr(self.portal.MailHost, 'messages', None))
 
-        self.login(mid1)
-        wft.doActionFor(s1, "request_syndication")
-        wft.doActionFor(s2, "request_syndication")
+        wft.doActionFor(s1, "request_syndication", organization=IUUID(c1))
+        wft.doActionFor(s2, "request_syndication", organizations=[IUUID(c1)])
 
-        self.logout()
-        self.loginAsPortalOwner()
+        self.portal.MailHost.messages[:] = []
+        wft.doActionFor(c1.target[s1.id], "reject_syndication")
+        self.assertEqual(len(self.portal.MailHost.messages), 1)
+        self.assertIn(
+            'John Smith', str(self.portal.MailHost.messages[0]))
 
-        wft.doActionFor(s1, "reject_syndication", organization=c1)
-        self.assertEqual(len(self.portal.MailHost.mails), 1)
-        self.assertIn('John Smith', self.portal.MailHost.mails[0])
-        self.assertIn('has not been approved', self.portal.MailHost.mails[0])
-
-        wft.doActionFor(s2, "accept_syndication", organizations=[c1])
-        self.assertEqual(len(self.portal.MailHost.mails), 2)
-        self.assertIn('John Smith', self.portal.MailHost.mails[1])
-        self.assertIn('has been approved', self.portal.MailHost.mails[1])
-
-        self.logout()
-
-    def test_syndication_digest_template(self):
-        # create several items that will be syndicated
-        self.loginAsPortalOwner()
-        wft = getToolByName(self.portal, 'portal_workflow')
-
-        c1 = self._createType(self.portal, 'Folder', 'c1')
-        c1.setTitle('Center1')
-        c2 = self._createType(self.portal, 'Folder', 'c2')
-        c2.setTitle('Center2')
-        c3 = self._createType(self.portal, 'Folder', 'c3')
-        c3.setTitle('Center3')
-
-        s1 = self._createType(c1, 'Event', 's1')
-        s1.setTitle('Event1')
-        wft.doActionFor(s1, "publish")
-        wft.doActionFor(s1, "request_syndication")
-        s2 = self._createType(c1, 'Event', 's2')
-        s2.setTitle('Event2')
-        wft.doActionFor(s2, "request_move", organization=IUUID(c2))
-        s3 = self._createType(c1, 'News Item', 's3')
-        s3.setTitle('News Item1')
-        wft.doActionFor(s3, "request_syndication")
-        s4 = self._createType(c1, 'News Item', 's4')
-        s4.setTitle('News Item2')
-        wft.doActionFor(s4, "request_syndication")
-
-        digest = c1.unrestrictedTraverse('@@digest_notification')
-        payload = [(s1, c2)]
-        digest.update(payload)
-        self.assertEqual(digest.items[0]['title'], 'Event1')
-        self.assertEqual(digest.items[0]['organization'], 'Center2')
-        self.assertEqual(digest.items[0]['status'],
-                         ['published', 'pending_syndication'])
-
-        digest = c1.unrestrictedTraverse('@@digest_notification')
-        payload = [(s2, c2)]
-        digest.update(payload)
-        self.assertEqual(digest.items[0]['title'], 'Event2')
-        self.assertEqual(digest.items[0]['organization'], 'Center2')
-        self.assertEqual(digest.items[0]['status'],
-                         ['private', 'pending_move'])
-
-        digest = c1.unrestrictedTraverse('@@digest_notification')
-        payload = [(s1, c2),
-                   (s2, c2),
-                   (s3, c3),
-                   (s4, c3)]
-        digest.update(payload)
-        self.assertEqual(len(digest.items), 4)
-
-        self.logout()
+        wft.doActionFor(c1.target[s2.id], "accept_syndication")
+        self.assertEqual(len(self.portal.MailHost.messages), 2)
+        self.assertIn(
+            'John Smith', str(self.portal.MailHost.messages[1]))
 
     def test_syndication_digest_for_proxies(self):
         # create several items that will be syndicated
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
 
-        c1 = self._createType(self.portal, 'Folder', 'c1')
+        c1 = self._createChildSiteAndTarget(
+            self.portal, 'Folder', 'c1', 'events')
         c1.setTitle('Center1')
-        c2 = self._createType(self.portal, 'Folder', 'c2')
+        c2 = self._createChildSiteAndTarget(
+            self.portal, 'Folder', 'c2', 'events')
         c2.setTitle('Center2')
 
         s1 = self._createType(c1, 'Event', 's1')
@@ -318,10 +266,10 @@ class TestSyndication(testing.TestCase):
         update_payload(s1, payload)
         digest.update(payload)
         html = digest()
-        self.assertIn("Last Changed (*)", html)
-        self.assertIn("border=\"1\"", html)
-        link = '<a href="http://nohost/plone/@@redirect-to-uuid/%s">Event1</a>'
-        self.assertIn(link % IUUID(s1), html)
+        self.assertIn("Last Changed", html)
+        link = (
+            '<a href="http://nohost/plone/@@redirect-to-uuid/%s">%s</a>')
+        self.assertIn(link % (IUUID(s1), c1.Title()), html)
 
 
 def test_suite():
