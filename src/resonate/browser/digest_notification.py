@@ -41,13 +41,7 @@ class DigestNotification(BrowserView):
 
     def update(self, payload):
         """
-        Update self.items with payload items in following format:
-
-            >>> print self.items
-            >>> [{'title'       : u'Source object title',
-            ...   'organization': u'Organization title',
-            ...   'status'      : ['published', 'pending_moved'],
-            ...   'last_changed': DateTime(2003/12/12 12:00)}]
+        Update self.items with payload items.
         """
         self.item = self.fix_organization_by_state(payload)
 
