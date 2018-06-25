@@ -19,6 +19,8 @@ from plone.app.layout.navigation.root import getNavigationRoot
 
 from plone.uuid.interfaces import IUUID
 
+from plone import api
+
 from . import behaviors
 
 
@@ -190,8 +192,8 @@ def sendEmailToMember(member, source, status, comment):
     urltool = getToolByName(source, "portal_url")
     portal = urltool.getPortalObject()
     portal_title = portal.title
-    f_name = portal.getProperty('email_from_name')
-    f_addr = portal.getProperty('email_from_address')
+    f_name = api.portal.get_registry_record('plone.email_from_name')
+    f_addr = api.portal.get_registry_record('plone.email_from_address')
     if f_name and f_addr:
         mfrom = "\"%s\" <%s>" % (f_name, f_addr)
     else:

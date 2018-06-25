@@ -14,6 +14,8 @@ from zope.component import getMultiAdapter
 from zope.component.hooks import setSite
 from plone.app.uuid.utils import uuidToObject
 
+from plone import api
+
 from resonate.utils import sudo
 from resonate.utils import upgrade_logger
 from resonate.utils import update_payload
@@ -64,8 +66,8 @@ def create_digest(app):
     app = makerequest(app, environ={'SERVER_NAME': domain})
     portal = app[plone_site_id]
     setSite(portal)
-    mfromname = portal.email_from_name
-    mfrom = portal.email_from_address
+    mfromname = api.portal.get_registry_record('plone.email_from_name')
+    mfrom = api.portal.get_registry_record('plone.email_from_address')
     notification_tool = getToolByName(portal, 'portal_syn_notification')
     acl_users = getToolByName(portal, 'acl_users')
     mailhost = getToolByName(portal, 'MailHost')

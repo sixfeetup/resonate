@@ -16,6 +16,8 @@ from Products.ATContentTypes.utils import DT2dt
 
 from z3c.relationfield import RelationValue
 
+from plone import api
+
 from resonate.content.proxy import IProxy
 from . import behaviors
 from resonate.utils import getRefs
@@ -45,8 +47,8 @@ def send_syndication_notification(obj, event):
 
     portal = getToolByName(obj, 'portal_url').getPortalObject()
     catalog = getToolByName(obj, 'portal_catalog')
-    mfromname = portal.email_from_name
-    mfrom = portal.email_from_address
+    mfromname = api.portal.get_registry_record('plone.email_from_name')
+    mfrom = api.portal.get_registry_record('plone.email_from_address')
     source = hooks.getSite()
     organizations = (event.kwargs or {}).get('organizations', ())
     bccs = getattr(source, 'notification_emails', '')
