@@ -44,6 +44,7 @@ class DigestNotification(BrowserView):
         Update self.items with payload items.
         """
         self.item = self.fix_organization_by_state(payload)
+        self.items_by_uid[self.item['object_uid']] = self.item
 
     def items_by_date(self):
         return sorted([
