@@ -166,8 +166,8 @@ class TestSyndication(testing.TestCase):
             self.assertNotIn(s1.id, self.portal.objectIds())
 
     def test_syndication_notifications(self):
-        self.portal.notification_emails = [
-            'John Smith <john.smith@example.com>']
+        self.portal.notification_emails = (
+            'John Smith <john.smith@example.com>')
 
         self.loginAsPortalOwner()
         wft = getToolByName(self.portal, 'portal_workflow')
