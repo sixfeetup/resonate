@@ -11,7 +11,7 @@
       />
 
   <browser:page
-      for="Products.CMFCore.interfaces.IContentish"
+      for="..behaviors.ISyndicationSource"
       name="select-organizations"
       class="resonate.browser.select.SelectOrganizations"
       template="templates/select.pt"
@@ -19,7 +19,7 @@
       />
 
   <browser:page
-      for="Products.CMFCore.interfaces.IContentish"
+      for="..behaviors.ISyndicationSource"
       name="digest_notification"
       class="resonate.browser.digest_notification.DigestNotification"
       template="templates/syn_notification.pt"
@@ -27,14 +27,14 @@
       />
 
   <browser:page
-      for="Products.CMFCore.interfaces.IContentish"
+      for="..behaviors.ISyndicationSource"
       name="move-content"
       class="resonate.browser.move.MoveContent"
       permission="cmf.ReviewPortalContent"
       />
 
   <browser:page
-      for="Products.CMFCore.interfaces.IContentish"
+      for="..behaviors.ISyndicationSource"
       name="reject-syndication"
       class="resonate.browser.reject.RejectSyndication"
       permission="cmf.ReviewPortalContent"

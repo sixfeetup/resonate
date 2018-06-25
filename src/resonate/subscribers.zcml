@@ -4,7 +4,7 @@
     i18n_domain="resonate">
 
   <subscriber
-      for="Products.CMFCore.interfaces.IContentish
+      for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.notify_syndication_change"
       />
@@ -14,7 +14,7 @@
       handler="resonate.subscribers.send_syndication_notification"
       />
   <subscriber
-      for="Products.CMFCore.interfaces.IContentish
+      for=".behaviors.ISyndicationSource
            zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler="resonate.subscribers.update_proxy_fields"
       />
@@ -44,12 +44,12 @@
       handler="resonate.subscribers.reject_syndication"
       />
   <subscriber
-      for="Products.CMFCore.interfaces.IContentish
+      for="resonate.content.proxy.IProxy
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.accept_move"
       />
   <subscriber
-      for="Products.CMFCore.interfaces.IContentish
+      for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.request_syndication"
       />

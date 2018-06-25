@@ -121,10 +121,6 @@ def send_syndication_notification(obj, event):
 def update_proxy_fields(obj, event):
     """Update proxy title when source title is modified
     """
-    if IProxy.providedBy(obj):
-        # Do not handle proxies
-        return
-
     proxies = getRefs(obj, 'current_syndication_targets')
 
     if not proxies:
@@ -170,8 +166,6 @@ def remove_at_proxy(obj, event):
 def remove_dexterity_proxies(obj, event):
     """Remove proxy after source object is removed
     """
-    if IProxy.providedBy(obj):
-        return
     for rv in obj.current_syndication_targets:
         proxy = rv.to_object
         proxy.source_object = None
@@ -268,9 +262,6 @@ def accept_move(proxy, event):
     if transition_id != 'move':
         return
 
-    # Use original object for target / history
-    if not IProxy.providedBy(proxy):
-        return
     wft = getToolByName(proxy, 'portal_workflow')
     history = wft.getHistoryOf('syndication_workflow',
                                proxy.source_object.to_object)
@@ -322,10 +313,6 @@ def notify_syndication_change(obj, event):
     """
     # Bail out if this isn't our workflow
     if event.workflow.id != 'syndication_workflow':
-        return
-
-    if IProxy.providedBy(obj):
-        # Only notify for the real content object
         return
 
     transition_id = event.transition and event.transition.id or None
