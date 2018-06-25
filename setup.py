@@ -54,7 +54,10 @@ setup(name='resonate',
           'plone.api',
           'plone.app.referenceablebehavior',
       ],
-      extras_require={'test': ['plone.app.testing']},
+      extras_require={'test': [
+          'plone.app.testing',
+          'Products.PloneTestCase', 'collective.testcaselayer',
+      ]},
       entry_points="""
       # -*- Entry points: -*-
       [z3c.autoinclude.plugin]
