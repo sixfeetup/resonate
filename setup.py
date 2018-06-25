@@ -41,7 +41,6 @@ setup(name='resonate',
           'setuptools',
           # -*- Extra requirements: -*-
           'zc.queue<2dev',
-          'sixfeetup.utils',
           'plone.app.dexterity [relations]',
           'collective.js.chosen',
           'collective.lineage',
