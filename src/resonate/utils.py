@@ -101,6 +101,10 @@ def setATRef(obj, fname, value):
 
 
 def setDTRef(obj, fname, value):
+    # TODO: This is a workaround for "#12802"?
+    # See plone.app.relationfield.monkey.get_from_object
+    value.__dict__['from_object'] = obj
+
     ref_field = getattr(obj, fname)
     ref_field.append(value)
     setattr(obj, fname, ref_field)
@@ -121,6 +125,10 @@ def delATRef(obj, fname, value):
 
 
 def delDTRef(obj, fname, value):
+    # TODO: This is a workaround for "#12802"?
+    # See plone.app.relationfield.monkey.get_from_object
+    value.__dict__['from_object'] = obj
+
     ref_field = getattr(obj, fname)
     ref_field.remove(value)
     setattr(obj, fname, ref_field)
