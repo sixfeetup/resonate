@@ -28,7 +28,6 @@ class ISyndicationSource(model.Schema):
     current_syndication_targets = schema.RelationList(
         title=u"Current syndication targets",
         default=[],
-        readonly=True,
         required=False,
         value_type=schema.RelationChoice(
             title=_(u"Target"), source=contenttree.ObjPathSourceBinder()),
@@ -37,7 +36,6 @@ class ISyndicationSource(model.Schema):
     rejected_syndication_sites = schema.RelationList(
         title=u"Rejected syndication sites",
         default=[],
-        readonly=True,
         required=False,
         value_type=schema.RelationChoice(
             title=_(u"Site"), source=contenttree.ObjPathSourceBinder()),
