@@ -17,21 +17,7 @@ from .. import behaviors
 from .. import testing
 
 
-def fake_send(self, mail_text, *args, **kwargs):
-    """
-    mock up the send method so that emails do not actually get sent
-    during unit tests.
-    """
-    if not hasattr(self, 'mails'):
-        self.mails = []
-    self.mails.append(mail_text)
-
-
 class TestSyndication(testing.TestCase):
-
-    def afterSetUp(self):
-        self.portal.MailHost.send = types.MethodType(fake_send,
-                                                     self.portal.MailHost)
 
     def add_and_approve_member(self):
         registration = getToolByName(self.portal, 'portal_registration')
@@ -180,8 +166,6 @@ class TestSyndication(testing.TestCase):
             self.assertNotIn(s1.id, self.portal.objectIds())
 
     def test_syndication_notifications(self):
-        plone_testing.applyProfile(
-            self.portal, 'collective.testcaselayer:testing')
         self.portal.notification_emails = [
             'John Smith <john.smith@example.com>']
 

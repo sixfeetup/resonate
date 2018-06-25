@@ -1,5 +1,6 @@
 from Products.CMFCore.utils import getToolByName
 
+from plone.app import testing
 from plone.app.testing import PloneWithPackageLayer
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import FunctionalTesting
@@ -13,12 +14,13 @@ RESONATE = PloneWithPackageLayer(
     zcml_filename='testing.zcml',
     gs_profile_id='resonate:testing',
     name="RESONATE")
+BASES = (RESONATE, testing.MOCK_MAILHOST_FIXTURE)
 
 RESONATE_INTEGRATION = IntegrationTesting(
-    bases=(RESONATE, ), name="RESONATE_INTEGRATION")
+    bases=BASES, name="RESONATE_INTEGRATION")
 
 RESONATE_FUNCTIONAL = FunctionalTesting(
-    bases=(RESONATE, ), name="RESONATE_FUNCTIONAL")
+    bases=BASES, name="RESONATE_FUNCTIONAL")
 
 
 class TestCase(ptc.PloneTestCase):
