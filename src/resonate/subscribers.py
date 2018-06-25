@@ -16,7 +16,6 @@ from Products.ATContentTypes.utils import DT2dt
 
 from z3c.relationfield import RelationValue
 
-from resonate import syndication_types
 from resonate.content.proxy import IProxy
 from . import behaviors
 from resonate.utils import getRefs
@@ -125,10 +124,6 @@ def send_syndication_notification(obj, event):
 def update_proxy_fields(obj, event):
     """Update proxy title when source title is modified
     """
-    if (
-            IBaseObject.providedBy(obj) and
-            not any([st.providedBy(obj) for st in syndication_types])):
-        return
     proxies = getRefs(obj, 'current_syndication_targets')
 
     if not proxies:
@@ -191,8 +186,6 @@ def remove_dexterity_proxies(obj, event):
 def unpublish_proxy(obj, event):
     """Unpublish proxy after source object is unpublished
     """
-    if not any([st.providedBy(obj) for st in syndication_types]):
-        return
     proxies = getRefs(obj, 'current_syndication_targets')
 
     if not proxies:
@@ -255,8 +248,7 @@ def reject_syndication(obj, event):
     # gets fired correctly
     sudo(event.workflow.doActionFor, source, 'reject_syndication')
     sudo(update_syndication_state, source, obj)
-    if not any([st.providedBy(source) for st in syndication_types]):
-        return
+
     org_id = intids.getId(organization)
     sudo(setRef, source, 'rejected_syndication_sites', RelationValue(org_id))
     # Deleting the source/proxy relationship triggers deletion of the proxy

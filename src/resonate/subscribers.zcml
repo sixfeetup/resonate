@@ -29,7 +29,7 @@
       handler=".subscribers.remove_dexterity_proxies"
       />
   <subscriber
-      for="Products.CMFCore.interfaces.IContentish
+      for="Products.Archetypes.interfaces.IBaseObject
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.unpublish_proxy"
       />
