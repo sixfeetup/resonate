@@ -2,7 +2,7 @@
 
 import unittest
 from z3c.relationfield import RelationValue
-from zope.app.intid.interfaces import IIntIds
+from zope.intid.interfaces import IIntIds
 from zope.event import notify
 from zope.component import getUtility
 from zope.lifecycleevent import ObjectModifiedEvent
