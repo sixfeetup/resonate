@@ -11,8 +11,6 @@ from zope.component import hooks
 from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFCore.utils import getToolByName
-from Products.Archetypes.interfaces import IBaseObject
-from Products.ATContentTypes.utils import DT2dt
 
 from z3c.relationfield import RelationValue
 
@@ -38,11 +36,6 @@ def send_syndication_notification(obj, event):
     """
     # Bail out if this isn't our workflow
     if event.workflow.id != 'syndication_workflow':
-        return
-
-    # Bail out if it's an AT object that is in the process
-    # of being created
-    if IBaseObject.providedBy(obj) and obj.checkCreationFlag():
         return
 
     portal = getToolByName(obj, 'portal_url').getPortalObject()
@@ -165,9 +158,6 @@ def update_proxy_fields(obj, event):
 def remove_at_proxy(obj, event):
     """Remove proxy after reference is removed
     """
-    source = obj.getSourceObject()
-    if not IBaseObject.providedBy(source):
-        return
     proxy = obj.getTargetObject()
     if not IProxy.providedBy(proxy):
         return
@@ -314,13 +304,6 @@ def accept_move(proxy, event):
     paste = sudo(source_parent.manage_cutObjects,
                  ids=[paste_id])
     sudo(target_obj.manage_pasteObjects, paste)
-    # Delete the proxy
-    proxy_parent = aq_parent(proxy)
-    if not IBaseObject.providedBy(source):
-        # Proxies to AT sources get cleaned up by the `remove_at_proxy`
-        # handler
-        # TODO: I'm not at all sure this is the correct solution
-        sudo(proxy_parent.manage_delObjects, ids=[proxy.getId()])
 
     # Automatically publish moved object
     moved_obj = target_obj[paste_id]

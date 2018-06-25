@@ -9,7 +9,7 @@
       handler="resonate.subscribers.notify_syndication_change"
       />
   <subscriber
-      for="Products.CMFCore.interfaces.IContentish
+      for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.send_syndication_notification"
       />
@@ -29,7 +29,7 @@
       handler=".subscribers.remove_dexterity_proxies"
       />
   <subscriber
-      for="Products.Archetypes.interfaces.IBaseObject
+      for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.unpublish_proxy"
       />

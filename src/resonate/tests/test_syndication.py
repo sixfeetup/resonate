@@ -1,7 +1,6 @@
 # For most cases it is easiest to reuse the test setup from nd.policy.
 
 import unittest
-import types
 
 from zope import interface
 
