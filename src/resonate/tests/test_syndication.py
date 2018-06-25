@@ -39,9 +39,8 @@ class TestSyndication(testing.TestCase):
         member = registration.addMember(
             'first_member', plone_testing.TEST_USER_PASSWORD)
         # give user contributor rights for portal
-        self.folder.manage_setLocalRoles(
-            member.unique_userid, ['Contributor', ])
-        return member, member.unique_userid
+        self.folder.manage_setLocalRoles(member.id, ['Contributor', ])
+        return member, member.id
 
     def _createChildSiteAndTarget(self, context, type_name, id_, target):
         """
