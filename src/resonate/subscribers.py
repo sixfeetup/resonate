@@ -12,6 +12,8 @@ from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFCore.utils import getToolByName
 
+from plone.app.event.dx import behaviors as event_behaviors
+
 from z3c.relationfield import RelationValue
 
 from plone import api
@@ -128,8 +130,6 @@ def update_proxy_fields(obj, event):
     if not proxies:
         return
 
-    calendar = getToolByName(obj, 'portal_calendar')
-    event_types = calendar.calendar_types
     portal_properties = getToolByName(obj, 'portal_properties')
     encoding = portal_properties.site_properties.getProperty('default_charset',
                                                              'utf-8')
@@ -144,7 +144,7 @@ def update_proxy_fields(obj, event):
         if source_title != proxy.title:
             proxy.title = source_title
             reindex = True
-        elif obj.portal_type in event_types:
+        elif event_behaviors.IEventBasic.providedBy(obj):
             if obj.start != proxy.start:
                 proxy.start = obj.start
                 reindex = True
@@ -385,8 +385,6 @@ def request_syndication(obj, event):
         organizations = [organization]
 
     portal_properties = getToolByName(obj, 'portal_properties')
-    calendar = getToolByName(obj, 'portal_calendar')
-    event_types = calendar.calendar_types
     wf_tool = getToolByName(obj, 'portal_workflow')
     intids = getUtility(IIntIds)
     source_id = intids.getId(obj)
@@ -418,7 +416,7 @@ def request_syndication(obj, event):
         sudo(event.workflow.doActionFor, proxy, transition_id)
         proxy_id = intids.getId(proxy)
         setRef(obj, 'current_syndication_targets', RelationValue(proxy_id))
-        if obj.portal_type in event_types:
+        if event_behaviors.IEventBasic.providedBy(obj):
             for attr in ('start', 'end'):
                 prop = getattr(obj, attr)
                 if callable(prop):
