@@ -309,15 +309,21 @@ def accept_move(proxy, event):
         raise ValueError(
             'Could not find organization for target of {0!r}'.format(proxy))
 
-    # Delete the proxy
-    proxy_parent = aq_parent(proxy)
-    sudo(proxy_parent.manage_delObjects, ids=[proxy.getId()])
     # Move original object into place
-    source_parent = aq_parent(proxy.source_object.to_object)
-    paste_id = proxy.source_object.to_object.getId()
+    source = proxy.source_object.to_object
+    source_parent = aq_parent(source)
+    paste_id = source.getId()
     paste = sudo(source_parent.manage_cutObjects,
                  ids=[paste_id])
     sudo(target_obj.manage_pasteObjects, paste)
+    # Delete the proxy
+    proxy_parent = aq_parent(proxy)
+    if not IBaseObject.providedBy(source):
+        # Proxies to AT sources get cleaned up by the `remove_at_proxy`
+        # handler
+        # TODO: I'm not at all sure this is the correct solution
+        sudo(proxy_parent.manage_delObjects, ids=[proxy.getId()])
+
     # Automatically publish moved object
     moved_obj = target_obj[paste_id]
     if wft.getInfoFor(moved_obj, "review_state") != "published":
