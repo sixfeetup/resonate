@@ -14,7 +14,7 @@
       handler="resonate.subscribers.send_syndication_notification"
       />
   <subscriber
-      for=".behaviors.ISyndicationSource
+      for="Products.CMFCore.interfaces.IContentish
            zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler="resonate.subscribers.update_proxy_fields"
       />

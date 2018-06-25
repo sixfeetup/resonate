@@ -124,6 +124,10 @@ def send_syndication_notification(obj, event):
 def update_proxy_fields(obj, event):
     """Update proxy title when source title is modified
     """
+    if IProxy.providedBy(obj):
+        # Do not handle proxies
+        return
+
     proxies = getRefs(obj, 'current_syndication_targets')
 
     if not proxies:
