@@ -47,15 +47,12 @@ setup(name='resonate',
           'z3c.relationfield',
           'plone.directives.form',
           'plone.formwidget.contenttree',
-          'archetypes.schemaextender',
-          'archetypes.referencebrowserwidget',
-          'Products.OrderableReferenceField',
           'plone.api',
           'plone.app.referenceablebehavior',
       ],
       extras_require={'test': [
           'plone.app.testing',
-          'Products.PloneTestCase', 'collective.testcaselayer',
+          'plone.app.contenttypes',
       ]},
       entry_points="""
       # -*- Entry points: -*-

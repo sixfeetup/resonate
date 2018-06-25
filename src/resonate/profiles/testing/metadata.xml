@@ -2,7 +2,7 @@
 <metadata>
   <version>0001</version>
   <dependencies>
-    <dependency>profile-plone.app.dexterity:testing</dependency>
+    <dependency>profile-plone.app.contenttypes:default</dependency>
     <dependency>profile-resonate:default</dependency>
   </dependencies>
 </metadata>

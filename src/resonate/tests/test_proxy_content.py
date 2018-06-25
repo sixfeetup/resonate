@@ -23,8 +23,9 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        s1targets = s1.getField('current_syndication_targets')
-        s1targets.set(s1, [IUUID(p1), IUUID(p2)])
+        s1.current_syndication_targets = [
+            RelationValue(getUtility(IIntIds).getId(p1)),
+            RelationValue(getUtility(IIntIds).getId(p2))]
 
         p1.source_object = RelationValue(getUtility(IIntIds).getId(s1))
         notify(ObjectModifiedEvent(p1))
@@ -62,8 +63,9 @@ class TestProxyContent(testing.TestCase):
         s1.setTitle('Old title')
         notify(ObjectModifiedEvent(s1))
 
-        s1targets = s1.getField('current_syndication_targets')
-        s1targets.set(s1, [IUUID(p1), IUUID(p2)])
+        s1.current_syndication_targets = [
+            RelationValue(getUtility(IIntIds).getId(p1)),
+            RelationValue(getUtility(IIntIds).getId(p2))]
 
         self.assertNotEqual(p1.title, 'New title')
         self.assertNotEqual(p2.title, 'New title')
@@ -100,8 +102,9 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        s1targets = s1.getField('current_syndication_targets')
-        s1targets.set(s1, [IUUID(p1), IUUID(p2)])
+        s1.current_syndication_targets = [
+            RelationValue(getUtility(IIntIds).getId(p1)),
+            RelationValue(getUtility(IIntIds).getId(p2))]
 
         wft.doActionFor(s1, "publish")
         self.failUnless(wft.getInfoFor(s1, "review_state") == "published")
@@ -126,24 +129,25 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        s1targets = s1.getField('current_syndication_targets')
-        self.assertFalse(s1targets.get(s1))
+        self.assertFalse(s1.current_syndication_targets)
 
-        s1targets.set(s1, IUUID(p1))
+        s1.current_syndication_targets = [
+            RelationValue(getUtility(IIntIds).getId(p1))]
         p1.source_object = IUUID(s1)
-        self.assertEqual(len(s1targets.get(s1)), 1)
+        self.assertEqual(len(s1.current_syndication_targets), 1)
 
         self.skipTest(
             'TODO Fix defore delete event handler deleting proxy '
             'from under itself')
         self.portal.manage_delObjects(ids=['p1'])
-        self.assertFalse(s1targets.get(s1))
+        self.assertFalse(s1.current_syndication_targets)
 
         # Seminar source object
         s2 = self._createType(self.portal, 'Folder', 's2')
         self.assertFalse(s2.current_syndication_targets)
 
-        s2.current_syndication_targets = [IUUID(p2)]
+        s2.current_syndication_targets = [
+            RelationValue(getUtility(IIntIds).getId(p2))]
         p2.source_object = IUUID(s2)
         self.assertEqual(len(s2.current_syndication_targets), 1)
 

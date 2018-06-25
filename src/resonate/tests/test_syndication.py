@@ -63,10 +63,10 @@ class TestSyndication(testing.TestCase):
              lambda x: x.current_syndication_targets),
             ('Event',
              'events',
-             lambda x: x.getField('current_syndication_targets').get(x)),
+             lambda x: x.current_syndication_targets),
             ('News Item',
              'news',
-             lambda x: x.getField('current_syndication_targets').get(x)),
+             lambda x: x.current_syndication_targets),
         ]
 
         for idx, _type in enumerate(types):
@@ -108,10 +108,10 @@ class TestSyndication(testing.TestCase):
              lambda x: x.rejected_syndication_sites),
             ('Event',
              'events',
-             lambda x: x.getField('rejected_syndication_sites').get(x)),
+             lambda x: x.rejected_syndication_sites),
             ('News Item',
              'news',
-             lambda x: x.getField('rejected_syndication_sites').get(x)),
+             lambda x: x.rejected_syndication_sites),
         ]
 
         for idx, _type in enumerate(types):

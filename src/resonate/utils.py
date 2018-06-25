@@ -12,7 +12,6 @@ from Products.CMFCore.tests.base.security import OmnipotentUser as \
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
 
-from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.layout.navigation.root import getNavigationRoot
@@ -82,27 +81,10 @@ def safe_uid(obj):
 
 
 def getRefs(obj, fname):
-    if IBaseObject.providedBy(obj):
-        return obj.getField(fname).get(obj)
-    else:
-        return [a.to_object for a in getattr(obj, fname)]
+    return [a.to_object for a in getattr(obj, fname)]
 
 
 def setRef(obj, fname, value):
-    if IBaseObject.providedBy(obj):
-        setATRef(obj, fname, value)
-    else:
-        setDTRef(obj, fname, value)
-
-
-def setATRef(obj, fname, value):
-    field = obj.getField(fname)
-    existing = [safe_uid(a) for a in field.get(obj)]
-    existing.append(safe_uid(value.to_object))
-    field.set(obj, existing)
-
-
-def setDTRef(obj, fname, value):
     # TODO: This is a workaround for "#12802"?
     # See plone.app.relationfield.monkey.get_from_object
     value.__dict__['from_object'] = obj
@@ -113,20 +95,6 @@ def setDTRef(obj, fname, value):
 
 
 def delRef(obj, fname, value):
-    if IBaseObject.providedBy(obj):
-        delATRef(obj, fname, value)
-    else:
-        delDTRef(obj, fname, value)
-
-
-def delATRef(obj, fname, value):
-    field = obj.getField(fname)
-    existing = [safe_uid(a) for a in field.get(obj)]
-    existing.remove(safe_uid(value.to_object))
-    field.set(obj, existing)
-
-
-def delDTRef(obj, fname, value):
     # TODO: This is a workaround for "#12802"?
     # See plone.app.relationfield.monkey.get_from_object
     value.__dict__['from_object'] = obj

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<object
+    i18n:domain="plone"
+    meta_type="Dexterity FTI"
+    name="Event"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+  <property name="behaviors" purge="false">
+    <element value="plone.app.event.dx.behaviors.IEventBasic"/>
+    <element value="plone.app.event.dx.behaviors.IEventRecurrence"/>
+    <element value="plone.app.event.dx.behaviors.IEventLocation"/>
+    <element value="plone.app.event.dx.behaviors.IEventAttendees"/>
+    <element value="plone.app.event.dx.behaviors.IEventContact"/>
+    <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
+    <element value="plone.app.content.interfaces.INameFromTitle"/>
+    <element value="plone.app.contenttypes.behaviors.richtext.IRichText"/>
+    <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
+    <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
+    <element value="plone.app.dexterity.behaviors.id.IShortName"/>
+    <element value="plone.app.relationfield.behavior.IRelatedItems"/>
+    <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+    <element value="plone.app.lockingbehavior.behaviors.ILocking" />
+    <element value="plone.app.referenceablebehavior.referenceable.IReferenceable" />
+    <element value="resonate.behaviors.ISyndicationSource"/>
+  </property>
+</object>
