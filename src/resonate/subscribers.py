@@ -208,17 +208,6 @@ def unpublish_proxy(obj, event):
             sudo(wft.doActionFor, proxy, 'retract')
 
 
-def cleanup_source_after_proxy_remove(obj, event):
-    """Cleanup source reference field after proxy object has been removed
-    """
-    if not obj.source_object:
-        return
-
-    source = obj.source_object.to_object
-    if not source:
-        return
-
-
 def accept_syndication(obj, event):
     """
     Update source object to syndicated.

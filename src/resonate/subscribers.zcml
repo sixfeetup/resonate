@@ -35,11 +35,6 @@
       />
   <subscriber
       for="resonate.content.proxy.IProxy
-           OFS.interfaces.IObjectWillBeRemovedEvent"
-      handler="resonate.subscribers.cleanup_source_after_proxy_remove"
-      />
-  <subscriber
-      for="resonate.content.proxy.IProxy
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.accept_syndication"
       />
