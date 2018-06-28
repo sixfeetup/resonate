@@ -33,6 +33,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="content"
+      title="Resonate Enable for Default Types"
+      description="Enable the default `Document`, `News Item` and `Event`
+		   content types as syndication sources."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <genericsetup:upgradeStep
       title="resonate: Enable resonate.proxy type"
       description="Enable new dexterity type resonate.proxy #948"

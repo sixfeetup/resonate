@@ -2,7 +2,6 @@
 <metadata>
   <version>0001</version>
   <dependencies>
-    <dependency>profile-plone.app.contenttypes:default</dependency>
-    <dependency>profile-resonate:default</dependency>
+    <dependency>profile-resonate:content</dependency>
   </dependencies>
 </metadata>

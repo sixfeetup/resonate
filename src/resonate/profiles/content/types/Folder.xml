@@ -3,5 +3,6 @@
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="behaviors" purge="false">
   <element value="plone.app.referenceablebehavior.referenceable.IReferenceable" />
+  <element value="resonate.behaviors.ISyndicationSource"/>
  </property>
 </object>
