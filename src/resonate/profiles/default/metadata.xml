@@ -6,6 +6,5 @@
     <dependency>profile-plone.app.referenceablebehavior:default</dependency>
     <dependency>profile-plone.app.relationfield:default</dependency>
     <dependency>profile-collective.js.chosen:default</dependency>
-    <dependency>profile-Products.OrderableReferenceField:default</dependency>
   </dependencies>
 </metadata>
