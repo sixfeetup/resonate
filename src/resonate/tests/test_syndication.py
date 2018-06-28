@@ -254,6 +254,49 @@ class TestSyndication(testing.TestCase):
             '<a href="http://nohost/plone/@@redirect-to-uuid/%s">%s</a>')
         self.assertIn(link % (IUUID(s1), c1.Title()), html)
 
+    def test_adding_syndication_source_behavior(self):
+        """
+        The syndication source behavior can be added to a content type:
+
+        Without removing other behaviors.
+        """
+        types = getToolByName(self.portal, 'portal_types')
+        behaviors = types['Document'].behaviors
+        self.assertIn(
+            'plone.app.content.interfaces.INameFromTitle', behaviors,
+            'Default behaviors removed')
+        self.assertIn(
+            'resonate.behaviors.ISyndicationSource', behaviors,
+            'Missing the syndication source behavior')
+
+    def test_choosing_child_sites(self):
+        """
+        The selection view lists lineage child sites.
+        """
+        workflow = getToolByName(self.portal, 'portal_workflow')
+        self.loginAsPortalOwner()
+
+        foo_child_site = self._createChildSiteAndTarget(
+            self.portal, 'Folder', 'foo-child-site', 'target')
+        workflow.doActionFor(foo_child_site, 'publish')
+        foo_event = self._createType(foo_child_site, 'Event', 'foo-event')
+        workflow.doActionFor(foo_event, 'publish')
+
+        bar_child_site = self._createChildSiteAndTarget(
+            self.portal, 'Folder', 'bar-child-site', 'target')
+        workflow.doActionFor(bar_child_site, 'publish')
+
+        select_view = foo_event.unrestrictedTraverse(
+            '@@select-organizations')
+        available_organizations = select_view.available_organizations()
+
+        self.assertTrue(
+            available_organizations,
+            'No child sites listed')
+        self.assertEqual(
+            available_organizations[0].token, bar_child_site.UID(),
+            'Wrong child site UID token')
+
 
 def test_suite():
     suite = unittest.TestSuite()
