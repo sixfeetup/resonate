@@ -13,6 +13,7 @@
 
   <include file="subscribers.zcml" />
 
+  <interface interface=".behaviors.ISyndicationTarget" />
   <plone:behavior
       title="Syndication source"
       description="Content that is the source for syndication to other sites"
