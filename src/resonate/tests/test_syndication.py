@@ -43,9 +43,6 @@ class TestSyndication(testing.TestCase):
         wft = getToolByName(self.portal, 'portal_workflow')
 
         types = [
-            ('Folder',
-             'seminars',
-             lambda x: x.current_syndication_targets),
             ('Event',
              'events',
              lambda x: x.current_syndication_targets),
@@ -88,9 +85,6 @@ class TestSyndication(testing.TestCase):
         wft = getToolByName(self.portal, 'portal_workflow')
 
         types = [
-            ('Folder',
-             'seminars',
-             lambda x: x.rejected_syndication_sites),
             ('Event',
              'events',
              lambda x: x.rejected_syndication_sites),
@@ -134,7 +128,6 @@ class TestSyndication(testing.TestCase):
         wft = getToolByName(self.portal, 'portal_workflow')
 
         types = [
-            ('Folder', 'seminars'),
             ('Event', 'events'),
             ('News Item', 'news'),
         ]
@@ -261,7 +254,7 @@ class TestSyndication(testing.TestCase):
         Without removing other behaviors.
         """
         types = getToolByName(self.portal, 'portal_types')
-        behaviors = types['Document'].behaviors
+        behaviors = types['Event'].behaviors
         self.assertIn(
             'plone.app.content.interfaces.INameFromTitle', behaviors,
             'Default behaviors removed')
@@ -273,18 +266,14 @@ class TestSyndication(testing.TestCase):
         """
         The selection view lists lineage child sites.
         """
-        workflow = getToolByName(self.portal, 'portal_workflow')
         self.loginAsPortalOwner()
 
         foo_child_site = self._createChildSiteAndTarget(
             self.portal, 'foo-child-site', 'target')
-        workflow.doActionFor(foo_child_site, 'publish')
         foo_event = self._createType(foo_child_site, 'Event', 'foo-event')
-        workflow.doActionFor(foo_event, 'publish')
 
         bar_child_site = self._createChildSiteAndTarget(
             self.portal, 'bar-child-site', 'target')
-        workflow.doActionFor(bar_child_site, 'publish')
 
         select_view = foo_event.unrestrictedTraverse(
             '@@select-organizations')

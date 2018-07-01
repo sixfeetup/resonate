@@ -2,14 +2,6 @@
 <object name="portal_workflow">
   <object name="syndication_workflow" meta_type="Workflow"/>
  <bindings>
-  <type type_id="Folder">
-   <bound-workflow workflow_id="simple_publication_workflow"/>
-   <bound-workflow workflow_id="syndication_workflow"/>
-  </type>
-  <type type_id="Document">
-   <bound-workflow workflow_id="simple_publication_workflow"/>
-   <bound-workflow workflow_id="syndication_workflow"/>
-  </type>
   <type type_id="Event">
    <bound-workflow workflow_id="simple_publication_workflow"/>
    <bound-workflow workflow_id="syndication_workflow"/>

@@ -19,7 +19,7 @@
       />
 
   <browser:page
-      for="..behaviors.ISyndicationSource"
+      for="Products.CMFCore.interfaces.IContentish"
       name="digest_notification"
       class="resonate.browser.digest_notification.DigestNotification"
       template="templates/syn_notification.pt"

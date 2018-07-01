@@ -8,12 +8,4 @@
   <include package="collective.testcaselayer" />
   <include file="configure.zcml" />
 
-  <genericsetup:registerProfile
-      name="testing"
-      title="resonate tests"
-      directory="profiles/testing"
-      description="Steps to ease tests of resonate"
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
-
 </configure>

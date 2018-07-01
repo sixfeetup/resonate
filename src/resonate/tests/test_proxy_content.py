@@ -37,7 +37,7 @@ class TestProxyContent(testing.TestCase):
         self.assertNotIn('p2', self.portal.objectIds())
 
         # Seminar source object
-        s2 = self._createType(self.portal, 'Folder', 's2')
+        s2 = self._createType(self.portal, 'News Item', 's2')
         s2.current_syndication_targets = [
             RelationValue(getUtility(IIntIds).getId(p3)),
             RelationValue(getUtility(IIntIds).getId(p4))]
@@ -75,8 +75,8 @@ class TestProxyContent(testing.TestCase):
         self.assertEqual(p1.title, 'New title')
         self.assertEqual(p2.title, 'New title')
 
-        # Seminar source object
-        s2 = self._createType(self.portal, 'Folder', 's2')
+        # News Item source object
+        s2 = self._createType(self.portal, 'News Item', 's2')
         s2.setTitle('Old title')
         notify(ObjectModifiedEvent(s2))
 
@@ -142,8 +142,8 @@ class TestProxyContent(testing.TestCase):
         self.portal.manage_delObjects(ids=['p1'])
         self.assertFalse(s1.current_syndication_targets)
 
-        # Seminar source object
-        s2 = self._createType(self.portal, 'Folder', 's2')
+        # News Item source object
+        s2 = self._createType(self.portal, 'News Item', 's2')
         self.assertFalse(s2.current_syndication_targets)
 
         s2.current_syndication_targets = [
