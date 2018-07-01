@@ -46,4 +46,16 @@
       class="resonate.browser.redirect.ProxyRedirect"
       permission="zope2.View"
       />
+
+  <browser:page
+      for="plone.app.contenttypes.interfaces.IFolder"
+      name="syn_target_tool"
+      class=".syn_target.SynTargetTool"
+      allowed_attributes="enabled
+                          disabled
+                          enable
+                          disable"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>

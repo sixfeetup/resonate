@@ -15,6 +15,16 @@ class ISyndicationTarget(interface.Interface):
     """
 
 
+def enable_syn_target(context):
+    interface.alsoProvides(context, ISyndicationTarget)
+    context.reindexObject(idxs=('object_provides'))
+
+
+def disable_syn_target(context):
+    interface.noLongerProvides(context, ISyndicationTarget)
+    context.reindexObject(idxs=('object_provides'))
+
+
 @interface.provider(autoform_ifaces.IFormFieldProvider)
 class ISyndicationSource(model.Schema):
     """

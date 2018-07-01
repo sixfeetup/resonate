@@ -12,7 +12,6 @@ from plone.app import testing as plone_testing
 from collective.lineage import utils as lineage_utils
 
 from resonate.utils import update_payload
-from .. import behaviors
 
 from .. import testing
 
@@ -34,8 +33,7 @@ class TestSyndication(testing.TestCase):
         obj = self._createType(context, 'Folder', id_)
         lineage_utils.enable_childsite(obj)
         target_obj = self._createType(obj, 'Folder', target)
-        interface.alsoProvides(target_obj, behaviors.ISyndicationTarget)
-        target_obj.reindexObject()
+        target_obj.unrestrictedTraverse('@@syn_target_tool').enable()
         return obj
 
     def test_accept_syndication_transition(self):
