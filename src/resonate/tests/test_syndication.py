@@ -27,11 +27,11 @@ class TestSyndication(testing.TestCase):
         self.folder.manage_setLocalRoles(member.id, ['Contributor', ])
         return member, member.id
 
-    def _createChildSiteAndTarget(self, context, type_name, id_, target):
+    def _createChildSiteAndTarget(self, context, id_, target):
         """
         Create a container as a navigation root with a child site target.
         """
-        obj = self._createType(context, type_name, id_)
+        obj = self._createType(context, 'Folder', id_)
         lineage_utils.enable_childsite(obj)
         target_obj = self._createType(obj, 'Folder', target)
         interface.alsoProvides(target_obj, behaviors.ISyndicationTarget)
@@ -61,9 +61,9 @@ class TestSyndication(testing.TestCase):
             # create source object and two organization foldes
             s1 = self._createType(self.portal, typename, _id % 's1')
             c1 = self._createChildSiteAndTarget(
-                self.portal, 'Folder', _id % 'c1', target)
+                self.portal, _id % 'c1', target)
             c2 = self._createChildSiteAndTarget(
-                self.portal, 'Folder', _id % 'c2', target)
+                self.portal, _id % 'c2', target)
 
             # perform accept_syndication transition
             wft.doActionFor(
@@ -106,7 +106,7 @@ class TestSyndication(testing.TestCase):
             # create source object and two organization foldes
             s1 = self._createType(self.portal, typename, _id % 's1')
             c1 = self._createChildSiteAndTarget(
-                self.portal, 'Folder', _id % 'c1', target)
+                self.portal, _id % 'c1', target)
             self.assertFalse(rejected_sites(s1))
 
             # perform reject_syndication transition
@@ -146,9 +146,9 @@ class TestSyndication(testing.TestCase):
 
             s1 = self._createType(self.portal, typename, _id % 's')
             c1 = self._createChildSiteAndTarget(
-                self.portal, 'Folder', _id % 'c1', target)
+                self.portal, _id % 'c1', target)
             c2 = self._createChildSiteAndTarget(
-                self.portal, 'Folder', _id % 'c2', target)
+                self.portal, _id % 'c2', target)
 
             # perform accept_syndication transition
             wft.doActionFor(
@@ -176,7 +176,7 @@ class TestSyndication(testing.TestCase):
         s1 = self._createType(self.portal, 'Event', 's1')
         s2 = self._createType(self.portal, 'Event', 's2')
         c1 = self._createChildSiteAndTarget(
-            self.portal, 'Folder', 'c1', 'target')
+            self.portal, 'c1', 'target')
         m1, mid1 = self.add_and_approve_member()
 
         self.assertFalse(getattr(self.portal.MailHost, 'messages', None))
@@ -201,10 +201,10 @@ class TestSyndication(testing.TestCase):
         wft = getToolByName(self.portal, 'portal_workflow')
 
         c1 = self._createChildSiteAndTarget(
-            self.portal, 'Folder', 'c1', 'events')
+            self.portal, 'c1', 'events')
         c1.setTitle('Center1')
         c2 = self._createChildSiteAndTarget(
-            self.portal, 'Folder', 'c2', 'events')
+            self.portal, 'c2', 'events')
         c2.setTitle('Center2')
 
         s1 = self._createType(c1, 'Event', 's1')
@@ -277,13 +277,13 @@ class TestSyndication(testing.TestCase):
         self.loginAsPortalOwner()
 
         foo_child_site = self._createChildSiteAndTarget(
-            self.portal, 'Folder', 'foo-child-site', 'target')
+            self.portal, 'foo-child-site', 'target')
         workflow.doActionFor(foo_child_site, 'publish')
         foo_event = self._createType(foo_child_site, 'Event', 'foo-event')
         workflow.doActionFor(foo_event, 'publish')
 
         bar_child_site = self._createChildSiteAndTarget(
-            self.portal, 'Folder', 'bar-child-site', 'target')
+            self.portal, 'bar-child-site', 'target')
         workflow.doActionFor(bar_child_site, 'publish')
 
         select_view = foo_event.unrestrictedTraverse(
