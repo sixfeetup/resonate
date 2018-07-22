@@ -11,7 +11,7 @@ import resonate
 
 RESONATE = PloneWithPackageLayer(
     zcml_package=resonate,
-    zcml_filename='testing.zcml',
+    zcml_filename='configure.zcml',
     gs_profile_id='resonate:content',
     name="RESONATE")
 BASES = (RESONATE, testing.MOCK_MAILHOST_FIXTURE)
