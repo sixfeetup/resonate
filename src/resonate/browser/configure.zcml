@@ -27,14 +27,14 @@
       />
 
   <browser:page
-      for="..behaviors.ISyndicationSource"
+      for="resonate.content.proxy.IProxy"
       name="move-content"
       class="resonate.browser.move.MoveContent"
       permission="cmf.ReviewPortalContent"
       />
 
   <browser:page
-      for="..behaviors.ISyndicationSource"
+      for="resonate.content.proxy.IProxy"
       name="reject-syndication"
       class="resonate.browser.reject.RejectSyndication"
       permission="cmf.ReviewPortalContent"

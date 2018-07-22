@@ -1,8 +1,7 @@
 # For most cases it is easiest to reuse the test setup from nd.policy.
 
 import unittest
-
-from zope import interface
+import urlparse
 
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
@@ -14,6 +13,20 @@ from collective.lineage import utils as lineage_utils
 from resonate.utils import update_payload
 
 from .. import testing
+
+
+def doActionFor(self, obj, transition):
+    """
+    Simulate clicking a workflow transition's action in the browser.
+    """
+    action_info = self.getActionInfo('workflow/' + transition, obj)
+    action_url = action_info.get('url')
+    if not action_url:
+        return self.doActionFor(obj, transition)
+
+    action_view = obj.restrictedTraverse(
+        urlparse.urlsplit(action_url).path)
+    return action_view()
 
 
 class TestSyndication(testing.TestCase):
@@ -68,9 +81,9 @@ class TestSyndication(testing.TestCase):
             self.assertTrue(c2[target].objectIds())
 
             p1 = c1[target].objectValues()[0]
-            wft.doActionFor(p1, "accept_syndication")
+            doActionFor(wft, p1, "accept_syndication")
             p2 = c2[target].objectValues()[0]
-            wft.doActionFor(p2, "accept_syndication")
+            doActionFor(wft, p2, "accept_syndication")
 
             self.assertEqual(IUUID(p1.source_object.to_object), IUUID(s1))
             self.assertEqual(IUUID(p2.source_object.to_object), IUUID(s1))
@@ -104,7 +117,7 @@ class TestSyndication(testing.TestCase):
             # perform reject_syndication transition
             wft.doActionFor(s1, "request_syndication", organization=IUUID(c1))
             p1 = c1[target][s1.id]
-            wft.doActionFor(p1, "reject_syndication")
+            doActionFor(wft, p1, "reject_syndication")
 
             self.assertEqual(len(rejected_sites(s1)), 1)
 
@@ -153,7 +166,7 @@ class TestSyndication(testing.TestCase):
             p1_id = (_id % 's') + '-proxy'
             self.assertIn(p1_id, c1[target].objectIds())
             p1 = c1[target][p1_id]
-            wft.doActionFor(p1, "move")
+            doActionFor(wft, p1, "move")
             self.assertNotIn(s1.id, self.portal.objectIds())
 
     def test_syndication_notifications(self):
@@ -176,7 +189,7 @@ class TestSyndication(testing.TestCase):
         wft.doActionFor(s2, "request_syndication", organizations=[IUUID(c1)])
 
         self.portal.MailHost.messages[:] = []
-        wft.doActionFor(c1.target[s1.id], "reject_syndication")
+        doActionFor(wft, c1.target[s1.id], "reject_syndication")
         self.assertEqual(len(self.portal.MailHost.messages), 1)
         self.assertIn(
             'John Smith', str(self.portal.MailHost.messages[0]))
@@ -201,8 +214,8 @@ class TestSyndication(testing.TestCase):
         s1 = self._createType(c1, 'Event', 's1')
         s1.setTitle('Event1')
         wft.doActionFor(s1, "publish")
-        wft.doActionFor(s1, "request_syndication")
-        wft.doActionFor(s1, "accept_syndication")
+        doActionFor(wft, s1, "request_syndication")
+        doActionFor(wft, s1, "accept_syndication")
 
         p1 = self._createType(c2.events, 'resonate.proxy', 'p1')
 
@@ -230,7 +243,7 @@ class TestSyndication(testing.TestCase):
         s1 = self._createType(c1, 'Event', 's1')
         s1.setTitle('Event1')
         wft.doActionFor(s1, "publish")
-        wft.doActionFor(s1, "request_syndication")
+        doActionFor(wft, s1, "request_syndication")
 
         digest = c1.unrestrictedTraverse('@@digest_notification')
         payload = {
