@@ -29,6 +29,11 @@
       handler=".subscribers.remove_dexterity_proxies"
       />
   <subscriber
+      for="resonate.content.proxy.IProxy
+           OFS.interfaces.IObjectWillBeRemovedEvent"
+      handler="resonate.subscribers.handle_deleted_proxy"
+      />
+  <subscriber
       for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.unpublish_proxy"

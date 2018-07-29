@@ -6,9 +6,9 @@ from zope.intid.interfaces import IIntIds
 from zope.event import notify
 from zope.component import getUtility
 from zope.lifecycleevent import ObjectModifiedEvent
-from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 
+from .. import utils
 from .. import testing
 
 
@@ -131,14 +131,12 @@ class TestProxyContent(testing.TestCase):
         s1 = self._createType(self.portal, 'Event', 's1')
         self.assertFalse(s1.current_syndication_targets)
 
-        s1.current_syndication_targets = [
-            RelationValue(getUtility(IIntIds).getId(p1))]
-        p1.source_object = IUUID(s1)
+        utils.setRef(
+            s1, 'current_syndication_targets',
+            RelationValue(getUtility(IIntIds).getId(p1)))
+        p1.source_object = RelationValue(getUtility(IIntIds).getId(s1))
         self.assertEqual(len(s1.current_syndication_targets), 1)
 
-        self.skipTest(
-            'TODO Fix defore delete event handler deleting proxy '
-            'from under itself')
         self.portal.manage_delObjects(ids=['p1'])
         self.assertFalse(s1.current_syndication_targets)
 
@@ -146,9 +144,10 @@ class TestProxyContent(testing.TestCase):
         s2 = self._createType(self.portal, 'News Item', 's2')
         self.assertFalse(s2.current_syndication_targets)
 
-        s2.current_syndication_targets = [
-            RelationValue(getUtility(IIntIds).getId(p2))]
-        p2.source_object = IUUID(s2)
+        utils.setRef(
+            s2, 'current_syndication_targets',
+            RelationValue(getUtility(IIntIds).getId(p2)))
+        p2.source_object = RelationValue(getUtility(IIntIds).getId(s2))
         self.assertEqual(len(s2.current_syndication_targets), 1)
 
         self.portal.manage_delObjects(ids=['p2'])

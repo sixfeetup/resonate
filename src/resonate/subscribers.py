@@ -173,6 +173,19 @@ def remove_dexterity_proxies(obj, event):
         parent.manage_delObjects(ids=[proxy.getId()])
 
 
+def handle_deleted_proxy(obj, event):
+    """
+    Cleanup after a proxy has been deleted.
+    """
+    if obj.source_object is not None:
+        intids = getUtility(IIntIds)
+        source = obj.source_object.to_object
+        relation = RelationValue(intids.getId(obj))
+        relation.__dict__['from_object'] = source
+        if relation in source.current_syndication_targets:
+            source.current_syndication_targets.remove(relation)
+
+
 def unpublish_proxy(obj, event):
     """Unpublish proxy after source object is unpublished
     """
