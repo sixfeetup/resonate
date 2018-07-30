@@ -18,6 +18,8 @@ from plone.app.layout.navigation.root import getNavigationRoot
 
 from plone.uuid.interfaces import IUUID
 
+from Products.Archetypes.interfaces import referenceable
+
 from plone import api
 
 from . import behaviors
@@ -78,30 +80,6 @@ def safe_uid(obj):
             raise err
         uid = '/'.join(obj.getPhysicalPath())
     return uid
-
-
-def getRefs(obj, fname):
-    return [a.to_object for a in getattr(obj, fname)]
-
-
-def setRef(obj, fname, value):
-    # TODO: This is a workaround for "#12802"?
-    # See plone.app.relationfield.monkey.get_from_object
-    value.__dict__['from_object'] = obj
-
-    ref_field = getattr(obj, fname)
-    ref_field.append(value)
-    setattr(obj, fname, ref_field)
-
-
-def delRef(obj, fname, value):
-    # TODO: This is a workaround for "#12802"?
-    # See plone.app.relationfield.monkey.get_from_object
-    value.__dict__['from_object'] = obj
-
-    ref_field = getattr(obj, fname)
-    ref_field.remove(value)
-    setattr(obj, fname, ref_field)
 
 
 def upgrade_logger(logger_name, level,
@@ -245,7 +223,8 @@ def update_payload(source, payload):
 
 def update_syndication_state(source, proxy=None):
     wf_tool = getToolByName(source, 'portal_workflow')
-    targets = getRefs(source, 'current_syndication_targets')
+    targets = referenceable.IReferenceable(source).getRefs(
+        relationship='current_syndication_targets')
     if proxy in targets:
         # The reference might be out of date;
         # we make sure to only consider other targets
@@ -260,3 +239,15 @@ def update_syndication_state(source, proxy=None):
     # at that point if it should be. We update their respective
     # history record here to the correct value.
     history[-1]['syndication_state'] = state_id
+
+
+def get_proxy_source(proxy):
+    """
+    Retrieve the proxy's source via the back reference.
+    """
+    brefs = referenceable.IReferenceable(proxy).getBRefs(
+        relationship='current_syndication_targets')
+    if len(brefs) > 0:
+        assert len(brefs) == 1, (
+            'More than one back syndication reference for proxy')
+        return brefs[0]

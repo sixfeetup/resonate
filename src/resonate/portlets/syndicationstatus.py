@@ -7,8 +7,9 @@ from plone.app.layout.navigation.root import getNavigationRoot
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
+from Products.Archetypes.interfaces import referenceable
+
 from resonate import MessageFactory as _
-from resonate.utils import getRefs
 
 
 class ISyndicationStatusPortlet(IPortletDataProvider):
@@ -41,7 +42,8 @@ class Renderer(base.Renderer):
     render = ViewPageTemplateFile('syndicationstatus.pt')
 
     def _get_targets_by_state(self, state):
-        proxies = getRefs(self.context, 'current_syndication_targets')
+        proxies = referenceable.IReferenceable(self.context).getRefs(
+            relationship='current_syndication_targets')
 
         organization_paths = set()
         wft = getToolByName(self.context, 'portal_workflow')
@@ -70,7 +72,8 @@ class Renderer(base.Renderer):
         return self._get_targets_by_state('pending')
 
     def rejected_syndications(self):
-        rejected = getRefs(self.context, 'rejected_syndication_sites')
+        rejected = referenceable.IReferenceable(self.context).getRefs(
+            relationship='rejected_syndication_sites')
         return rejected
 
     @property

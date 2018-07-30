@@ -1,14 +1,12 @@
 # For most cases it is easiest to reuse the test setup from nd.policy.
 
 import unittest
-from z3c.relationfield import RelationValue
-from zope.intid.interfaces import IIntIds
 from zope.event import notify
-from zope.component import getUtility
 from zope.lifecycleevent import ObjectModifiedEvent
 from Products.CMFCore.utils import getToolByName
 
-from .. import utils
+from Products.Archetypes.interfaces import referenceable
+
 from .. import testing
 
 
@@ -23,13 +21,14 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        s1.current_syndication_targets = [
-            RelationValue(getUtility(IIntIds).getId(p1)),
-            RelationValue(getUtility(IIntIds).getId(p2))]
+        referenceable.IReferenceable(s1).addReference(
+            referenceable.IReferenceable(p1),
+            relationship='current_syndication_targets')
+        referenceable.IReferenceable(s1).addReference(
+            referenceable.IReferenceable(p2),
+            relationship='current_syndication_targets')
 
-        p1.source_object = RelationValue(getUtility(IIntIds).getId(s1))
         notify(ObjectModifiedEvent(p1))
-        p2.source_object = RelationValue(getUtility(IIntIds).getId(s1))
         notify(ObjectModifiedEvent(p2))
 
         self.portal.manage_delObjects(ids=['s1'])
@@ -38,13 +37,14 @@ class TestProxyContent(testing.TestCase):
 
         # Seminar source object
         s2 = self._createType(self.portal, 'News Item', 's2')
-        s2.current_syndication_targets = [
-            RelationValue(getUtility(IIntIds).getId(p3)),
-            RelationValue(getUtility(IIntIds).getId(p4))]
+        referenceable.IReferenceable(s2).addReference(
+            referenceable.IReferenceable(p3),
+            relationship='current_syndication_targets')
+        referenceable.IReferenceable(s2).addReference(
+            referenceable.IReferenceable(p4),
+            relationship='current_syndication_targets')
 
-        p3.source_object = RelationValue(getUtility(IIntIds).getId(s2))
         notify(ObjectModifiedEvent(p3))
-        p4.source_object = RelationValue(getUtility(IIntIds).getId(s2))
         notify(ObjectModifiedEvent(p4))
 
         self.portal.manage_delObjects(ids=['s2'])
@@ -63,9 +63,12 @@ class TestProxyContent(testing.TestCase):
         s1.setTitle('Old title')
         notify(ObjectModifiedEvent(s1))
 
-        s1.current_syndication_targets = [
-            RelationValue(getUtility(IIntIds).getId(p1)),
-            RelationValue(getUtility(IIntIds).getId(p2))]
+        referenceable.IReferenceable(s1).addReference(
+            referenceable.IReferenceable(p1),
+            relationship='current_syndication_targets')
+        referenceable.IReferenceable(s1).addReference(
+            referenceable.IReferenceable(p2),
+            relationship='current_syndication_targets')
 
         self.assertNotEqual(p1.title, 'New title')
         self.assertNotEqual(p2.title, 'New title')
@@ -80,9 +83,12 @@ class TestProxyContent(testing.TestCase):
         s2.setTitle('Old title')
         notify(ObjectModifiedEvent(s2))
 
-        s2.current_syndication_targets = [
-            RelationValue(getUtility(IIntIds).getId(p3)),
-            RelationValue(getUtility(IIntIds).getId(p4))]
+        referenceable.IReferenceable(s2).addReference(
+            referenceable.IReferenceable(p3),
+            relationship='current_syndication_targets')
+        referenceable.IReferenceable(s2).addReference(
+            referenceable.IReferenceable(p4),
+            relationship='current_syndication_targets')
 
         self.assertNotEqual(p3.title, 'New title')
         self.assertNotEqual(p4.title, 'New title')
@@ -102,9 +108,12 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        s1.current_syndication_targets = [
-            RelationValue(getUtility(IIntIds).getId(p1)),
-            RelationValue(getUtility(IIntIds).getId(p2))]
+        referenceable.IReferenceable(s1).addReference(
+            referenceable.IReferenceable(p1),
+            relationship='current_syndication_targets')
+        referenceable.IReferenceable(s1).addReference(
+            referenceable.IReferenceable(p2),
+            relationship='current_syndication_targets')
 
         wft.doActionFor(s1, "publish")
         self.failUnless(wft.getInfoFor(s1, "review_state") == "published")
@@ -129,29 +138,29 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        self.assertFalse(s1.current_syndication_targets)
+        self.assertFalse(referenceable.IReferenceable(s1).getRefs(
+            relationship='current_syndication_targets'))
 
-        utils.setRef(
-            s1, 'current_syndication_targets',
-            RelationValue(getUtility(IIntIds).getId(p1)))
-        p1.source_object = RelationValue(getUtility(IIntIds).getId(s1))
-        self.assertEqual(len(s1.current_syndication_targets), 1)
+        referenceable.IReferenceable(s1).addReference(
+            referenceable.IReferenceable(p1),
+            relationship='current_syndication_targets')
 
         self.portal.manage_delObjects(ids=['p1'])
-        self.assertFalse(s1.current_syndication_targets)
+        self.assertFalse(referenceable.IReferenceable(s1).getRefs(
+            relationship='current_syndication_targets'))
 
         # News Item source object
         s2 = self._createType(self.portal, 'News Item', 's2')
-        self.assertFalse(s2.current_syndication_targets)
+        self.assertFalse(referenceable.IReferenceable(s1).getRefs(
+            relationship='current_syndication_targets'))
 
-        utils.setRef(
-            s2, 'current_syndication_targets',
-            RelationValue(getUtility(IIntIds).getId(p2)))
-        p2.source_object = RelationValue(getUtility(IIntIds).getId(s2))
-        self.assertEqual(len(s2.current_syndication_targets), 1)
+        referenceable.IReferenceable(s2).addReference(
+            referenceable.IReferenceable(p2),
+            relationship='current_syndication_targets')
 
         self.portal.manage_delObjects(ids=['p2'])
-        self.assertFalse(s2.current_syndication_targets)
+        self.assertFalse(referenceable.IReferenceable(s2).getRefs(
+            relationship='current_syndication_targets'))
 
 
 def test_suite():

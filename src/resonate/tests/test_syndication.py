@@ -6,10 +6,13 @@ import urlparse
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 
+from Products.Archetypes.interfaces import referenceable
+
 from plone.app import testing as plone_testing
 
 from collective.lineage import utils as lineage_utils
 
+from .. import utils
 from resonate.utils import update_payload
 
 from .. import testing
@@ -56,10 +59,12 @@ class TestSyndication(testing.TestCase):
         types = [
             ('Event',
              'events',
-             lambda x: x.current_syndication_targets),
+             lambda x: referenceable.IReferenceable(x).getRefs(
+                 relationship='current_syndication_targets')),
             ('News Item',
              'news',
-             lambda x: x.current_syndication_targets),
+             lambda x: referenceable.IReferenceable(x).getRefs(
+                 relationship='current_syndication_targets')),
         ]
 
         for idx, _type in enumerate(types):
@@ -85,8 +90,8 @@ class TestSyndication(testing.TestCase):
             p2 = c2[target].objectValues()[0]
             doActionFor(wft, p2, "accept_syndication")
 
-            self.assertEqual(IUUID(p1.source_object.to_object), IUUID(s1))
-            self.assertEqual(IUUID(p2.source_object.to_object), IUUID(s1))
+            self.assertEqual(IUUID(utils.get_proxy_source(p1)), IUUID(s1))
+            self.assertEqual(IUUID(utils.get_proxy_source(p2)), IUUID(s1))
             self.assertEqual(len(syndication_targets(s1)), 2)
 
         self.logout()
@@ -98,10 +103,12 @@ class TestSyndication(testing.TestCase):
         types = [
             ('Event',
              'events',
-             lambda x: x.rejected_syndication_sites),
+             lambda x: referenceable.IReferenceable(x).getRefs(
+                 relationship='rejected_syndication_sites')),
             ('News Item',
              'news',
-             lambda x: x.rejected_syndication_sites),
+             lambda x: referenceable.IReferenceable(x).getRefs(
+                 relationship='rejected_syndication_sites')),
         ]
 
         for idx, _type in enumerate(types):

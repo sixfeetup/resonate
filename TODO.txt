@@ -1,5 +1,3 @@
-* Remove deprecated zc.relations support:
-  https://pypi.org/project/plone.app.dexterity/#id65
 * Generalize syndication target selection
     - Adapt source to collective.lineage.interfaces.IChildSite
     - Enabling sites would provide adapter that returns desired subtype interface

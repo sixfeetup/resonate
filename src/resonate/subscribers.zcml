@@ -21,17 +21,12 @@
   <subscriber
       for="Products.Archetypes.interfaces.IReference
            OFS.interfaces.IObjectWillBeRemovedEvent"
-      handler="resonate.subscribers.remove_at_proxy"
+      handler="resonate.subscribers.remove_proxy"
       />
   <subscriber
       for=".behaviors.ISyndicationSource
-           OFS.interfaces.IObjectWillBeRemovedEvent"
-      handler=".subscribers.remove_dexterity_proxies"
-      />
-  <subscriber
-      for="resonate.content.proxy.IProxy
-           OFS.interfaces.IObjectWillBeRemovedEvent"
-      handler="resonate.subscribers.handle_deleted_proxy"
+           zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+      handler=".subscribers.remove_source"
       />
   <subscriber
       for=".behaviors.ISyndicationSource

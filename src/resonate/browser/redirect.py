@@ -7,6 +7,8 @@ from plone.dexterity.browser.view import DefaultView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.permissions import ModifyPortalContent
 
+from .. import utils
+
 
 class ProxyRedirect(DefaultView):
     index = ViewPageTemplateFile('templates/proxy.pt')
@@ -19,5 +21,5 @@ class ProxyRedirect(DefaultView):
         if can_edit:
             return super(ProxyRedirect, self).__call__()
         else:
-            source_url = context.source_object.to_object.virtual_url_path()
+            source_url = utils.get_proxy_source(context).virtual_url_path()
             return context.REQUEST.RESPONSE.redirect('/' + source_url)

@@ -4,6 +4,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
+from .. import utils
 from resonate.content.proxy import IProxy
 from resonate.utils import get_organizations_by_target
 
@@ -25,7 +26,7 @@ class MoveContent(BrowserView):
             return
 
         wf_tool = getToolByName(self.context, 'portal_workflow')
-        source_obj = self.context.source_object.to_object
+        source_obj = utils.get_proxy_source(self.context)
         history = wf_tool.getHistoryOf('syndication_workflow', source_obj)
         wf_tool.doActionFor(self.context, 'move')
 
@@ -40,7 +41,7 @@ class MoveContent(BrowserView):
             organizations = get_organizations_by_target(source_obj,
                                                         target_org_uid)
             target = organizations.values()[0]
-            new_obj = target[self.context.source_object.to_object.getId()]
+            new_obj = target[utils.get_proxy_source(self.context).getId()]
             new_url = new_obj.absolute_url()
             msg = 'Successfully moved "%s"' % source_obj.title_or_id()
             IStatusMessage(self.request).addStatusMessage(msg, type='info')

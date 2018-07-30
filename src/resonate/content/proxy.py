@@ -1,6 +1,5 @@
 from zope import schema
 
-from z3c.relationfield.schema import RelationChoice
 from plone.directives import form
 from plone.formwidget.contenttree import ObjPathSourceBinder
 
@@ -20,13 +19,6 @@ class IProxy(form.Schema):
     description = schema.Text(
         title=_(u"Description"),
         required=False,
-    )
-
-    source_object = RelationChoice(
-        title=_(u"Source object"),
-        source=ObjPathSourceBinder(),
-        required=True,
-        readonly=True,
     )
 
     source_type = schema.TextLine(

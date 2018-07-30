@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import os
 
 version = '2.2'
 
@@ -41,10 +40,9 @@ setup(name='resonate',
           'setuptools',
           # -*- Extra requirements: -*-
           'zc.queue<2dev',
-          'plone.app.dexterity [relations]',
+          'plone.app.dexterity',
           'collective.js.chosen',
           'collective.lineage',
-          'z3c.relationfield',
           'plone.directives.form',
           'plone.formwidget.contenttree',
           'plone.api',

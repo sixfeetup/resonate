@@ -13,7 +13,8 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from plone.app.layout.navigation.root import getNavigationRoot
 
-from resonate.utils import getRefs
+from Products.Archetypes.interfaces import referenceable
+
 from resonate.utils import get_organizations_by_target
 from resonate.utils import safe_uid
 
@@ -122,8 +123,8 @@ class SelectOrganizations(BrowserView):
     @property
     def target_proxies(self):
         pc = getToolByName(self, 'portal_catalog')
-        current_syndication_targets = getRefs(self.context,
-                                              'current_syndication_targets')
+        current_syndication_targets = referenceable.IReferenceable(
+            self.context).getRefs(relationship='current_syndication_targets')
         kw = dict(
             portal_type='resonate.proxy',
             UID=[safe_uid(t)
