@@ -5,7 +5,11 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 
+from zope import component
 from zope.component.hooks import getSite
+from zope.intid import interfaces as intid_ifaces
+
+from z3c import relationfield
 
 from Products.CMFCore.tests.base.security import OmnipotentUser as \
             CMFOmnipotentUser
@@ -249,7 +253,10 @@ def update_syndication_state(source, proxy=None):
     if proxy in targets:
         # The reference might be out of date;
         # we make sure to only consider other targets
-        targets.pop(targets.index(proxy))
+        intids = component.getUtility(intid_ifaces.IIntIds)
+        delRef(
+            source, 'current_syndication_targets',
+            relationfield.RelationValue(intids.getId(proxy)))
     if targets:
         state_id = 'syndicated'
     else:
