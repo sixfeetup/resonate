@@ -120,6 +120,9 @@ class TestSyndication(testing.TestCase):
             doActionFor(wft, p1, "reject_syndication")
 
             self.assertEqual(len(rejected_sites(s1)), 1)
+            self.assertNotIn(
+                p1.getId(), c1[target].objectIds(),
+                'Proxy remains after rejection')
 
         self.logout()
 
@@ -168,6 +171,9 @@ class TestSyndication(testing.TestCase):
             p1 = c1[target][p1_id]
             doActionFor(wft, p1, "move")
             self.assertNotIn(s1.id, self.portal.objectIds())
+            self.assertNotIn(
+                p1.getId(), c1[target].objectIds(),
+                'Proxy remains after accepted move')
 
     def test_syndication_notifications(self):
         self.portal.notification_emails = (

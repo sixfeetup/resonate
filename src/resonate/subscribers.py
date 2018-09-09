@@ -254,6 +254,9 @@ def reject_syndication(obj, event):
     org_id = intids.getId(organization)
     sudo(setRef, source, 'rejected_syndication_sites', RelationValue(org_id))
 
+    # Remove the proxy for this syndication request
+    aq_parent(obj).manage_delObjects([obj.getId()])
+
 
 def accept_move(proxy, event):
     """
@@ -311,6 +314,9 @@ def accept_move(proxy, event):
     if wft.getInfoFor(moved_obj, "syndication_state") == "pending_move":
         sudo(wft.doActionFor, moved_obj, 'move')
         sudo(update_syndication_state, moved_obj, proxy=proxy)
+
+    # Remove the proxy for this move request
+    aq_parent(proxy).manage_delObjects([proxy.getId()])
 
 
 def notify_syndication_change(obj, event):
