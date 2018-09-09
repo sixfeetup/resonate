@@ -228,7 +228,9 @@ def update_syndication_state(source, proxy=None):
     if proxy in targets:
         # The reference might be out of date;
         # we make sure to only consider other targets
-        targets.pop(targets.index(proxy))
+        referenceable.IReferenceable(source).deleteReference(
+            referenceable.IReferenceable(proxy),
+            relationship='current_syndication_targets')
     if targets:
         state_id = 'syndicated'
     else:
