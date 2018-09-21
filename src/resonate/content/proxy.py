@@ -1,7 +1,6 @@
 from zope import schema
 
 from plone.directives import form
-from plone.formwidget.contenttree import ObjPathSourceBinder
 
 from resonate import MessageFactory as _
 
