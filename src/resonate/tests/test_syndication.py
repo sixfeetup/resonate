@@ -71,7 +71,7 @@ class TestSyndication(testing.TestCase):
             typename, target, syndication_targets = _type
             _id = '%s_obj' + str(idx)
 
-            # create source object and two organization foldes
+            # create source object and two organization folders
             s1 = self._createType(self.portal, typename, _id % 's1')
             c1 = self._createChildSiteAndTarget(
                 self.portal, _id % 'c1', target)
@@ -115,7 +115,7 @@ class TestSyndication(testing.TestCase):
             typename, target, rejected_sites = _type
             _id = '%s_obj' + str(idx)
 
-            # create source object and two organization foldes
+            # create source object and two organization folders
             s1 = self._createType(self.portal, typename, _id % 's1')
             c1 = self._createChildSiteAndTarget(
                 self.portal, _id % 'c1', target)
