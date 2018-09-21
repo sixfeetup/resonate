@@ -102,7 +102,7 @@ class SelectOrganizations(BrowserView):
         # Get all org uids except the one we are in
         org_uids = set(terms.by_value.keys()) - set((nav_root_uid,))
         existing_orgs = set([
-            tp.containing_organization
+            tp.navigation_root_uuid
             for tp in self.target_proxies
         ])
         org_uids = org_uids - existing_orgs
@@ -133,7 +133,7 @@ class SelectOrganizations(BrowserView):
         if self.organization_uids:
             # Verify this object has not already been syndicated to the
             # requested organization
-            kw['containing_organization'] = self.organization_uids
+            kw['navigation_root_uuid'] = self.organization_uids
         target_proxies = pc(**kw)
         return target_proxies
 

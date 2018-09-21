@@ -8,4 +8,9 @@
  </index>
  <column value="syndication_state"/>
  <column value="syndication_move_state"/>
+
+ <index name="navigation_root_uuid" meta_type="UUIDIndex">
+  <indexed_attr value="navigation_root_uuid"/>
+ </index>
+ <column value="navigation_root_uuid" />
 </object>

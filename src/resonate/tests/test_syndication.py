@@ -294,6 +294,7 @@ class TestSyndication(testing.TestCase):
         """
         The selection view lists lineage child sites.
         """
+        workflow = getToolByName(self.portal, 'portal_workflow')
         self.loginAsPortalOwner()
 
         foo_child_site = self._createChildSiteAndTarget(
@@ -302,6 +303,14 @@ class TestSyndication(testing.TestCase):
 
         bar_child_site = self._createChildSiteAndTarget(
             self.portal, 'bar-child-site', 'target')
+
+        qux_child_site = self._createChildSiteAndTarget(
+            self.portal, 'qux-child-site', 'target')
+        workflow.doActionFor(
+            foo_event, 'request_syndication',
+            organizations=[IUUID(qux_child_site)])
+        workflow.doActionFor(
+            qux_child_site.target[foo_event.getId()], 'accept_syndication')
 
         select_view = foo_event.unrestrictedTraverse(
             '@@select-organizations')

@@ -2,6 +2,5 @@
     - Adapt source to collective.lineage.interfaces.IChildSite
     - Enabling sites would provide adapter that returns desired subtype interface
     - Use INavigationRoot to find microsites?
-* Move containing_organization index / metadata from nd.content to resonate
 * Check if local role adapters can be moved to nd.content
 * Handle problems gracefully when adding the "Syndication status" portlet to a folder

@@ -19,6 +19,9 @@
       provides=".behaviors.ISyndicationSource"
       for="plone.dexterity.interfaces.IDexterityContent"
       />
+  <adapter
+      name="navigation_root_uuid"
+      factory=".content.proxy.navigation_root_uuid" />
 
   <include package=".browser" />
   <include package=".portlets" />
