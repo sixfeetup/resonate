@@ -58,9 +58,9 @@ class SelectOrganizations(BrowserView):
             return self.index()
 
         wf_chain = wf_tool.getChainFor(context)
-        # A check to make sure this item has the syndication_workflow applied,
+        # A check to make sure this item has the syndication_source_workflow applied,
         # if not, just do the standard action
-        if 'syndication_workflow' not in wf_chain:
+        if 'syndication_source_workflow' not in wf_chain:
             status.addStatusMessage(not_supported_msg, type='warn')
             if current_transition is None:
                 return self.request.RESPONSE.redirect(self.default_view_url)

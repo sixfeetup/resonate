@@ -4,6 +4,13 @@
     i18n_domain="resonate">
 
   <browser:page
+      for="..behaviors.ISyndicationSource"
+      name="syndication-status"
+      class="resonate.browser.status.SyndicationSourceStatusView"
+      permission="cmf.ReviewPortalContent"
+      />
+
+  <browser:page
       for="*"
       name="syndication_status_notification"
       template="templates/syndication_status_notification.pt"

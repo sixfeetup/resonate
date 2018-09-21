@@ -6,6 +6,7 @@ from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 
 from zope.component.hooks import getSite
+from zope.container.interfaces import INameChooser
 
 from Products.CMFCore.tests.base.security import OmnipotentUser as \
             CMFOmnipotentUser
@@ -15,10 +16,11 @@ from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.layout.navigation.root import getNavigationRoot
-
+from plone.app.event.dx import behaviors as event_behaviors
 from plone.uuid.interfaces import IUUID
 
 from Products.Archetypes.interfaces import referenceable
+from Products.ATContentTypes.utils import DT2dt
 
 from plone import api
 
@@ -221,28 +223,6 @@ def update_payload(source, payload):
     return payload
 
 
-def update_syndication_state(source, proxy=None):
-    wf_tool = getToolByName(source, 'portal_workflow')
-    targets = referenceable.IReferenceable(source).getRefs(
-        relationship='current_syndication_targets')
-    if proxy in targets:
-        # The reference might be out of date;
-        # we make sure to only consider other targets
-        referenceable.IReferenceable(source).deleteReference(
-            referenceable.IReferenceable(proxy),
-            relationship='current_syndication_targets')
-    if targets:
-        state_id = 'syndicated'
-    else:
-        state_id = 'not_syndicated'
-    history = wf_tool.getHistoryOf('syndication_workflow', source)
-    # The move and reject_syndication transitions are
-    # set to not change the state, since it can't be known
-    # at that point if it should be. We update their respective
-    # history record here to the correct value.
-    history[-1]['syndication_state'] = state_id
-
-
 def get_proxy_source(proxy):
     """
     Retrieve the proxy's source via the back reference.
@@ -253,3 +233,39 @@ def get_proxy_source(proxy):
         assert len(brefs) == 1, (
             'More than one back syndication reference for proxy')
         return brefs[0]
+
+
+def make_proxy(
+        obj, event, target, suffix=''):
+    """
+    Create a proxy in a target for a given syndication action.
+    """
+    portal_properties = getToolByName(obj, 'portal_properties')
+    encoding = portal_properties.site_properties.getProperty(
+        'default_charset', 'utf-8')
+    workflow = getToolByName(obj, 'portal_workflow')
+
+    unique_id = INameChooser(target)._findUniqueName(
+        obj.getId() + suffix, None)
+    proxy = sudo(target.invokeFactory,
+                 type_name='resonate.proxy',
+                 id=unique_id)
+    proxy = target[proxy]
+    proxy.title = obj.Title().decode(encoding)
+    proxy.description = obj.Description().decode(encoding)
+    proxy.source_type = obj.portal_type
+    # Submit for publication, so the item shows up in the review list
+    sudo(workflow.doActionFor, proxy, 'submit')
+    # Set proxy to pending syndication so reviewer can accept/reject;
+    # Use the workflow object's doActionFor so that IAfterTransitionEvent
+    # gets fired correctly
+    sudo(workflow.doActionFor, proxy, event.transition.id)
+    referenceable.IReferenceable(obj).addReference(
+        referenceable.IReferenceable(proxy),
+        relationship='current_syndication_targets')
+    if event_behaviors.IEventBasic.providedBy(obj):
+        for attr in ('start', 'end'):
+            prop = getattr(obj, attr)
+            if callable(prop):
+                prop = DT2dt(prop())
+            setattr(proxy, attr, prop)

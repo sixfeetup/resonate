@@ -122,9 +122,10 @@ class TestSyndication(testing.TestCase):
             self.assertFalse(rejected_sites(s1))
 
             # perform reject_syndication transition
-            wft.doActionFor(s1, "request_syndication", organization=IUUID(c1))
+            wft.doActionFor(
+                s1, "request_syndication", organizations=IUUID(c1))
             p1 = c1[target][s1.id]
-            doActionFor(wft, p1, "reject_syndication")
+            wft.doActionFor(p1, "reject_syndication")
 
             self.assertEqual(len(rejected_sites(s1)), 1)
             self.assertNotIn(
@@ -138,11 +139,14 @@ class TestSyndication(testing.TestCase):
         wft = getToolByName(self.portal, 'portal_workflow')
 
         s1 = self._createType(self.portal, 'Event', 's1')
-        c1 = self._createType(self.portal, 'Folder', 'c1')
+        c1 = self._createChildSiteAndTarget(
+            self.portal, 'c1', 'target')
         wft.doActionFor(s1, "request_move", organization=IUUID(c1))
 
-        self.assertEqual(wft.getStatusOf('syndication_workflow',
-                                         s1)['organization'], IUUID(c1))
+        self.assertEqual(
+            wft.getStatusOf(
+                'syndication_source_move_workflow', s1)['organization'],
+            IUUID(c1))
         self.logout()
 
     def test_accept_move_transition(self):
@@ -176,7 +180,7 @@ class TestSyndication(testing.TestCase):
             p1_id = (_id % 's') + '-proxy'
             self.assertIn(p1_id, c1[target].objectIds())
             p1 = c1[target][p1_id]
-            doActionFor(wft, p1, "move")
+            wft.doActionFor(p1, "move")
             self.assertNotIn(s1.id, self.portal.objectIds())
             self.assertNotIn(
                 p1.getId(), c1[target].objectIds(),
@@ -198,7 +202,7 @@ class TestSyndication(testing.TestCase):
 
         self.assertFalse(getattr(self.portal.MailHost, 'messages', None))
 
-        wft.doActionFor(s1, "request_syndication", organization=IUUID(c1))
+        wft.doActionFor(s1, "request_syndication", organizations=IUUID(c1))
         wft.doActionFor(s2, "request_syndication", organizations=[IUUID(c1)])
 
         self.portal.MailHost.messages[:] = []
@@ -227,8 +231,8 @@ class TestSyndication(testing.TestCase):
         s1 = self._createType(c1, 'Event', 's1')
         s1.setTitle('Event1')
         wft.doActionFor(s1, "publish")
-        doActionFor(wft, s1, "request_syndication")
-        doActionFor(wft, s1, "accept_syndication")
+        wft.doActionFor(s1, "request_syndication", organizations=[IUUID(c2)])
+        doActionFor(wft, c2.events[s1.getId()], "accept_syndication")
 
         p1 = self._createType(c2.events, 'resonate.proxy', 'p1')
 

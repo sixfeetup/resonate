@@ -3,5 +3,9 @@
  <index name="syndication_state" meta_type="FieldIndex">
   <indexed_attr value="syndication_state"/>
  </index>
+ <index name="syndication_move_state" meta_type="FieldIndex">
+  <indexed_attr value="syndication_move_state"/>
+ </index>
  <column value="syndication_state"/>
+ <column value="syndication_move_state"/>
 </object>

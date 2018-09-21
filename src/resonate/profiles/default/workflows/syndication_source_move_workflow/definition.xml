@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<dc-workflow
+    workflow_id="syndication_source_move_workflow"
+    title="Syndication Source Move Workflow"
+    description="A workflow for moving content between sites"
+    state_variable="syndication_move_state" initial_state="not_moved">
+
+  <state state_id="not_moved" title="Not Moved">
+    <description>
+      Not moved, in original location
+    </description>
+    <exit-transition transition_id="request_move"/>
+  </state>
+  <state state_id="pending_move" title="Pending Content Move">
+    <description>
+      Waiting to be reviewed for moving to another site
+    </description>
+    <exit-transition transition_id="review_move" />
+    <exit-transition transition_id="move"/>
+    <exit-transition transition_id="reject_move"/>
+  </state>
+  <state state_id="moved" title="Moved">
+    <description>
+      Moved from original location
+    </description>
+    <exit-transition transition_id="reject_move"/>
+    <exit-transition transition_id="request_move"/>
+  </state>
+
+  <transition
+      transition_id="request_move"
+      title="Member submits content to be moved to a site"
+      new_state="pending_move" trigger="USER"
+      before_script="" after_script="">
+    <description>
+      A member selects a target site and submits this content for review to be
+      moved to that site.
+    </description>
+    <action
+	url="%(content_url)s/@@select-organizations?transition=request_move"
+	category="workflow" icon="">
+      Request move
+    </action>
+    <guard>
+      <guard-permission>Request review</guard-permission>
+    </guard>
+  </transition>
+  <transition
+      transition_id="review_move"
+      title="Reviewer responds to move request"
+      new_state="" trigger="USER"
+      before_script="" after_script="">
+    <description>
+      A reviewer accepts or rejects the request for this content to be moved
+      to a site.
+    </description>
+    <guard>
+      <guard-permission>Review portal content</guard-permission>
+    </guard>
+  </transition>
+  <transition
+      transition_id="move"
+      title="Reviewer accepts move"
+      new_state="moved" trigger="AUTOMATIC"
+      before_script="" after_script="">
+    <description>
+      A reviewer accepts the request and moves this content to a site.
+    </description>
+    <guard>
+      <guard-permission>Review portal content</guard-permission>
+      <guard-expression>
+	object/@@syndication-status/is_move_accepted
+      </guard-expression>
+    </guard>
+  </transition>
+  <transition
+      transition_id="reject_move"
+      title="Reviewer rejects move"
+      new_state="not_moved" trigger="AUTOMATIC"
+      before_script="" after_script="">
+    <description>
+      A reviewer rejects the request for this content to be moved to a site.
+    </description>
+    <guard>
+      <guard-permission>Review portal content</guard-permission>
+      <guard-expression>
+	object/@@syndication-status/is_move_rejected
+      </guard-expression>
+    </guard>
+  </transition>
+
+  <variable
+      variable_id="action" for_catalog="False" for_status="True"
+      update_always="True">
+    <description>Previous transition</description>
+    <default>
+      <expression>transition/getId|nothing</expression>
+    </default>
+    <guard>
+    </guard>
+  </variable>
+  <variable
+      variable_id="actor" for_catalog="False" for_status="True"
+      update_always="True">
+    <description>
+      The ID of the user who performed the previous transition
+    </description>
+    <default>
+      <expression>user/getId</expression>
+    </default>
+    <guard>
+    </guard>
+  </variable>
+  <variable
+      variable_id="comments" for_catalog="False" for_status="True"
+      update_always="True">
+    <description>Comment about the last transition</description>
+    <default>
+      <expression>python:state_change.kwargs.get('comment', '')</expression>
+    </default>
+    <guard>
+    </guard>
+  </variable>
+  <variable
+      variable_id="review_history" for_catalog="False" for_status="False"
+      update_always="False">
+    <description>Provides access to workflow history</description>
+    <default>
+      <expression>state_change/getHistory</expression>
+    </default>
+    <guard>
+      <guard-permission>Request review</guard-permission>
+      <guard-permission>Review portal content</guard-permission>
+    </guard>
+  </variable>
+  <variable
+      variable_id="time" for_catalog="False" for_status="True"
+      update_always="True">
+    <description>When the previous transition was performed</description>
+    <default>
+      <expression>state_change/getDateTime</expression>
+    </default>
+    <guard>
+    </guard>
+  </variable>
+  <variable
+      variable_id="organization" for_catalog="False" for_status="True"
+      update_always="True">
+    <default>
+      <expression>
+	python:state_change.kwargs.get('organization', '')
+      </expression>
+    </default>
+    <guard>
+    </guard>
+  </variable>
+</dc-workflow>

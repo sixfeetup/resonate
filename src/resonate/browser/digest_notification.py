@@ -25,7 +25,11 @@ class DigestNotification(BrowserView):
             return payload
 
         # we need to update the organization only for NON pending states
-        if 'pending' in wft.getInfoFor(source, 'syndication_state'):
+        if (
+                'pending_syndication' in wft.getInfoFor(
+                    source, 'syndication_state') or
+                'pending_move' in wft.getInfoFor(
+                    source, 'syndication_move_state')):
             return payload
 
         if IProxy.providedBy(source):

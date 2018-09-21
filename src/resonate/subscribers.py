@@ -3,7 +3,6 @@ import logging
 import rfc822
 
 from Acquisition import aq_parent
-from zope.container.interfaces import INameChooser
 from zope import component
 from zope.component import hooks
 from plone.app.layout.navigation.root import getNavigationRoot
@@ -24,7 +23,6 @@ from resonate.utils import safe_uid
 from resonate.utils import sendEmailToMember
 from resonate.utils import sudo
 from resonate.utils import update_payload
-from resonate.utils import update_syndication_state
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +31,15 @@ def send_syndication_notification(obj, event):
     """When an item's syndication state changes, send a notification.
     """
     # Bail out if this isn't our workflow
-    if event.workflow.id != 'syndication_workflow':
+    if event.workflow.id not in {
+            'syndication_source_workflow',
+            'syndication_source_move_workflow'}:
+        return
+
+    # Don't sent an email for the empty transition that is just meant to
+    # trigger automatic transitions
+    transition_id = event.transition and event.transition.id or None
+    if transition_id in {'review_syndication', 'review_move'}:
         return
 
     portal = getToolByName(obj, 'portal_url').getPortalObject()
@@ -196,7 +202,7 @@ def accept_syndication(obj, event):
     Update source object to syndicated.
     """
     # Bail out if this isn't our workflow
-    if event.workflow.id != 'syndication_workflow':
+    if event.workflow.id != 'syndication_proxy_workflow':
         return
 
     # and not our transition
@@ -205,10 +211,9 @@ def accept_syndication(obj, event):
         return
 
     wf_tool = getToolByName(obj, 'portal_workflow')
-    syndication_state = wf_tool.getInfoFor(
-        utils.get_proxy_source(obj), "syndication_state")
-    if syndication_state != "syndicated":
-        sudo(wf_tool.doActionFor, utils.get_proxy_source(obj), transition_id)
+    sudo(
+        wf_tool.doActionFor, utils.get_proxy_source(obj),
+        'review_syndication')
     # Automatically publish proxy object
     wf_tool.doActionFor(obj, 'publish')
 
@@ -220,7 +225,7 @@ def reject_syndication(obj, event):
     proxy object.
     """
     # Bail out if this isn't our workflow
-    if event.workflow.id != 'syndication_workflow':
+    if event.workflow.id != 'syndication_proxy_workflow':
         return
 
     # and not our transition
@@ -228,14 +233,12 @@ def reject_syndication(obj, event):
     if transition_id != 'reject_syndication':
         return
 
+    workflow = getToolByName(obj, 'portal_workflow')
+
     organization_path = getNavigationRoot(obj)
     organization = obj.restrictedTraverse(organization_path)
 
     source = utils.get_proxy_source(obj)
-    # Use the workflow object's doActionFor so that IAfterTransitionEvent
-    # gets fired correctly
-    sudo(event.workflow.doActionFor, source, 'reject_syndication')
-    sudo(update_syndication_state, source, obj)
 
     referenceable.IReferenceable(source).addReference(
         referenceable.IReferenceable(organization),
@@ -243,6 +246,10 @@ def reject_syndication(obj, event):
     referenceable.IReferenceable(source).deleteReference(
         referenceable.IReferenceable(obj),
         relationship='current_syndication_targets')
+
+    # Use the workflow object's doActionFor so that IAfterTransitionEvent
+    # gets fired correctly
+    sudo(workflow.doActionFor, source, 'review_syndication')
 
     # Remove the proxy for this syndication request
     aq_parent(obj).manage_delObjects([obj.getId()])
@@ -254,7 +261,7 @@ def accept_move(proxy, event):
     based on the target organization chosen.
     """
     # Bail out if this isn't our workflow
-    if event.workflow.id != 'syndication_workflow':
+    if event.workflow.id != 'syndication_proxy_move_workflow':
         return
 
     # and not our transition
@@ -264,7 +271,7 @@ def accept_move(proxy, event):
 
     wft = getToolByName(proxy, 'portal_workflow')
     history = wft.getHistoryOf(
-        'syndication_workflow', utils.get_proxy_source(proxy))
+        'syndication_source_move_workflow', utils.get_proxy_source(proxy))
 
     # last history entry is for current transition_id
     # we need to get the previous one
@@ -300,10 +307,9 @@ def accept_move(proxy, event):
     moved_obj = target_obj[paste_id]
     if wft.getInfoFor(moved_obj, "review_state") != "published":
         sudo(wft.doActionFor, moved_obj, 'publish')
+
     # Update moved object's syndication_state
-    if wft.getInfoFor(moved_obj, "syndication_state") == "pending_move":
-        sudo(wft.doActionFor, moved_obj, 'move')
-        sudo(update_syndication_state, moved_obj, proxy=proxy)
+    sudo(wft.doActionFor, moved_obj, 'review_move')
 
     # Remove the proxy for this move request
     aq_parent(proxy).manage_delObjects([proxy.getId()])
@@ -315,7 +321,9 @@ def notify_syndication_change(obj, event):
     the comment for the action needs to be emailed to the request originator.
     """
     # Bail out if this isn't our workflow
-    if event.workflow.id != 'syndication_workflow':
+    if event.workflow.id not in {
+            'syndication_source_workflow',
+            'syndication_source_move_workflow'}:
         return
 
     transition_id = event.transition and event.transition.id or None
@@ -333,7 +341,7 @@ def notify_syndication_change(obj, event):
 
     mtool = getToolByName(obj, 'portal_membership')
     wft = getToolByName(obj, 'portal_workflow')
-    history = wft.getHistoryOf('syndication_workflow', obj)
+    history = wft.getHistoryOf(event.workflow.id, obj)
     comment = event.kwargs['comment']
 
     # Get the last actor
@@ -359,54 +367,34 @@ def request_syndication(obj, event):
     folder.
     """
     # Bail out if this isn't our workflow
-    if event.workflow.id != 'syndication_workflow':
+    if event.workflow.id != 'syndication_source_workflow':
         return
 
     # and not our transition
     transition_id = event.transition and event.transition.id or None
-    if transition_id not in ('request_move', 'request_syndication'):
+    if transition_id != 'request_syndication':
         return
 
     organizations = event.kwargs.get('organizations')
-    if not organizations:
-        organization = event.kwargs.get('organization')
-        if not organization:
-            return
-        organizations = [organization]
-
-    portal_properties = getToolByName(obj, 'portal_properties')
-    wf_tool = getToolByName(obj, 'portal_workflow')
     organizations = get_organizations_by_target(obj, organizations)
-    encoding = portal_properties.site_properties.getProperty('default_charset',
-                                                             'utf-8')
     for organization, target in organizations.items():
-        # Create the proxy
-        if transition_id == 'request_move':
-            # Tack on -proxy, so that collective.indexing doesn't get confused
-            # when we later paste the source object back into the same folder
-            oid = INameChooser(target)._findUniqueName(obj.getId() + '-proxy',
-                                                       None)
-        else:
-            oid = INameChooser(target)._findUniqueName(obj.getId(), None)
-        proxy = sudo(target.invokeFactory,
-                     type_name='resonate.proxy',
-                     id=oid)
-        proxy = target[proxy]
-        proxy.title = obj.Title().decode(encoding)
-        proxy.description = obj.Description().decode(encoding)
-        proxy.source_type = obj.portal_type
-        # Submit for publication, so the item shows up in the review list
-        sudo(wf_tool.doActionFor, proxy, 'submit')
-        # Set proxy to pending syndication so reviewer can accept/reject;
-        # Use the workflow object's doActionFor so that IAfterTransitionEvent
-        # gets fired correctly
-        sudo(event.workflow.doActionFor, proxy, transition_id)
-        referenceable.IReferenceable(obj).addReference(
-            referenceable.IReferenceable(proxy),
-            relationship='current_syndication_targets')
-        if event_behaviors.IEventBasic.providedBy(obj):
-            for attr in ('start', 'end'):
-                prop = getattr(obj, attr)
-                if callable(prop):
-                    prop = DT2dt(prop())
-                setattr(proxy, attr, prop)
+        utils.make_proxy(obj, event, target)
+
+
+def request_move(obj, event):
+    """
+    Create the proxy for a source move request.
+    """
+    # Bail out if this isn't our workflow
+    if event.workflow.id != 'syndication_source_move_workflow':
+        return
+
+    # and not our transition
+    transition_id = event.transition and event.transition.id or None
+    if transition_id != 'request_move':
+        return
+
+    organization = event.kwargs.get('organization')
+    organizations = get_organizations_by_target(obj, [organization])
+    target, = organizations.values()
+    utils.make_proxy(obj, event, target, suffix='-proxy')

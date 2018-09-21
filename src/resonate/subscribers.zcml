@@ -53,5 +53,10 @@
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.request_syndication"
       />
+  <subscriber
+      for=".behaviors.ISyndicationSource
+           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+      handler="resonate.subscribers.request_move"
+      />
 
 </configure>

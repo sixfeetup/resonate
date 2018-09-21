@@ -27,7 +27,7 @@ class MoveContent(BrowserView):
 
         wf_tool = getToolByName(self.context, 'portal_workflow')
         source_obj = utils.get_proxy_source(self.context)
-        history = wf_tool.getHistoryOf('syndication_workflow', source_obj)
+        history = wf_tool.getHistoryOf('syndication_source_workflow', source_obj)
         wf_tool.doActionFor(self.context, 'move')
 
         # Get the last request_move organization
