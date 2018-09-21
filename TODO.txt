@@ -1,6 +1,2 @@
-* Generalize syndication target selection
-    - Adapt source to collective.lineage.interfaces.IChildSite
-    - Enabling sites would provide adapter that returns desired subtype interface
-    - Use INavigationRoot to find microsites?
 * Check if local role adapters can be moved to nd.content
 * Handle problems gracefully when adding the "Syndication status" portlet to a folder
