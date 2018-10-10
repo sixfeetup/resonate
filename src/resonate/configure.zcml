@@ -17,7 +17,6 @@
       title="Syndication source"
       description="Content that is the source for syndication to other sites"
       provides=".behaviors.ISyndicationSource"
-      for="plone.dexterity.interfaces.IDexterityContent"
       />
   <adapter
       name="navigation_root_uuid"
