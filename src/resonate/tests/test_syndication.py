@@ -3,6 +3,8 @@
 import unittest
 import urlparse
 
+import transaction
+
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 
@@ -18,7 +20,7 @@ from resonate.utils import update_payload
 from .. import testing
 
 
-def doActionFor(self, obj, transition):
+def doActionFor(self, obj, transition, *args, **kwargs):
     """
     Simulate clicking a workflow transition's action in the browser.
     """
@@ -29,7 +31,7 @@ def doActionFor(self, obj, transition):
 
     action_view = obj.restrictedTraverse(
         urlparse.urlsplit(action_url).path)
-    return action_view()
+    return action_view(*args, **kwargs)
 
 
 class TestSyndication(testing.TestCase):
@@ -186,6 +188,52 @@ class TestSyndication(testing.TestCase):
                 p1.getId(), c1[target].objectIds(),
                 'Proxy remains after accepted move')
 
+    def test_reject_move_transition(self):
+        wft = getToolByName(self.portal, 'portal_workflow')
+
+        types = [
+            ('Event', 'events'),
+            ('News Item', 'news'),
+        ]
+
+        self.loginAsPortalOwner()
+        self.setUpBrowser()
+        for idx, _type in enumerate(types):
+            typename, target = _type
+            _id = '%s_obj' + str(idx)
+
+            s1 = self._createType(self.portal, typename, _id % 's')
+            c1 = self._createChildSiteAndTarget(
+                self.portal, _id % 'c1', target)
+            c2 = self._createChildSiteAndTarget(
+                self.portal, _id % 'c2', target)
+
+            # perform reject_syndication transition
+            wft.doActionFor(
+                s1, "request_syndication", organizations=[IUUID(c2)])
+            p2 = c2[target].objectValues()[0]
+            wft.doActionFor(p2, "reject_syndication")
+
+            self.assertFalse(c1[target].objectIds())
+
+            wft.doActionFor(s1, "request_move", organization=IUUID(c1))
+            p1_id = (_id % 's') + '-proxy'
+            self.assertIn(p1_id, c1[target].objectIds())
+            p1 = c1[target][p1_id]
+            transaction.commit()
+            self.browser.open(p1.absolute_url())
+            self.browser.getLink('Reject move').click()
+            self.assertIn(s1.id, self.portal.objectIds())
+            self.assertNotIn(
+                p1.getId(), c1[target].objectIds(),
+                'Proxy remains after rejected move')
+            self.assertNotIn(
+                p1.getId(), c2[target].objectIds(),
+                'Proxy in target after rejected move')
+            self.assertNotIn(
+                s1.getId(), c2[target].objectIds(),
+                'Source in target after rejected move')
+
     def test_syndication_notifications(self):
         self.portal.notification_emails = (
             'John Smith <john.smith@example.com>')
@@ -206,7 +254,9 @@ class TestSyndication(testing.TestCase):
         wft.doActionFor(s2, "request_syndication", organizations=[IUUID(c1)])
 
         self.portal.MailHost.messages[:] = []
-        doActionFor(wft, c1.target[s1.id], "reject_syndication")
+        doActionFor(
+            wft, c1.target[s1.id], "reject_syndication",
+            workflow_action='reject_syndication')
         self.assertEqual(len(self.portal.MailHost.messages), 1)
         self.assertIn(
             'John Smith', str(self.portal.MailHost.messages[0]))

@@ -65,7 +65,7 @@
       A reviewer rejects the request to syndicate content to this site.
     </description>
     <action
-	url="%(content_url)s/@@reject-syndication"
+	url="%(content_url)s/@@transition-redirect-parent?workflow_action=reject_syndication"
 	category="workflow" icon="">
       Reject syndication
     </action>

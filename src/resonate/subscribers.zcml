@@ -49,6 +49,11 @@
       handler="resonate.subscribers.accept_move"
       />
   <subscriber
+      for="resonate.content.proxy.IProxy
+           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+      handler="resonate.subscribers.reject_move"
+      />
+  <subscriber
       for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
       handler="resonate.subscribers.request_syndication"

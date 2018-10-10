@@ -65,7 +65,7 @@
       A reviewer rejects the request for content to be moved to this site.
     </description>
     <action
-	url="%(content_url)s/@@reject-move"
+	url="%(content_url)s/@@transition-redirect-parent?workflow_action=reject_move"
 	category="workflow" icon="">
       Reject move
     </action>

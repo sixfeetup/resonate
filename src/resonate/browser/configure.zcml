@@ -42,8 +42,8 @@
 
   <browser:page
       for="resonate.content.proxy.IProxy"
-      name="reject-syndication"
-      class="resonate.browser.reject.RejectSyndication"
+      name="transition-redirect-parent"
+      class="resonate.browser.redirect.TransitionRedirectParentView"
       permission="cmf.ReviewPortalContent"
       />
 

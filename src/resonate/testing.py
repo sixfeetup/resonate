@@ -1,5 +1,6 @@
 from Products.CMFCore.utils import getToolByName
 
+from plone.testing import z2
 from plone.app import testing
 from plone.app.testing import PloneWithPackageLayer
 from plone.app.testing import IntegrationTesting
@@ -46,3 +47,24 @@ class TestCase(ptc.PloneTestCase):
         # XXX: This could certainly cause some problems
         self.setRoles(())
         return obj
+
+    def setUpBrowser(self):
+        """
+        Start a logged in browser session.
+        """
+        app = self.layer['app']
+        self.browser = z2.Browser(app)
+        self.browser.handleErrors = False  # Don't get HTTP 500 pages
+
+        portal = self.layer['portal']
+        portal_url = portal.absolute_url()
+
+        self.browser.open(portal_url + '/login_form')
+        self.browser.getControl(
+            name='__ac_name').value = testing.SITE_OWNER_NAME
+        self.browser.getControl(
+            name='__ac_password').value = testing.SITE_OWNER_PASSWORD
+        self.browser.getControl(name='submit').click()
+        self.assertIn(
+            "You are now logged in", self.browser.contents.decode('utf-8'),
+            'Missing login confirmation message')

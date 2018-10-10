@@ -315,6 +315,29 @@ def accept_move(proxy, event):
     aq_parent(proxy).manage_delObjects([proxy.getId()])
 
 
+def reject_move(obj, event):
+    """
+    Remove the proxy after a rejected move.
+    """
+    # Bail out if this isn't our workflow
+    if event.workflow.id != 'syndication_proxy_move_workflow':
+        return
+
+    # and not our transition
+    transition_id = event.transition and event.transition.id or None
+    if transition_id != 'reject_move':
+        return
+
+    # Use the workflow object's doActionFor so that IAfterTransitionEvent
+    # gets fired correctly
+    workflow = getToolByName(obj, 'portal_workflow')
+    source = utils.get_proxy_source(obj)
+    sudo(workflow.doActionFor, source, 'review_move')
+
+    # Remove the proxy for this move request
+    aq_parent(obj).manage_delObjects([obj.getId()])
+
+
 def notify_syndication_change(obj, event):
     """
     When a syndication request is accepted or rejected,
