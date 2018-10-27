@@ -102,6 +102,8 @@ class SyndicationProxyStatusView(object):
     Reflect the syndication status of this proxy in a target site.
     """
 
+    RELATIONSHIP_TEMPLATE = 'resonate.auto-approve.{0}'
+
     def is_syndication_auto_approved(self):
         """
         Is syndication approved from the source to this target site and type.
@@ -116,5 +118,5 @@ class SyndicationProxyStatusView(object):
 
         return source_site in referenceable.IReferenceable(
             target_site).getBRefs(
-                relationship='resonate.auto-approve.{0}'.format(
+                relationship=self.RELATIONSHIP_TEMPLATE.format(
                     source.getPortalTypeName()))

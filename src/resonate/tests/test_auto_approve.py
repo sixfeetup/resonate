@@ -2,6 +2,8 @@
 Managers can set which target sites where syndication is auto-approved.
 """
 
+import transaction
+
 from Products.CMFCore.utils import getToolByName
 
 from plone.uuid import interfaces as uuid_ifaces
@@ -131,3 +133,53 @@ class TestSyndication(testing.TestCase):
             self.assertEqual(
                 news_state, 'syndicated',
                 'Wrong auto-approved syndication workflow state')
+
+    def test_auto_approve_form(self):
+        """
+        The auto-approve action and form set references.
+        """
+        foo_child_site = self._createChildSiteAndTarget(
+            self.portal, 'foo-child-site', 'target', title='Foo Child Site')
+        bar_child_site = self._createChildSiteAndTarget(
+            self.portal, 'bar-child-site', 'target', title='Bar Child Site')
+        qux_child_site = self._createChildSiteAndTarget(
+            self.portal, 'qux-child-site', 'target', title='Qux Child Site')
+
+        transaction.commit()
+        self.setUpBrowser()
+        self.browser.open(self.portal.absolute_url())
+        self.browser.getLink(
+            'Designate Syndication Auto-Approve Targets').click()
+        form = self.browser.getForm('resonate.auto-approve')
+        news_ctl = form.getControl(name='News Item')
+        news_ctl.getControl(foo_child_site.Title()).selected = True
+        self.assertFalse(
+            news_ctl.getControl(bar_child_site.Title()).selected,
+            'Child site selected by default')
+        news_ctl.getControl(qux_child_site.Title()).selected = True
+        form.getControl('Designate Auto-Approve Sites').click()
+        self.assertEqual(
+            self.browser.url, self.portal.absolute_url(),
+            'Wrong redirect after designating child sites')
+        self.assertIn(
+            'Auto-approve target sites designated successfully',
+            self.browser.contents,
+            'Wrong or missing success message')
+
+        portal_refs = referenceable.IReferenceable(self.portal)
+        news_refs = portal_refs.getRefs('resonate.auto-approve.News Item')
+        self.assertEqual(
+            news_refs, [foo_child_site, qux_child_site],
+            'Wrong auto-approve references after submitting form')
+        event_refs = portal_refs.getRefs('resonate.auto-approve.Event')
+        self.assertFalse(
+            event_refs,
+            'Auto-approve references set for wrong type')
+
+        self.browser.getLink(
+            'Designate Syndication Auto-Approve Targets').click()
+        form = self.browser.getForm('resonate.auto-approve')
+        news_ctl = form.getControl(name='News Item')
+        self.assertTrue(
+            news_ctl.getControl(foo_child_site.Title()).selected,
+            'Existing values not preserved on form')

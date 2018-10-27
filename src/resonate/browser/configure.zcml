@@ -18,6 +18,14 @@
       />
 
   <browser:page
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      permission="cmf.ManagePortal"
+      name="resonate-auto-approve"
+      class=".sites.ResonateSiteAutoApproveForm"
+      template="templates/resonate-auto-approve.pt"
+      />
+
+  <browser:page
       for="*"
       name="syndication_status_notification"
       template="templates/syndication_status_notification.pt"

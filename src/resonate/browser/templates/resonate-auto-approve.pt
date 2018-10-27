@@ -1,0 +1,59 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+  <head>
+    <metal:javascript fill-slot="javascript_head_slot">
+      <script type="text/javascript">
+	(function($) { $(function() {
+	$(".chzn-select").chosen()
+	}); })(jQuery);
+      </script>
+    </metal:javascript>
+  </head>
+
+  <body>
+    <h1 class="documentFirstHeading" metal:fill-slot="content-title">
+      Designate Auto-Approval Target Sites
+    </h1>
+    <div class="documentDescription description"
+	 metal:fill-slot="content-description">
+      Select the target sites to which syndication requests are automatically
+      approved for each portal content type.
+    </div>
+
+    <metal:content-core fill-slot="content-core">
+      <form
+	action="" method="post" id="resonate.auto-approve"
+	tal:define="target_sites view/target_sites;">
+	<div tal:repeat="portal_type view/syndication_types">
+	  <label
+	    for="portal_type"
+	    tal:attributes="for portal_type/getId;"
+	    tal:content="portal_type/Title">
+	    Portal Type
+	  </label>
+	  <select
+	    data-placeholder="Choose target sites..." class="chzn-select"
+	    style="width:350px;" name="portal_type" multiple=""
+	    tal:attributes="name portal_type/getId">
+            <option
+	      value="UID"
+	      tal:repeat="term target_sites;"
+	      tal:attributes="value term/value;
+			      selected python:term.value in set(site.UID() for site in view.designated_target_sites(portal_type.getId()));" tal:content="term/title">
+	      Site Title
+	    </option>
+	  </select>
+	</div>
+	<input
+	  type="submit" name="submit" value="Designate Auto-Approve Sites" />
+      </form>
+    </metal:content-core>
+  </body>
+</html>

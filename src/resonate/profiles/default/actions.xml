@@ -21,5 +21,24 @@
         <element value="Manage portal" />
       </property>
     </object>
+    <object
+	name="designate_auto_approve_targets" meta_type="CMF Action"
+	i18n:domain="resonate">
+      <property name="title" i18n:translate="">
+	Designate Syndication Auto-Approve Targets
+      </property>
+      <property name="description" i18n:translate="">
+	Select the target sites to which syndication requests are
+	automatically approved.
+      </property>
+      <property name="url_expr">string:$object_url/@@resonate-auto-approve</property>
+      <property name="available_expr">
+	object/@@resonate-auto-approve/can_designate_auto_approve|nothing
+      </property>
+      <property name="visible">True</property>
+      <property name="permissions">
+        <element value="Manage portal" />
+      </property>
+    </object>
   </object>
 </object>
