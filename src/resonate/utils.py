@@ -13,11 +13,9 @@ from Products.CMFCore.tests.base.security import OmnipotentUser as \
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
 
-from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.event.dx import behaviors as event_behaviors
-from plone.uuid.interfaces import IUUID
 
 from Products.Archetypes.interfaces import referenceable
 from Products.ATContentTypes.utils import DT2dt
@@ -71,17 +69,6 @@ def sudo(func, *args, **kwargs):
         setSecurityManager(origSecurityManager)
 
     return result
-
-
-def safe_uid(obj):
-    try:
-        uid = IUUID(obj)
-    except (TypeError,) as err:
-        # special-case Plone site objects
-        if not IPloneSiteRoot.providedBy(obj):
-            raise err
-        uid = '/'.join(obj.getPhysicalPath())
-    return uid
 
 
 def upgrade_logger(logger_name, level,
@@ -203,7 +190,7 @@ def update_payload(source, payload):
     wft = getToolByName(source, 'portal_workflow')
     nav_root_path = getNavigationRoot(source)
     nav_root = source.restrictedTraverse(nav_root_path)
-    nav_root_uid = safe_uid(nav_root)
+    nav_root_uid = api.content.get_uuid(nav_root)
     state_changes = []
     try:
         review_state = wft.getInfoFor(source, 'review_state')

@@ -12,11 +12,11 @@ from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
 from plone.app.layout.navigation.root import getNavigationRoot
+from plone import api
 
 from Products.Archetypes.interfaces import referenceable
 
 from resonate.utils import get_organizations_by_target
-from resonate.utils import safe_uid
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +97,7 @@ class SelectOrganizations(BrowserView):
         portal = getSite()
         nav_root_path = getNavigationRoot(self.context)
         nav_root = portal.restrictedTraverse(nav_root_path)
-        nav_root_uid = safe_uid(nav_root)
+        nav_root_uid = api.content.get_uuid(nav_root)
 
         # Get all org uids except the one we are in
         org_uids = set(terms.by_value.keys()) - set((nav_root_uid,))
@@ -113,7 +113,7 @@ class SelectOrganizations(BrowserView):
         result = []
         for organization in organizations:
             try:
-                term = terms.getTerm(safe_uid(organization))
+                term = terms.getTerm(api.content.get_uuid(organization))
             except LookupError:
                 continue
             result.append(term)
@@ -127,7 +127,7 @@ class SelectOrganizations(BrowserView):
             self.context).getRefs(relationship='current_syndication_targets')
         kw = dict(
             portal_type='resonate.proxy',
-            UID=[safe_uid(t)
+            UID=[api.content.get_uuid(t)
                  for t in current_syndication_targets],
         )
         if self.organization_uids:

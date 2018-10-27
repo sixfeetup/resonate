@@ -19,7 +19,6 @@ from resonate.content.proxy import IProxy
 from . import utils
 from . import behaviors
 from resonate.utils import get_organizations_by_target
-from resonate.utils import safe_uid
 from resonate.utils import sendEmailToMember
 from resonate.utils import sudo
 from resonate.utils import update_payload
@@ -70,7 +69,7 @@ def send_syndication_notification(obj, event):
     mailhost = getToolByName(obj, 'MailHost')
     payload = {
         'new_state_id': event.new_state.id,
-        'object_uid': safe_uid(obj),
+        'object_uid': api.content.get_uuid(obj),
         'old_state_id': event.old_state.id,
         'status': event.status,
         'transition_id': event.transition and event.transition.id or None,
@@ -90,7 +89,7 @@ def send_syndication_notification(obj, event):
     nav_root_path = getNavigationRoot(obj)
     nav_root = obj.restrictedTraverse(nav_root_path)
     payload['organization_title'] = nav_root.title_or_id()
-    payload['organization_uid'] = safe_uid(nav_root)
+    payload['organization_uid'] = api.content.get_uuid(nav_root)
     update_payload(obj, payload)
 
     if '/' in payload['object_uid']:

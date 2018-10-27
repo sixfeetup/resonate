@@ -7,8 +7,9 @@ from zope.interface import implements
 
 from zc.queue import CompositeQueue
 
+from plone import api
+
 from resonate.interfaces import ISyndicationNotificationTool
-from resonate.utils import safe_uid
 
 logger = logging.getLogger('resonate.notifications')
 
@@ -28,15 +29,15 @@ class SyndicationNotificationTool(Persistent, SimpleItem):
         self.requeue_limit = 7
 
     def get_queue(self, obj):
-        uid = safe_uid(obj)
+        uid = api.content.get_uuid(obj)
         return self.queues[uid]
 
     def put_notification(self, obj, payload):
-        uid = safe_uid(obj)
+        uid = api.content.get_uuid(obj)
         self.queues.setdefault(uid, CompositeQueue()).put(payload)
 
     def pull_notification(self, obj, index=0):
-        uid = safe_uid(obj)
+        uid = api.content.get_uuid(obj)
         # Can raise the following errors, must be handled by caller:
         #   KeyError: if the object has had no notifications queued yet
         #   IndexError: if the requested index isn't present in the queue

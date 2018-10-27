@@ -10,6 +10,23 @@
   <includePlugins package="." />
   <includeDependencies package="." />
 
+  <!-- Make the portal itself referenceable -->
+  <class class="Products.CMFCore.PortalObject.PortalObjectBase">
+    <implements interface="plone.uuid.interfaces.IAttributeUUID" />
+  </class>
+  <adapter
+      for="Products.CMFCore.interfaces.ISiteRoot
+           Products.Archetypes.interfaces.referenceengine.IUIDCatalog"
+      factory="plone.indexer.wrapper.IndexableObjectWrapper"
+      provides="plone.indexer.interfaces.IIndexableObject" />
+  <subscriber
+      for="Products.GenericSetup.interfaces.IProfileImportedEvent"
+      handler=".setuphandlers.make_portal_referenceable" />
+  <adapter
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      factory="plone.app.referenceablebehavior.referenceable.ATReferenceable"
+      />
+
   <include file="subscribers.zcml" />
 
   <interface interface=".behaviors.ISyndicationTarget" />

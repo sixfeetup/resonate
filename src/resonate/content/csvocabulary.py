@@ -11,7 +11,8 @@ class ChildSitesVocabulary(object):
         """get IDs and names of child sites"""
         catalog = api.portal.get_tool('portal_catalog')
         brains = catalog(
-            object_provides='collective.lineage.interfaces.IChildSite'
+            object_provides='plone.app.layout.navigation'
+            '.interfaces.INavigationRoot'
         )
         vocabulary = []
         for brain in brains:
