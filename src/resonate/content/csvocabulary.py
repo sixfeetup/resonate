@@ -9,6 +9,9 @@ class ChildSitesVocabulary(object):
 
     def __call__(self, context):
         """get IDs and names of child sites"""
+        nav_root = api.portal.get_navigation_root(context)
+        nav_root_uid = api.content.get_uuid(nav_root)
+
         catalog = api.portal.get_tool('portal_catalog')
         brains = catalog(
             object_provides='plone.app.layout.navigation'
@@ -16,6 +19,8 @@ class ChildSitesVocabulary(object):
         )
         vocabulary = []
         for brain in brains:
+            if brain.UID == nav_root_uid:
+                continue
             obj = brain.getObject()
             vocabulary.append((obj.UID(), obj.title))
         items = [SimpleTerm(i[0], i[0], i[1]) for i in vocabulary]

@@ -4,14 +4,12 @@ from AccessControl import ClassSecurityInfo
 from Acquisition import aq_inner
 from zope.component import getUtility
 from zope.component import getMultiAdapter
-from zope.component.hooks import getSite
 from zope.schema.interfaces import IVocabularyFactory
 
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
-from plone.app.layout.navigation.root import getNavigationRoot
 from plone import api
 
 from Products.Archetypes.interfaces import referenceable
@@ -94,13 +92,8 @@ class SelectOrganizations(BrowserView):
                                'resonate.vocabulary.childsites')
         terms = org_vocab(self.context)
 
-        portal = getSite()
-        nav_root_path = getNavigationRoot(self.context)
-        nav_root = portal.restrictedTraverse(nav_root_path)
-        nav_root_uid = api.content.get_uuid(nav_root)
-
         # Get all org uids except the one we are in
-        org_uids = set(terms.by_value.keys()) - set((nav_root_uid,))
+        org_uids = set(terms.by_value.keys())
         existing_orgs = set([
             tp.navigation_root_uuid
             for tp in self.target_proxies
