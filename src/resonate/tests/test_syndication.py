@@ -12,8 +12,6 @@ from Products.Archetypes.interfaces import referenceable
 
 from plone.app import testing as plone_testing
 
-from collective.lineage import utils as lineage_utils
-
 from .. import utils
 from resonate.utils import update_payload
 
@@ -43,16 +41,6 @@ class TestSyndication(testing.TestCase):
         # give user contributor rights for portal
         self.folder.manage_setLocalRoles(member.id, ['Contributor', ])
         return member, member.id
-
-    def _createChildSiteAndTarget(self, context, id_, target):
-        """
-        Create a container as a navigation root with a child site target.
-        """
-        obj = self._createType(context, 'Folder', id_)
-        lineage_utils.enable_childsite(obj)
-        target_obj = self._createType(obj, 'Folder', target)
-        target_obj.unrestrictedTraverse('@@syn_target_tool').enable()
-        return obj
 
     def test_accept_syndication_transition(self):
         self.loginAsPortalOwner()

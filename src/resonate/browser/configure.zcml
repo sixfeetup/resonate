@@ -4,6 +4,13 @@
     i18n_domain="resonate">
 
   <browser:page
+      for="..content.proxy.IProxy"
+      name="syndication-status"
+      class="resonate.browser.status.SyndicationProxyStatusView"
+      permission="cmf.ReviewPortalContent"
+      />
+
+  <browser:page
       for="..behaviors.ISyndicationSource"
       name="syndication-status"
       class="resonate.browser.status.SyndicationSourceStatusView"

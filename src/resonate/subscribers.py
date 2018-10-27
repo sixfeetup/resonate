@@ -206,13 +206,16 @@ def accept_syndication(obj, event):
 
     # and not our transition
     transition_id = event.transition and event.transition.id or None
-    if transition_id != 'accept_syndication':
+    if transition_id not in {
+            'accept_syndication', 'auto_approve_syndication'}:
         return
 
     wf_tool = getToolByName(obj, 'portal_workflow')
-    sudo(
-        wf_tool.doActionFor, utils.get_proxy_source(obj),
-        'review_syndication')
+    source = utils.get_proxy_source(obj)
+    if wf_tool.getInfoFor(source, 'syndication_state') != 'syndicated':
+        sudo(
+            wf_tool.doActionFor, source,
+            'review_syndication')
     # Automatically publish proxy object
     wf_tool.doActionFor(obj, 'publish')
 

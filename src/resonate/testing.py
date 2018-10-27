@@ -7,6 +7,8 @@ from plone.app.testing import IntegrationTesting
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import bbb as ptc
 
+from collective.lineage import utils as lineage_utils
+
 import resonate
 
 
@@ -46,6 +48,16 @@ class TestCase(ptc.PloneTestCase):
             wftool.doActionFor(obj, transition)
         # XXX: This could certainly cause some problems
         self.setRoles(())
+        return obj
+
+    def _createChildSiteAndTarget(self, context, id_, target, *args, **kwargs):
+        """
+        Create a container as a navigation root with a child site target.
+        """
+        obj = self._createType(context, 'Folder', id_, *args, **kwargs)
+        lineage_utils.enable_childsite(obj)
+        target_obj = self._createType(obj, 'Folder', target)
+        target_obj.unrestrictedTraverse('@@syn_target_tool').enable()
         return obj
 
     def setUpBrowser(self):

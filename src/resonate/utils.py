@@ -246,7 +246,6 @@ def make_proxy(
     # Set proxy to pending syndication so reviewer can accept/reject;
     # Use the workflow object's doActionFor so that IAfterTransitionEvent
     # gets fired correctly
-    sudo(workflow.doActionFor, proxy, event.transition.id)
     referenceable.IReferenceable(obj).addReference(
         referenceable.IReferenceable(proxy),
         relationship='current_syndication_targets')
@@ -256,3 +255,5 @@ def make_proxy(
             if callable(prop):
                 prop = DT2dt(prop())
             setattr(proxy, attr, prop)
+
+    sudo(workflow.doActionFor, proxy, event.transition.id)

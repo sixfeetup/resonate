@@ -4,7 +4,11 @@ Browser views for syndication status.
 
 from Products.CMFCore.utils import getToolByName
 
+from plone.app.layout.navigation import root
+
 from Products.Archetypes.interfaces import referenceable
+
+from .. import utils
 
 
 class SyndicationSourceStatusView(object):
@@ -91,3 +95,26 @@ class SyndicationSourceStatusView(object):
         Determine if this source has not been moved and is not pending.
         """
         return not self.is_moved() and not self.is_pending_move()
+
+
+class SyndicationProxyStatusView(object):
+    """
+    Reflect the syndication status of this proxy in a target site.
+    """
+
+    def is_syndication_auto_approved(self):
+        """
+        Is syndication approved from the source to this target site and type.
+        """
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+
+        proxy = self.context
+        target_site = root.getNavigationRootObject(proxy, portal)
+
+        source = utils.get_proxy_source(proxy)
+        source_site = root.getNavigationRootObject(source, portal)
+
+        return source_site in referenceable.IReferenceable(
+            target_site).getBRefs(
+                relationship='resonate.auto-approve.{0}'.format(
+                    source.getPortalTypeName()))

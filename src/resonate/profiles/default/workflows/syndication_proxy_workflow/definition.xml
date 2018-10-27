@@ -16,6 +16,7 @@
       Waiting to be reviewed for syndication to this site.
     </description>
     <exit-transition transition_id="accept_syndication"/>
+    <exit-transition transition_id="auto_approve_syndication"/>
     <exit-transition transition_id="reject_syndication"/>
   </state>
   <state state_id="syndicated" title="Syndicated">
@@ -56,6 +57,22 @@
     </action>
     <guard>
       <guard-permission>Review portal content</guard-permission>
+    </guard>
+  </transition>
+  <transition
+      transition_id="auto_approve_syndication"
+      title="Site automatically approves syndication"
+      new_state="syndicated" trigger="AUTOMATIC"
+      before_script="" after_script="">
+    <description>
+      This target site has been designated to be automatically approved for
+      syndication from the source site.
+    </description>
+    <guard>
+      <guard-permission>Request review</guard-permission>
+      <guard-expression>
+	object/@@syndication-status/is_syndication_auto_approved
+      </guard-expression>
     </guard>
   </transition>
   <transition
