@@ -6,22 +6,22 @@
   <subscriber
       for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler="resonate.subscribers.notify_syndication_change"
+      handler=".subscribers.notify_syndication_change"
       />
   <subscriber
       for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler="resonate.subscribers.send_syndication_notification"
+      handler=".subscribers.send_syndication_notification"
       />
   <subscriber
       for=".behaviors.ISyndicationSource
            zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-      handler="resonate.subscribers.update_proxy_fields"
+      handler=".subscribers.update_proxy_fields"
       />
   <subscriber
       for="Products.Archetypes.interfaces.IReference
            OFS.interfaces.IObjectWillBeRemovedEvent"
-      handler="resonate.subscribers.remove_proxy"
+      handler=".subscribers.remove_proxy"
       />
   <subscriber
       for=".behaviors.ISyndicationSource
@@ -31,37 +31,37 @@
   <subscriber
       for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler="resonate.subscribers.unpublish_proxy"
+      handler=".subscribers.unpublish_proxy"
       />
   <subscriber
-      for="resonate.content.proxy.IProxy
+      for=".content.proxy.IProxy
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler="resonate.subscribers.accept_syndication"
+      handler=".subscribers.accept_syndication"
       />
   <subscriber
-      for="resonate.content.proxy.IProxy
+      for=".content.proxy.IProxy
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler="resonate.subscribers.reject_syndication"
+      handler=".subscribers.reject_syndication"
       />
   <subscriber
-      for="resonate.content.proxy.IProxy
+      for=".content.proxy.IProxy
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler="resonate.subscribers.accept_move"
+      handler=".subscribers.accept_move"
       />
   <subscriber
-      for="resonate.content.proxy.IProxy
+      for=".content.proxy.IProxy
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler="resonate.subscribers.reject_move"
-      />
-  <subscriber
-      for=".behaviors.ISyndicationSource
-           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler="resonate.subscribers.request_syndication"
+      handler=".subscribers.reject_move"
       />
   <subscriber
       for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-      handler="resonate.subscribers.request_move"
+      handler=".subscribers.request_syndication"
+      />
+  <subscriber
+      for=".behaviors.ISyndicationSource
+           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+      handler=".subscribers.request_move"
       />
 
 </configure>

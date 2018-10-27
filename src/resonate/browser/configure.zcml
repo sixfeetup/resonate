@@ -6,14 +6,14 @@
   <browser:page
       for="..content.proxy.IProxy"
       name="syndication-status"
-      class="resonate.browser.status.SyndicationProxyStatusView"
+      class=".status.SyndicationProxyStatusView"
       permission="cmf.ReviewPortalContent"
       />
 
   <browser:page
       for="..behaviors.ISyndicationSource"
       name="syndication-status"
-      class="resonate.browser.status.SyndicationSourceStatusView"
+      class=".status.SyndicationSourceStatusView"
       permission="cmf.ReviewPortalContent"
       />
 
@@ -27,7 +27,7 @@
   <browser:page
       for="..behaviors.ISyndicationSource"
       name="select-organizations"
-      class="resonate.browser.select.SelectOrganizations"
+      class=".select.SelectOrganizations"
       template="templates/select.pt"
       permission="zope2.View"
       />
@@ -35,29 +35,29 @@
   <browser:page
       for="Products.CMFCore.interfaces.IContentish"
       name="digest_notification"
-      class="resonate.browser.digest_notification.DigestNotification"
+      class=".digest_notification.DigestNotification"
       template="templates/syn_notification.pt"
       permission="zope2.View"
       />
 
   <browser:page
-      for="resonate.content.proxy.IProxy"
+      for="..content.proxy.IProxy"
       name="move-content"
-      class="resonate.browser.move.MoveContent"
+      class=".move.MoveContent"
       permission="cmf.ReviewPortalContent"
       />
 
   <browser:page
-      for="resonate.content.proxy.IProxy"
+      for="..content.proxy.IProxy"
       name="transition-redirect-parent"
-      class="resonate.browser.redirect.TransitionRedirectParentView"
+      class=".redirect.TransitionRedirectParentView"
       permission="cmf.ReviewPortalContent"
       />
 
   <browser:page
-      for="resonate.content.proxy.IProxy"
+      for="..content.proxy.IProxy"
       name="proxy_redirect_view"
-      class="resonate.browser.redirect.ProxyRedirect"
+      class=".redirect.ProxyRedirect"
       permission="zope2.View"
       />
 

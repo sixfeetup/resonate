@@ -65,7 +65,7 @@
       description="Enable new dexterity type resonate.proxy #948"
       source="0001"
       destination="0003"
-      handler="resonate.upgrades.add_proxy_content_type"
+      handler=".upgrades.add_proxy_content_type"
       sortkey="1"
       profile="resonate:default"
       />
