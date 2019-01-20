@@ -148,6 +148,7 @@ class TestSyndication(testing.TestCase):
         ]
 
         self.loginAsPortalOwner()
+        self.setUpBrowser()
         for idx, _type in enumerate(types):
             typename, target = _type
             _id = '%s_obj' + str(idx)
@@ -170,11 +171,23 @@ class TestSyndication(testing.TestCase):
             p1_id = (_id % 's') + '-proxy'
             self.assertIn(p1_id, c1[target].objectIds())
             p1 = c1[target][p1_id]
-            wft.doActionFor(p1, "move")
+
+            transaction.commit()
+            self.browser.open(p1.absolute_url())
+            self.browser.getLink('Accept move').click()
             self.assertNotIn(s1.id, self.portal.objectIds())
             self.assertNotIn(
                 p1.getId(), c1[target].objectIds(),
                 'Proxy remains after accepted move')
+            self.assertIn(
+                s1.id, c1[target].objectIds(),
+                'Syndication source missing from target after move')
+            self.assertEqual(
+                self.browser.url, c1[target][s1.id].absolute_url(),
+                'Browser not redirected to moved source after move')
+            self.assertIn(
+                'action was successful', self.browser.contents,
+                'Successful move message missing in browser')
 
     def test_reject_move_transition(self):
         wft = getToolByName(self.portal, 'portal_workflow')

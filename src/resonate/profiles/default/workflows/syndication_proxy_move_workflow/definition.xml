@@ -50,7 +50,7 @@
       A reviewer accepts the request and moves this content to a site.
     </description>
     <action
-	url="%(content_url)s/content_status_modify?workflow_action=move"
+	url="%(content_url)s/@@transition-redirect?workflow_action=move"
 	category="workflow" icon="">
       Accept move
     </action>
@@ -65,7 +65,7 @@
       A reviewer rejects the request for content to be moved to this site.
     </description>
     <action
-	url="%(content_url)s/@@transition-redirect-parent?workflow_action=reject_move"
+	url="%(content_url)s/@@transition-redirect?workflow_action=reject_move"
 	category="workflow" icon="">
       Reject move
     </action>

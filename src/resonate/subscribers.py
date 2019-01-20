@@ -3,8 +3,11 @@ import logging
 import rfc822
 
 from Acquisition import aq_parent
+
 from zope import component
 from zope.component import hooks
+from zope import globalrequest
+
 from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFCore.utils import getToolByName
@@ -315,6 +318,12 @@ def accept_move(proxy, event):
 
     # Remove the proxy for this move request
     aq_parent(proxy).manage_delObjects([proxy.getId()])
+
+    request = globalrequest.getRequest()
+    if request is not None:
+        request['redirect_to'] = '/'.join(
+            moved_obj.getPhysicalPath()[
+                len(api.portal.get().getPhysicalPath()):])
 
 
 def reject_move(obj, event):
