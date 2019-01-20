@@ -151,16 +151,26 @@ class TestSyndication(testing.TestCase):
         self.browser.getLink(
             'Designate Syndication Auto-Approve Targets').click()
         form = self.browser.getForm('resonate.auto-approve')
-        news_ctl = form.getControl(name='News Item')
+        news_ctl = form.getControl(name='News Item:list')
         news_ctl.getControl(foo_child_site.Title()).selected = True
         self.assertFalse(
             news_ctl.getControl(bar_child_site.Title()).selected,
             'Child site selected by default')
-        news_ctl.getControl(qux_child_site.getId()).selected = True
         form.getControl('Designate Auto-Approve Sites').click()
         self.assertEqual(
             self.browser.url, self.portal.absolute_url(),
             'Wrong redirect after designating child sites')
+        self.assertIn(
+            'Auto-approve target sites designated successfully',
+            self.browser.contents,
+            'Wrong or missing success message')
+
+        self.browser.getLink(
+            'Designate Syndication Auto-Approve Targets').click()
+        form = self.browser.getForm('resonate.auto-approve')
+        news_ctl = form.getControl(name='News Item:list')
+        news_ctl.getControl(qux_child_site.getId()).selected = True
+        form.getControl('Designate Auto-Approve Sites').click()
         self.assertIn(
             'Auto-approve target sites designated successfully',
             self.browser.contents,
@@ -179,7 +189,7 @@ class TestSyndication(testing.TestCase):
         self.browser.getLink(
             'Designate Syndication Auto-Approve Targets').click()
         form = self.browser.getForm('resonate.auto-approve')
-        news_ctl = form.getControl(name='News Item')
+        news_ctl = form.getControl(name='News Item:list')
         self.assertTrue(
             news_ctl.getControl(foo_child_site.Title()).selected,
             'Existing values not preserved on form')

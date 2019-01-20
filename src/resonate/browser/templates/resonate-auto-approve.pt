@@ -41,7 +41,7 @@
 	  <select
 	    data-placeholder="Choose target sites..." class="chzn-select"
 	    style="width:350px;" name="portal_type" multiple=""
-	    tal:attributes="name portal_type/getId">
+	    tal:attributes="name string:${portal_type/getId}:list">
             <option
 	      value="UID"
 	      tal:repeat="term target_sites;"
