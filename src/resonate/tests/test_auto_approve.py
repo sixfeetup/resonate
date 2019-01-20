@@ -143,7 +143,7 @@ class TestSyndication(testing.TestCase):
         bar_child_site = self._createChildSiteAndTarget(
             self.portal, 'bar-child-site', 'target', title='Bar Child Site')
         qux_child_site = self._createChildSiteAndTarget(
-            self.portal, 'qux-child-site', 'target', title='Qux Child Site')
+            self.portal, 'qux-child-site', 'target')
 
         transaction.commit()
         self.setUpBrowser()
@@ -156,7 +156,7 @@ class TestSyndication(testing.TestCase):
         self.assertFalse(
             news_ctl.getControl(bar_child_site.Title()).selected,
             'Child site selected by default')
-        news_ctl.getControl(qux_child_site.Title()).selected = True
+        news_ctl.getControl(qux_child_site.getId()).selected = True
         form.getControl('Designate Auto-Approve Sites').click()
         self.assertEqual(
             self.browser.url, self.portal.absolute_url(),

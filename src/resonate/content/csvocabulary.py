@@ -22,7 +22,7 @@ class ChildSitesVocabulary(object):
             if brain.UID == nav_root_uid:
                 continue
             obj = brain.getObject()
-            vocabulary.append((obj.UID(), obj.title))
+            vocabulary.append((obj.UID(), obj.title_or_id()))
         items = [SimpleTerm(i[0], i[0], i[1]) for i in vocabulary]
         return SimpleVocabulary(items)
 
