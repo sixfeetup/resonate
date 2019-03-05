@@ -5,6 +5,14 @@
       metal:use-macro="context/main_template/macros/master"
       i18n:domain="resonate">
 <head>
+<metal:block fill-slot="style_slot">
+<style>
+    #select-organization-form input[type='submit'] {
+        position: absolute;
+        margin-left: 10px;
+    }
+</style>
+</metal:block>
 <metal:block fill-slot="javascript_head_slot">
 <script type="text/javascript">
 (function($) { $(function() {
