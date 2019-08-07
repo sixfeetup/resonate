@@ -2,7 +2,7 @@ from zope import schema
 
 from Products.CMFCore.utils import getToolByName
 
-from plone.directives import form
+from plone.supermodel import model
 from plone.uuid import interfaces as uuid_ifaces
 from plone import indexer
 from plone.app.layout.navigation import root
@@ -10,7 +10,7 @@ from plone.app.layout.navigation import root
 from resonate import MessageFactory as _
 
 
-class IProxy(form.Schema):
+class IProxy(model.Schema):
     """
     Proxy
     """
