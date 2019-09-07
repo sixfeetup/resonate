@@ -1,6 +1,5 @@
 import email
 import logging
-import rfc822
 
 from Acquisition import aq_parent
 
@@ -62,7 +61,7 @@ def send_syndication_notification(obj, event):
     if bccs == '':
         return
     bccs_by_addr = {}
-    for name, addr in rfc822.AddressList(bccs).addresslist:
+    for name, addr in email.utils.getaddresses([bccs]):
         if not bccs_by_addr.get(addr):
             bccs_by_addr[addr] = name
     mto = u', '.join(

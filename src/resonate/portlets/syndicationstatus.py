@@ -1,4 +1,5 @@
-from zope.interface import implements
+from zope import interface
+
 from AccessControl.unauthorized import Unauthorized
 
 from plone.portlets.interfaces import IPortletDataProvider
@@ -21,11 +22,10 @@ class ISyndicationStatusPortlet(IPortletDataProvider):
     """
 
 
+@interface.implementer(ISyndicationStatusPortlet)
 class Assignment(base.Assignment):
     """Portlet assignment.
     """
-
-    implements(ISyndicationStatusPortlet)
 
     def __init__(self):
         pass

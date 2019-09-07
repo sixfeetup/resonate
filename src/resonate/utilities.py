@@ -1,9 +1,10 @@
 import logging
 
+from zope import interface
+
 from BTrees.OOBTree import OOBTree
 from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent
-from zope.interface import implements
 
 from zc.queue import CompositeQueue
 
@@ -16,11 +17,11 @@ logger = logging.getLogger('resonate.notifications')
 
 # BBB Disabled in favor of "real time" notifications instead of digests.
 # Kept in place in case we want to enable it later.
+@interface.implementer(ISyndicationNotificationTool)
 class SyndicationNotificationTool(Persistent, SimpleItem):
     """
     See INotificationUtility for details
     """
-    implements(ISyndicationNotificationTool)
 
     requeue_limit = 7
 

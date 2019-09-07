@@ -1,11 +1,12 @@
-from zope.interface import implements
+from zope import interface
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
+
 from plone import api
 
 
+@interface.implementer(IVocabularyFactory)
 class ChildSitesVocabulary(object):
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         """get IDs and names of child sites"""
