@@ -4,6 +4,7 @@ import sys
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
+import zExceptions
 
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
@@ -150,7 +151,7 @@ def sendEmailToMember(member, source, status, comment):
     template = '@@syndication_status_notification'
     try:
         message_template = source.restrictedTraverse(template)
-    except NotFound as e:
+    except zExceptions.NotFound as e:
         # notify the user that we were unable to notify by email
         msg = base_error_msg % "message template cannot be found"
         status_messages.add(msg, type=u'warning')
