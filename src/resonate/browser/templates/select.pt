@@ -13,13 +13,6 @@
     }
 </style>
 </metal:block>
-<metal:block fill-slot="javascript_head_slot">
-<script type="text/javascript">
-(function($) { $(function() {
-    $(".chzn-select").chosen()
-}); })(jQuery);
-</script>
-</metal:block>
 </head>
 <body>
 <div metal:fill-slot="content-core" id="select-organization">
@@ -35,7 +28,7 @@
   <form action="" method="post" id="select-organization-form"
         tal:define="transition request/transition | nothing">
 
-    <select data-placeholder="Choose an Organization..." class="chzn-select"
+    <select data-placeholder="Choose an Organization..." class="pat-select2"
             style="width:350px;" name="organizations" tabindex="1" multiple=""
             tal:condition="python:transition=='request_syndication'">
         <tal:organizations repeat="term view/available_organizations">
@@ -43,7 +36,7 @@
         </tal:organizations>
     </select>
 
-    <select data-placeholder="Choose an Organization..." class="chzn-select"
+    <select data-placeholder="Choose an Organization..." class="pat-select2"
             style="width:350px;" name="organizations" tabindex="1"
             tal:condition="python:transition=='request_move'">
         <tal:organizations repeat="term view/available_organizations">

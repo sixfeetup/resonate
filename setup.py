@@ -41,7 +41,6 @@ setup(name='resonate',
           # -*- Extra requirements: -*-
           'zc.queue<2dev',
           'plone.app.dexterity',
-          'collective.js.chosen',
           'collective.lineage',
           'plone.formwidget.contenttree',
           'plone.api',

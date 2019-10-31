@@ -1,6 +1,7 @@
 import logging
 import sys
 
+import DateTime
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
@@ -19,7 +20,6 @@ from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.event.dx import behaviors as event_behaviors
 
 from Products.Archetypes.interfaces import referenceable
-from Products.ATContentTypes.utils import DT2dt
 
 from plone import api
 
@@ -254,7 +254,7 @@ def make_proxy(
         for attr in ('start', 'end'):
             prop = getattr(obj, attr)
             if callable(prop):
-                prop = DT2dt(prop())
+                prop = DateTime.DateTime(prop())
             setattr(proxy, attr, prop)
 
     sudo(workflow.doActionFor, proxy, event.transition.id)
