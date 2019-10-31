@@ -116,19 +116,19 @@ class TestProxyContent(testing.TestCase):
             relationship='current_syndication_targets')
 
         wft.doActionFor(s1, "publish")
-        self.failUnless(wft.getInfoFor(s1, "review_state") == "published")
-        self.failUnless(wft.getInfoFor(p1, "review_state") != "published")
-        self.failUnless(wft.getInfoFor(p2, "review_state") != "published")
+        self.assertEqual(wft.getInfoFor(s1, "review_state"), "published")
+        self.assertNotEqual(wft.getInfoFor(p1, "review_state"), "published")
+        self.assertNotEqual(wft.getInfoFor(p2, "review_state"), "published")
 
         wft.doActionFor(p1, "publish")
-        self.failUnless(wft.getInfoFor(p1, "review_state") == "published")
+        self.assertEqual(wft.getInfoFor(p1, "review_state"), "published")
         wft.doActionFor(p2, "publish")
-        self.failUnless(wft.getInfoFor(p2, "review_state") == "published")
+        self.assertEqual(wft.getInfoFor(p2, "review_state"), "published")
 
         wft.doActionFor(s1, "retract")
-        self.failUnless(wft.getInfoFor(s1, "review_state") != "published")
-        self.failUnless(wft.getInfoFor(p1, "review_state") != "published")
-        self.failUnless(wft.getInfoFor(p2, "review_state") != "published")
+        self.assertNotEqual(wft.getInfoFor(s1, "review_state"), "published")
+        self.assertNotEqual(wft.getInfoFor(p1, "review_state"), "published")
+        self.assertNotEqual(wft.getInfoFor(p2, "review_state"), "published")
         self.logout()
 
     def test_proxy_object_removed(self):
