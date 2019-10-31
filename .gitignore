@@ -1,3 +1,4 @@
+/.tox
 /develop-eggs
 /parts
 /.installed.cfg
