@@ -6,8 +6,6 @@ from Products.CMFCore.utils import getToolByName
 
 from plone.app.layout.navigation import root
 
-from Products.Archetypes.interfaces import referenceable
-
 from .. import utils
 
 
@@ -23,12 +21,11 @@ class SyndicationSourceStatusView(object):
         workflow = getToolByName(self.context, 'portal_workflow')
         source = self.context
 
-        targets = referenceable.IReferenceable(source).getRefs(
-            relationship='current_syndication_targets')
-        return bool([
-            target for target in targets
+        for target_relation in source.current_syndication_targets:
             if workflow.getInfoFor(
-                    target, 'syndication_state') == 'syndicated'])
+                    target_relation.to_object, 'syndication_state'
+            ) == 'syndicated':
+                return True
 
     def is_pending_syndication(self):
         """
@@ -37,12 +34,11 @@ class SyndicationSourceStatusView(object):
         workflow = getToolByName(self.context, 'portal_workflow')
         source = self.context
 
-        targets = referenceable.IReferenceable(source).getRefs(
-            relationship='current_syndication_targets')
-        return bool([
-            target for target in targets
+        for target_relation in source.current_syndication_targets:
             if workflow.getInfoFor(
-                    target, 'syndication_state') == 'pending_syndication'])
+                    target_relation.to_object, 'syndication_state'
+            ) == 'pending_syndication':
+                return True
 
     def is_syndication_accepted(self):
         """
@@ -63,12 +59,11 @@ class SyndicationSourceStatusView(object):
         workflow = getToolByName(self.context, 'portal_workflow')
         source = self.context
 
-        targets = referenceable.IReferenceable(source).getRefs(
-            relationship='current_syndication_targets')
-        return bool([
-            target for target in targets
+        for target_relation in source.current_syndication_targets:
             if workflow.getInfoFor(
-                    target, 'syndication_move_state') == 'moved'])
+                    target_relation.to_object, 'syndication_move_state'
+            ) == 'moved':
+                return True
 
     def is_pending_move(self):
         """
@@ -77,12 +72,11 @@ class SyndicationSourceStatusView(object):
         workflow = getToolByName(self.context, 'portal_workflow')
         source = self.context
 
-        targets = referenceable.IReferenceable(source).getRefs(
-            relationship='current_syndication_targets')
-        return bool([
-            target for target in targets
+        for target_relation in source.current_syndication_targets:
             if workflow.getInfoFor(
-                    target, 'syndication_move_state') == 'pending_move'])
+                    target_relation.to_object, 'syndication_move_state'
+            ) == 'pending_move':
+                return True
 
     def is_move_accepted(self):
         """
@@ -116,7 +110,7 @@ class SyndicationProxyStatusView(object):
         source = utils.get_proxy_source(proxy)
         source_site = root.getNavigationRootObject(source, portal)
 
-        return source_site in referenceable.IReferenceable(
-            target_site).getBRefs(
-                relationship=self.RELATIONSHIP_TEMPLATE.format(
-                    source.getPortalTypeName()))
+        return bool(utils.getRelations(
+            from_object=source_site, to_object=target_site,
+            from_attribute=self.RELATIONSHIP_TEMPLATE.format(
+                source.getPortalTypeName())))

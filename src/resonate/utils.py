@@ -7,8 +7,15 @@ from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 import zExceptions
 
+from zope import component
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
+from zope import intid
+
+from zc.relation import interfaces as rel_ifaces
+from z3c.objpath import interfaces as objpath_ifaces
+from z3c import relationfield
+from z3c.relationfield import event as relfield_event
 
 from Products.CMFCore.tests.base.security import OmnipotentUser as \
             CMFOmnipotentUser
@@ -18,8 +25,6 @@ from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.event.dx import behaviors as event_behaviors
-
-from Products.Archetypes.interfaces import referenceable
 
 from plone import api
 
@@ -211,16 +216,50 @@ def update_payload(source, payload):
     return payload
 
 
+def addRelation(from_object, to_object, from_attribute):
+    """
+    Add an arbitrary relation that isn't associated with any schema field.
+    """
+    object_path = component.getUtility(objpath_ifaces.IObjectPath)
+    relation = relationfield.create_relation(
+        object_path.path(to_object))
+    relfield_event._setRelation(from_object, from_attribute, relation)
+
+
+def getRelations(from_object=None, to_object=None, **query):
+    """
+    Get arbitrary relations that aren't associated with any schema field.
+    """
+    intids = component.queryUtility(intid.IIntIds)
+    catalog = component.queryUtility(rel_ifaces.ICatalog)
+    if from_object:
+        query['from_id'] = intids.getId(from_object)
+    if to_object:
+        query['to_id'] = intids.getId(to_object)
+    assert query, 'Must pass a relaion catalog query'
+    return list(catalog.findRelations(query))
+
+
+def removeRelations(**query):
+    """
+    Remove arbitrary relations that aren't associated with any schema field.
+    """
+    catalog = component.queryUtility(rel_ifaces.ICatalog)
+
+    for relation in getRelations(**query):
+        catalog.unindex(relation)
+
+
 def get_proxy_source(proxy):
     """
-    Retrieve the proxy's source via the back reference.
+    Retrieve the proxy's source via the back relation.
     """
-    brefs = referenceable.IReferenceable(proxy).getBRefs(
-        relationship='current_syndication_targets')
-    if len(brefs) > 0:
-        assert len(brefs) == 1, (
-            'More than one back syndication reference for proxy')
-        return brefs[0]
+    back_rels = getRelations(
+        to_object=proxy, from_attribute='current_syndication_targets')
+    if len(back_rels) > 0:
+        assert len(back_rels) == 1, (
+            'More than one back syndication relation for proxy')
+        return back_rels[0].from_object
 
 
 def make_proxy(
@@ -247,9 +286,9 @@ def make_proxy(
     # Set proxy to pending syndication so reviewer can accept/reject;
     # Use the workflow object's doActionFor so that IAfterTransitionEvent
     # gets fired correctly
-    referenceable.IReferenceable(obj).addReference(
-        referenceable.IReferenceable(proxy),
-        relationship='current_syndication_targets')
+    addRelation(
+        from_object=obj, to_object=proxy,
+        from_attribute='current_syndication_targets')
     if event_behaviors.IEventBasic.providedBy(obj):
         for attr in ('start', 'end'):
             prop = getattr(obj, attr)

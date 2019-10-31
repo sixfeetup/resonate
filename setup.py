@@ -40,11 +40,10 @@ setup(name='resonate',
           'setuptools',
           # -*- Extra requirements: -*-
           'zc.queue<2dev',
-          'plone.app.dexterity',
+          'plone.app.dexterity [relations]',
           'collective.lineage',
           'plone.formwidget.contenttree',
           'plone.api',
-          'plone.app.referenceablebehavior',
       ],
       extras_require={'test': [
           'plone.app.testing',

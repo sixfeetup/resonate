@@ -18,16 +18,18 @@
            zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".subscribers.update_proxy_fields"
       />
+
   <subscriber
-      for="Products.Archetypes.interfaces.IReference
-           OFS.interfaces.IObjectWillBeRemovedEvent"
-      handler=".subscribers.remove_proxy"
+      for=".content.proxy.IProxy
+           zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+      handler=".subscribers.remove_proxy_relations"
       />
   <subscriber
       for=".behaviors.ISyndicationSource
            zope.lifecycleevent.interfaces.IObjectRemovedEvent"
-      handler=".subscribers.remove_source"
+      handler=".subscribers.remove_source_proxies"
       />
+
   <subscriber
       for=".behaviors.ISyndicationSource
            Products.DCWorkflow.interfaces.IAfterTransitionEvent"

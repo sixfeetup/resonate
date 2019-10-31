@@ -5,8 +5,7 @@ from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
 from Products.CMFCore.utils import getToolByName
 
-from Products.Archetypes.interfaces import referenceable
-
+from .. import utils
 from .. import testing
 
 
@@ -21,12 +20,12 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        referenceable.IReferenceable(s1).addReference(
-            referenceable.IReferenceable(p1),
-            relationship='current_syndication_targets')
-        referenceable.IReferenceable(s1).addReference(
-            referenceable.IReferenceable(p2),
-            relationship='current_syndication_targets')
+        utils.addRelation(
+            from_object=s1, to_object=p1,
+            from_attribute='current_syndication_targets')
+        utils.addRelation(
+            from_object=s1, to_object=p2,
+            from_attribute='current_syndication_targets')
 
         notify(ObjectModifiedEvent(p1))
         notify(ObjectModifiedEvent(p2))
@@ -37,12 +36,12 @@ class TestProxyContent(testing.TestCase):
 
         # Seminar source object
         s2 = self._createType(self.portal, 'News Item', 's2')
-        referenceable.IReferenceable(s2).addReference(
-            referenceable.IReferenceable(p3),
-            relationship='current_syndication_targets')
-        referenceable.IReferenceable(s2).addReference(
-            referenceable.IReferenceable(p4),
-            relationship='current_syndication_targets')
+        utils.addRelation(
+            from_object=s2, to_object=p3,
+            from_attribute='current_syndication_targets')
+        utils.addRelation(
+            from_object=s2, to_object=p4,
+            from_attribute='current_syndication_targets')
 
         notify(ObjectModifiedEvent(p3))
         notify(ObjectModifiedEvent(p4))
@@ -63,12 +62,12 @@ class TestProxyContent(testing.TestCase):
         s1.setTitle('Old title')
         notify(ObjectModifiedEvent(s1))
 
-        referenceable.IReferenceable(s1).addReference(
-            referenceable.IReferenceable(p1),
-            relationship='current_syndication_targets')
-        referenceable.IReferenceable(s1).addReference(
-            referenceable.IReferenceable(p2),
-            relationship='current_syndication_targets')
+        utils.addRelation(
+            from_object=s1, to_object=p1,
+            from_attribute='current_syndication_targets')
+        utils.addRelation(
+            from_object=s1, to_object=p2,
+            from_attribute='current_syndication_targets')
 
         self.assertNotEqual(p1.title, 'New title')
         self.assertNotEqual(p2.title, 'New title')
@@ -83,12 +82,12 @@ class TestProxyContent(testing.TestCase):
         s2.setTitle('Old title')
         notify(ObjectModifiedEvent(s2))
 
-        referenceable.IReferenceable(s2).addReference(
-            referenceable.IReferenceable(p3),
-            relationship='current_syndication_targets')
-        referenceable.IReferenceable(s2).addReference(
-            referenceable.IReferenceable(p4),
-            relationship='current_syndication_targets')
+        utils.addRelation(
+            from_object=s2, to_object=p3,
+            from_attribute='current_syndication_targets')
+        utils.addRelation(
+            from_object=s2, to_object=p4,
+            from_attribute='current_syndication_targets')
 
         self.assertNotEqual(p3.title, 'New title')
         self.assertNotEqual(p4.title, 'New title')
@@ -108,12 +107,12 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        referenceable.IReferenceable(s1).addReference(
-            referenceable.IReferenceable(p1),
-            relationship='current_syndication_targets')
-        referenceable.IReferenceable(s1).addReference(
-            referenceable.IReferenceable(p2),
-            relationship='current_syndication_targets')
+        utils.addRelation(
+            from_object=s1, to_object=p1,
+            from_attribute='current_syndication_targets')
+        utils.addRelation(
+            from_object=s1, to_object=p2,
+            from_attribute='current_syndication_targets')
 
         wft.doActionFor(s1, "publish")
         self.assertEqual(wft.getInfoFor(s1, "review_state"), "published")
@@ -138,29 +137,30 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        self.assertFalse(referenceable.IReferenceable(s1).getRefs(
-            relationship='current_syndication_targets'))
+        self.assertFalse(utils.getRelations(
+            from_object=s1, from_attribute='current_syndication_targets'))
 
-        referenceable.IReferenceable(s1).addReference(
-            referenceable.IReferenceable(p1),
-            relationship='current_syndication_targets')
+        utils.addRelation(
+            from_object=s1, to_object=p1,
+            from_attribute='current_syndication_targets')
 
+        import pdb; pdb.set_trace()
         self.portal.manage_delObjects(ids=['p1'])
-        self.assertFalse(referenceable.IReferenceable(s1).getRefs(
-            relationship='current_syndication_targets'))
+        self.assertFalse(utils.getRelations(
+            from_object=s1, from_attribute='current_syndication_targets'))
 
         # News Item source object
         s2 = self._createType(self.portal, 'News Item', 's2')
-        self.assertFalse(referenceable.IReferenceable(s1).getRefs(
-            relationship='current_syndication_targets'))
+        self.assertFalse(utils.getRelations(
+            from_object=s1, from_attribute='current_syndication_targets'))
 
-        referenceable.IReferenceable(s2).addReference(
-            referenceable.IReferenceable(p2),
-            relationship='current_syndication_targets')
+        utils.addRelation(
+            from_object=s2, to_object=p2,
+            from_attribute='current_syndication_targets')
 
         self.portal.manage_delObjects(ids=['p2'])
-        self.assertFalse(referenceable.IReferenceable(s2).getRefs(
-            relationship='current_syndication_targets'))
+        self.assertFalse(utils.getRelations(
+            from_object=s2, from_attribute='current_syndication_targets'))
 
 
 def test_suite():

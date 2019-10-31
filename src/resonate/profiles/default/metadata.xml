@@ -3,7 +3,7 @@
   <version>0003</version>
   <dependencies>
     <dependency>profile-plone.app.dexterity:default</dependency>
-    <dependency>profile-plone.app.referenceablebehavior:default</dependency>
+    <dependency>profile-plone.app.relationfield:default</dependency>
 
     <dependency>profile-collective.lineage:default</dependency>
   </dependencies>

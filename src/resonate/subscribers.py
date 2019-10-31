@@ -11,8 +11,6 @@ from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFCore.utils import getToolByName
 
-from Products.Archetypes.interfaces import referenceable
-from plone.app.referenceablebehavior import referenceable as ref_behavior
 from plone.app.event.dx import behaviors as event_behaviors
 
 from plone import api
@@ -124,9 +122,9 @@ def send_syndication_notification(obj, event):
 def update_proxy_fields(obj, event):
     """Update proxy title when source title is modified
     """
-    proxies = referenceable.IReferenceable(obj).getRefs(
-        relationship='current_syndication_targets')
-    if not proxies:
+    proxy_relations = utils.getRelations(
+        from_object=obj, from_attribute='current_syndication_targets')
+    if not proxy_relations:
         return
 
     portal_properties = getToolByName(obj, 'portal_properties')
@@ -136,7 +134,8 @@ def update_proxy_fields(obj, event):
     source_title = obj.title_or_id()
     if not isinstance(source_title, unicode):
         source_title = unicode(obj.title_or_id(), encoding)
-    for proxy in proxies:
+    for proxy_relation in proxy_relations:
+        proxy = proxy_relation.to_object
         reindex = False
         if not IProxy.providedBy(proxy):
             continue
@@ -154,28 +153,24 @@ def update_proxy_fields(obj, event):
             proxy.reindexObject()
 
 
-def remove_proxy(obj, event):
-    """Remove proxy after reference is removed
+def remove_proxy_relations(obj, event):
     """
-    proxy = obj.getTargetObject()
-    if isinstance(proxy, ref_behavior.ATReferenceable):
-        proxy = proxy.context
-    if not IProxy.providedBy(proxy):
-        return
-
-    source = obj.getSourceObject()
-    if isinstance(source, ref_behavior.ATReferenceable):
-        source = source.context
-    source._v_resonate_syndicated_proxies = getattr(
-        source, '_v_resonate_syndicated_proxies', [])
-    source._v_resonate_syndicated_proxies.append(proxy)
-
-
-def remove_source(obj, event):
-    """Remove proxy after source object is removed
+    Remove a source's relations after proxy object is deleted.
     """
-    source = obj
-    for proxy in getattr(source, '_v_resonate_syndicated_proxies', []):
+    utils.removeRelations(
+        to_object=obj,
+        from_attribute='current_syndication_targets')
+
+
+def remove_source_proxies(obj, event):
+    """
+    Remove a sources proxies after source object is deleted.
+    """
+    proxy_relations = utils.getRelations(
+        from_object=obj,
+        from_attribute='current_syndication_targets')
+    for proxy_relation in proxy_relations:
+        proxy = proxy_relation.to_object
         parent = aq_parent(proxy)
         parent.manage_delObjects(ids=[proxy.getId()])
 
@@ -183,9 +178,10 @@ def remove_source(obj, event):
 def unpublish_proxy(obj, event):
     """Unpublish proxy after source object is unpublished
     """
-    proxies = referenceable.IReferenceable(obj).getRefs(
-        relationship='current_syndication_targets')
-    if not proxies:
+    proxy_relations = utils.getRelations(
+        from_object=obj,
+        from_attribute='current_syndication_targets')
+    if not proxy_relations:
         return
 
     old_state = event.old_state.id
@@ -193,7 +189,8 @@ def unpublish_proxy(obj, event):
         return
 
     wft = getToolByName(obj, 'portal_workflow')
-    for proxy in proxies:
+    for proxy_relation in proxy_relations:
+        proxy = proxy_relation.to_object
         if wft.getInfoFor(proxy, "review_state") == "published":
             sudo(wft.doActionFor, proxy, 'retract')
 
@@ -225,7 +222,7 @@ def accept_syndication(obj, event):
 def reject_syndication(obj, event):
     """
     Update the source object's rejected_syndication_sites
-    with a reference to the proxy object's site and remove
+    with a relation to the proxy object's site and remove
     proxy object.
     """
     # Bail out if this isn't our workflow
@@ -244,12 +241,12 @@ def reject_syndication(obj, event):
 
     source = utils.get_proxy_source(obj)
 
-    referenceable.IReferenceable(source).addReference(
-        referenceable.IReferenceable(organization),
-        relationship='rejected_syndication_sites')
-    referenceable.IReferenceable(source).deleteReference(
-        referenceable.IReferenceable(obj),
-        relationship='current_syndication_targets')
+    utils.addRelation(
+        from_object=source, to_object=organization,
+        from_attribute='rejected_syndication_sites')
+    utils.removeRelations(
+        from_object=source, to_object=obj,
+        from_attribute='current_syndication_targets')
 
     # Use the workflow object's doActionFor so that IAfterTransitionEvent
     # gets fired correctly

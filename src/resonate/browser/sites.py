@@ -7,10 +7,9 @@ from zope.schema import interfaces as schema_ifaces
 
 from Products.statusmessages import interfaces as status_ifaces
 
-from Products.Archetypes.interfaces import referenceable
-
 from plone import api
 
+from .. import utils
 from . import status
 
 
@@ -27,20 +26,25 @@ class ResonateSiteAutoApproveForm(object):
         Render the form or handle a submission.
         """
         if 'submit' in self.request.form:
-            refs = referenceable.IReferenceable(self.context)
+            catalog = api.portal.get_tool('portal_catalog')
             for portal_type in self.syndication_types():
                 relationship = self.RELATIONSHIP_TEMPLATE.format(
                     portal_type.getId())
-                for target_site in self.request.form.get(
+                for target_site_uuid in self.request.form.get(
                         portal_type.getId(), []):
-                    refs.addReference(target_site, relationship=relationship)
+                    target_site = catalog(UID=target_site_uuid)[0].getObject()
+                    if not utils.getRelations(
+                            from_object=self.context, to_object=target_site,
+                            from_attribute=relationship):
+                        utils.addRelation(
+                            self.context, target_site, relationship)
 
             status = status_ifaces.IStatusMessage(self.request)
             status.addStatusMessage(
                 'Auto-approve target sites designated successfully')
 
             return self.request.RESPONSE.redirect(self.context.absolute_url())
-                    
+
         return super(ResonateSiteAutoApproveForm, self).__call__()
 
     def can_designate_auto_approve(self):
@@ -76,5 +80,6 @@ class ResonateSiteAutoApproveForm(object):
         """
         Which target sites have been designated for this portal content type.
         """
-        refs = referenceable.IReferenceable(self.context)
-        return refs.getRefs(self.RELATIONSHIP_TEMPLATE.format(portal_type))
+        return [relation.to_object for relation in utils.getRelations(
+            from_object=self.context,
+            from_attribute=self.RELATIONSHIP_TEMPLATE.format(portal_type))]

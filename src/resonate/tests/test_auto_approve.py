@@ -8,46 +8,42 @@ from Products.CMFCore.utils import getToolByName
 
 from plone.uuid import interfaces as uuid_ifaces
 
-from Products.Archetypes.interfaces import referenceable
-
+from .. import utils
 from .. import testing
 
 
 class TestSyndication(testing.TestCase):
     __doc__
 
-    def test_portal_referencable(self):
+    def test_portal_relatable(self):
         """
-        The portal supports Archetypes references.
+        The portal supports relations.
         """
-        portal_uid = uuid_ifaces.IUUID(self.portal)
-        self.assertTrue(
-            portal_uid,
-            'Missing portal UID')
-        uid_brains = self.portal.uid_catalog(UID=portal_uid)
-        self.assertEqual(
-            len(uid_brains), 1,
-            'Wrong number of portal UID results in the catalog')
-        portal_refs = referenceable.IReferenceable(self.portal)
-
         corge_news = self._createType(
             self.portal, 'News Item', 'corge-news-title')
-        corge_refs = referenceable.IReferenceable(corge_news)
-        portal_refs.addReference(corge_refs, relationship='from-portal')
-        corge_refs.addReference(portal_refs, relationship='to-portal')
+        utils.addRelation(
+            from_object=self.portal, to_object=corge_news,
+            from_attribute='from-portal')
+        utils.addRelation(
+            from_object=corge_news, to_object=self.portal,
+            from_attribute='to-portal')
 
         self.assertTrue(
-            portal_refs.getRefs('from-portal'),
-            'Wrong number of refs from portal')
+            utils.getRelations(
+                from_object=self.portal, from_attribute='from-portal'),
+            'Wrong number of rels from portal')
         self.assertTrue(
-            portal_refs.getBRefs('to-portal'),
-            'Wrong number of refs to portal')
+            utils.getRelations(
+                to_object=self.portal, from_attribute='to-portal'),
+            'Wrong number of rels to portal')
         self.assertTrue(
-            corge_refs.getBRefs('from-portal'),
-            'Wrong number of refs from portal')
+            utils.getRelations(
+                to_object=corge_news, from_attribute='from-portal'),
+            'Wrong number of rels from portal')
         self.assertTrue(
-            corge_refs.getRefs('to-portal'),
-            'Wrong number of refs to portal')
+            utils.getRelations(
+                from_object=corge_news, from_attribute='to-portal'),
+            'Wrong number of rels to portal')
 
     def test_auto_approve_workflow(self):
         """
@@ -60,11 +56,10 @@ class TestSyndication(testing.TestCase):
         qux_child_site = self._createChildSiteAndTarget(
             self.portal, 'qux-child-site', 'target', title='Qux Child Site')
 
-        portal_refs = referenceable.IReferenceable(self.portal)
         for child_site in (foo_child_site, qux_child_site):
-            portal_refs.addReference(
-                referenceable.IReferenceable(child_site),
-                relationship='resonate.auto-approve.News Item')
+            utils.addRelation(
+                from_object=self.portal, to_object=child_site,
+                from_attribute='resonate.auto-approve.News Item')
 
         corge_news = self._createType(
             self.portal, 'News Item', 'corge-news-title')
@@ -136,7 +131,7 @@ class TestSyndication(testing.TestCase):
 
     def test_auto_approve_form(self):
         """
-        The auto-approve action and form set references.
+        The auto-approve action and form set relations.
         """
         foo_child_site = self._createChildSiteAndTarget(
             self.portal, 'foo-child-site', 'target', title='Foo Child Site')
@@ -176,15 +171,18 @@ class TestSyndication(testing.TestCase):
             self.browser.contents,
             'Wrong or missing success message')
 
-        portal_refs = referenceable.IReferenceable(self.portal)
-        news_refs = portal_refs.getRefs('resonate.auto-approve.News Item')
+        news_rels = [news_rel.to_object for news_rel in utils.getRelations(
+            from_object=self.portal,
+            from_attribute='resonate.auto-approve.News Item')]
         self.assertEqual(
-            news_refs, [foo_child_site, qux_child_site],
-            'Wrong auto-approve references after submitting form')
-        event_refs = portal_refs.getRefs('resonate.auto-approve.Event')
+            news_rels, [foo_child_site, qux_child_site],
+            'Wrong auto-approve relations after submitting form')
+        event_rels = utils.getRelations(
+            from_object=self.portal,
+            from_attribute='resonate.auto-approve.Event')
         self.assertFalse(
-            event_refs,
-            'Auto-approve references set for wrong type')
+            event_rels,
+            'Auto-approve relations set for wrong type')
 
         self.browser.getLink(
             'Designate Syndication Auto-Approve Targets').click()

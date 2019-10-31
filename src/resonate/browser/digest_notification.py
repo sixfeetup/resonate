@@ -3,8 +3,6 @@ from Products.CMFCore.utils import getToolByName
 from plone.app.uuid.utils import uuidToObject
 from plone.app.layout.navigation.root import getNavigationRootObject
 
-from Products.Archetypes.interfaces import referenceable
-
 from resonate.content.proxy import IProxy
 
 
@@ -35,10 +33,9 @@ class DigestNotification(BrowserView):
         if IProxy.providedBy(source):
             return payload
 
-        proxies = referenceable.IReferenceable(source).getRefs(
-            relationship='current_syndication_targets')
         organization_title = []
-        for proxy in proxies:
+        for proxy_relation in source.current_syndication_targets:
+            proxy = proxy_relation.to_object
             new_organization = getNavigationRootObject(proxy, self.context)
             organization_title.append(new_organization.title_or_id())
         payload['organization_title'] = ','.join(organization_title)

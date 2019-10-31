@@ -8,8 +8,6 @@ import transaction
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 
-from Products.Archetypes.interfaces import referenceable
-
 from plone.app import testing as plone_testing
 
 from .. import utils
@@ -49,12 +47,12 @@ class TestSyndication(testing.TestCase):
         types = [
             ('Event',
              'events',
-             lambda x: referenceable.IReferenceable(x).getRefs(
-                 relationship='current_syndication_targets')),
+             lambda x: utils.getRelations(
+                 from_object=x, from_attribute='current_syndication_targets')),
             ('News Item',
              'news',
-             lambda x: referenceable.IReferenceable(x).getRefs(
-                 relationship='current_syndication_targets')),
+             lambda x: utils.getRelations(
+                 from_object=x, from_attribute='current_syndication_targets')),
         ]
 
         for idx, _type in enumerate(types):
@@ -93,12 +91,12 @@ class TestSyndication(testing.TestCase):
         types = [
             ('Event',
              'events',
-             lambda x: referenceable.IReferenceable(x).getRefs(
-                 relationship='rejected_syndication_sites')),
+             lambda x: utils.getRelations(
+                 from_object=x, from_attribute='rejected_syndication_sites')),
             ('News Item',
              'news',
-             lambda x: referenceable.IReferenceable(x).getRefs(
-                 relationship='rejected_syndication_sites')),
+             lambda x: utils.getRelations(
+                 from_object=x, from_attribute='rejected_syndication_sites')),
         ]
 
         for idx, _type in enumerate(types):

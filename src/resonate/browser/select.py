@@ -12,8 +12,6 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from plone import api
 
-from Products.Archetypes.interfaces import referenceable
-
 from resonate.utils import get_organizations_by_target
 
 logger = logging.getLogger(__name__)
@@ -56,8 +54,8 @@ class SelectOrganizations(BrowserView):
             return self.index()
 
         wf_chain = wf_tool.getChainFor(context)
-        # A check to make sure this item has the syndication_source_workflow applied,
-        # if not, just do the standard action
+        # A check to make sure this item has the syndication_source_workflow
+        # applied, if not, just do the standard action
         if 'syndication_source_workflow' not in wf_chain:
             status.addStatusMessage(not_supported_msg, type='warn')
             if current_transition is None:
@@ -116,13 +114,12 @@ class SelectOrganizations(BrowserView):
     @property
     def target_proxies(self):
         pc = getToolByName(self, 'portal_catalog')
-        current_syndication_targets = referenceable.IReferenceable(
-            self.context).getRefs(relationship='current_syndication_targets')
         kw = dict(
             portal_type='resonate.proxy',
-            UID=[api.content.get_uuid(t)
-                 for t in current_syndication_targets],
-        )
+            UID=[
+                api.content.get_uuid(target_relation.to_object)
+                for target_relation in
+                self.context.current_syndication_targets])
         if self.organization_uids:
             # Verify this object has not already been syndicated to the
             # requested organization
