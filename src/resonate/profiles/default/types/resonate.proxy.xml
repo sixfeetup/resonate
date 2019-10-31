@@ -3,7 +3,6 @@
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title">Proxy</property>
  <property name="description">Proxy</property>
- <property name="icon_expr">string:${portal_url}/document_icon.png</property>
  <property name="factory">resonate.proxy</property>
  <property name="link_target"></property>
  <property name="immediate_view">proxy_redirect_view</property>
