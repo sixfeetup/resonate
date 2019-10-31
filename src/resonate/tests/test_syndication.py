@@ -335,7 +335,7 @@ class TestSyndication(testing.TestCase):
         types = getToolByName(self.portal, 'portal_types')
         behaviors = types['Event'].behaviors
         self.assertIn(
-            'plone.app.content.interfaces.INameFromTitle', behaviors,
+            'plone.namefromtitle', behaviors,
             'Default behaviors removed')
         self.assertIn(
             'resonate.behaviors.ISyndicationSource', behaviors,
