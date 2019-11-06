@@ -39,10 +39,9 @@ setup(name='resonate',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'zc.queue<2dev',
+          'zc.queue',
           'plone.app.dexterity [relations]',
           'collective.lineage',
-          'plone.formwidget.contenttree',
           'plone.api',
       ],
       extras_require={'test': [
