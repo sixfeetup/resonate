@@ -144,7 +144,6 @@ class TestProxyContent(testing.TestCase):
             from_object=s1, to_object=p1,
             from_attribute='current_syndication_targets')
 
-        import pdb; pdb.set_trace()
         self.portal.manage_delObjects(ids=['p1'])
         self.assertFalse(utils.getRelations(
             from_object=s1, from_attribute='current_syndication_targets'))
