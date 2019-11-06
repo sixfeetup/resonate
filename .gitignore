@@ -3,3 +3,5 @@
 /parts
 /.installed.cfg
 /bin
+/.mr.developer.cfg
+/develop

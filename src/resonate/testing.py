@@ -78,5 +78,5 @@ class TestCase(ptc.PloneTestCase):
             name='__ac_password').value = testing.SITE_OWNER_PASSWORD
         self.browser.getControl('Log in').click()
         self.assertIn(
-            "You are now logged in", self.browser.contents.decode('utf-8'),
+            "You are now logged in", self.browser.contents,
             'Missing login confirmation message')

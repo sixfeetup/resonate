@@ -1,5 +1,7 @@
 import logging
 
+import six
+
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_inner
 from zope.component import getUtility
@@ -132,7 +134,7 @@ class SelectOrganizations(BrowserView):
         # The list of organizations to syndicate this content to
         organization_uids = self.request.form.get('organizations', [])
         # Be sure that we have a list and not string:
-        if isinstance(organization_uids, basestring):
+        if isinstance(organization_uids, six.string_types):
             organization_uids = [organization_uids]
         return organization_uids
 

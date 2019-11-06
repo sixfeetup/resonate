@@ -1,6 +1,9 @@
 import email
 import logging
 
+import six
+from six import moves
+
 from Acquisition import aq_parent
 
 from zope import component
@@ -64,7 +67,7 @@ def send_syndication_notification(obj, event):
             bccs_by_addr[addr] = name
     mto = u', '.join(
         email.utils.formataddr((name, addr))
-        for addr, name in bccs_by_addr.iteritems())
+        for addr, name in bccs_by_addr.items())
 
     mailhost = getToolByName(obj, 'MailHost')
     payload = {
@@ -101,7 +104,7 @@ def send_syndication_notification(obj, event):
 
     subject = ('Pending review status for {0!r}'.format(obj))
     # Create the enclosing (outer) message
-    outer = email.mime.Multipart.MIMEMultipart()
+    outer = moves.email_mime_multipart.MIMEMultipart()
     # Create the HTML
     digest_notification = component.getMultiAdapter(
         (obj, obj.REQUEST), name='digest_notification')
@@ -132,7 +135,7 @@ def update_proxy_fields(obj, event):
                                                              'utf-8')
 
     source_title = obj.title_or_id()
-    if not isinstance(source_title, unicode):
+    if not isinstance(source_title, six.string_types):
         source_title = unicode(obj.title_or_id(), encoding)
     for proxy_relation in proxy_relations:
         proxy = proxy_relation.to_object

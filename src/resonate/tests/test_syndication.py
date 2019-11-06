@@ -1,7 +1,8 @@
 # For most cases it is easiest to reuse the test setup from nd.policy.
 
 import unittest
-import urlparse
+
+from six.moves import urllib
 
 import transaction
 
@@ -26,7 +27,7 @@ def doActionFor(self, obj, transition, *args, **kwargs):
         return self.doActionFor(obj, transition)
 
     action_view = obj.restrictedTraverse(
-        urlparse.urlsplit(action_url).path)
+        urllib.parse.urlsplit(action_url).path)
     return action_view(*args, **kwargs)
 
 
