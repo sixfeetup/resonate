@@ -1,6 +1,6 @@
 from Products.CMFCore.utils import getToolByName
 
-from plone.testing import z2
+from plone.testing import zope
 from plone.app import testing
 from plone.app.testing import PloneWithPackageLayer
 from plone.app.testing import IntegrationTesting
@@ -65,7 +65,7 @@ class TestCase(ptc.PloneTestCase):
         Start a logged in browser session.
         """
         app = self.layer['app']
-        self.browser = z2.Browser(app)
+        self.browser = zope.Browser(app)
         self.browser.handleErrors = False  # Don't get HTTP 500 pages
 
         portal = self.layer['portal']
