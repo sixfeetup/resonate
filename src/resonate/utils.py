@@ -227,7 +227,7 @@ def addRelation(from_object, to_object, from_attribute):
 
 def getRelations(from_object=None, to_object=None, **query):
     """
-    Get arbitrary relations that aren't associated with any schema field.
+    Get arbitrary relations.  Mostly useful for querying back relations.
     """
     intids = component.queryUtility(intid.IIntIds)
     catalog = component.queryUtility(rel_ifaces.ICatalog)
@@ -237,16 +237,6 @@ def getRelations(from_object=None, to_object=None, **query):
         query['to_id'] = intids.getId(to_object)
     assert query, 'Must pass a relaion catalog query'
     return list(catalog.findRelations(query))
-
-
-def removeRelations(**query):
-    """
-    Remove arbitrary relations that aren't associated with any schema field.
-    """
-    catalog = component.queryUtility(rel_ifaces.ICatalog)
-
-    for relation in getRelations(**query):
-        catalog.unindex(relation)
 
 
 def get_proxy_source(proxy):
@@ -282,9 +272,10 @@ def make_proxy(
     # Set proxy to pending syndication so reviewer can accept/reject;
     # Use the workflow object's doActionFor so that IAfterTransitionEvent
     # gets fired correctly
-    addRelation(
-        from_object=obj, to_object=proxy,
-        from_attribute='current_syndication_targets')
+    source_form = behaviors.SyndicationSourceEditForm(obj)
+    proxies = source_form.get_data('current_syndication_targets')
+    proxies.append(proxy)
+    source_form.applyChanges(dict(current_syndication_targets=proxies))
     if event_behaviors.IEventBasic.providedBy(obj):
         for attr in ('start', 'end'):
             prop = getattr(obj, attr)

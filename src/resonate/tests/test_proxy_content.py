@@ -5,7 +5,7 @@ from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
 from Products.CMFCore.utils import getToolByName
 
-from .. import utils
+from .. import behaviors
 from .. import testing
 
 
@@ -20,12 +20,8 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        utils.addRelation(
-            from_object=s1, to_object=p1,
-            from_attribute='current_syndication_targets')
-        utils.addRelation(
-            from_object=s1, to_object=p2,
-            from_attribute='current_syndication_targets')
+        s1_form = behaviors.SyndicationSourceEditForm(s1)
+        s1_form.applyChanges(dict(current_syndication_targets=[p1, p2]))
 
         notify(ObjectModifiedEvent(p1))
         notify(ObjectModifiedEvent(p2))
@@ -36,12 +32,8 @@ class TestProxyContent(testing.TestCase):
 
         # Seminar source object
         s2 = self._createType(self.portal, 'News Item', 's2')
-        utils.addRelation(
-            from_object=s2, to_object=p3,
-            from_attribute='current_syndication_targets')
-        utils.addRelation(
-            from_object=s2, to_object=p4,
-            from_attribute='current_syndication_targets')
+        s2_form = behaviors.SyndicationSourceEditForm(s2)
+        s2_form.applyChanges(dict(current_syndication_targets=[p3, p4]))
 
         notify(ObjectModifiedEvent(p3))
         notify(ObjectModifiedEvent(p4))
@@ -62,12 +54,8 @@ class TestProxyContent(testing.TestCase):
         s1.setTitle('Old title')
         notify(ObjectModifiedEvent(s1))
 
-        utils.addRelation(
-            from_object=s1, to_object=p1,
-            from_attribute='current_syndication_targets')
-        utils.addRelation(
-            from_object=s1, to_object=p2,
-            from_attribute='current_syndication_targets')
+        s1_form = behaviors.SyndicationSourceEditForm(s1)
+        s1_form.applyChanges(dict(current_syndication_targets=[p1, p2]))
 
         self.assertNotEqual(p1.title, 'New title')
         self.assertNotEqual(p2.title, 'New title')
@@ -82,12 +70,8 @@ class TestProxyContent(testing.TestCase):
         s2.setTitle('Old title')
         notify(ObjectModifiedEvent(s2))
 
-        utils.addRelation(
-            from_object=s2, to_object=p3,
-            from_attribute='current_syndication_targets')
-        utils.addRelation(
-            from_object=s2, to_object=p4,
-            from_attribute='current_syndication_targets')
+        s2_form = behaviors.SyndicationSourceEditForm(s2)
+        s2_form.applyChanges(dict(current_syndication_targets=[p3, p4]))
 
         self.assertNotEqual(p3.title, 'New title')
         self.assertNotEqual(p4.title, 'New title')
@@ -107,12 +91,8 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        utils.addRelation(
-            from_object=s1, to_object=p1,
-            from_attribute='current_syndication_targets')
-        utils.addRelation(
-            from_object=s1, to_object=p2,
-            from_attribute='current_syndication_targets')
+        s1_form = behaviors.SyndicationSourceEditForm(s1)
+        s1_form.applyChanges(dict(current_syndication_targets=[p1, p2]))
 
         wft.doActionFor(s1, "publish")
         self.assertEqual(wft.getInfoFor(s1, "review_state"), "published")
@@ -137,29 +117,23 @@ class TestProxyContent(testing.TestCase):
 
         # Event source object
         s1 = self._createType(self.portal, 'Event', 's1')
-        self.assertFalse(utils.getRelations(
-            from_object=s1, from_attribute='current_syndication_targets'))
+        s1_form = behaviors.SyndicationSourceEditForm(s1)
+        self.assertFalse(s1_form.get_data('current_syndication_targets'))
 
-        utils.addRelation(
-            from_object=s1, to_object=p1,
-            from_attribute='current_syndication_targets')
+        s1_form.applyChanges(dict(current_syndication_targets=[p1]))
 
         self.portal.manage_delObjects(ids=['p1'])
-        self.assertFalse(utils.getRelations(
-            from_object=s1, from_attribute='current_syndication_targets'))
+        self.assertFalse(s1_form.get_data('current_syndication_targets'))
 
         # News Item source object
         s2 = self._createType(self.portal, 'News Item', 's2')
-        self.assertFalse(utils.getRelations(
-            from_object=s1, from_attribute='current_syndication_targets'))
+        self.assertFalse(s1_form.get_data('current_syndication_targets'))
 
-        utils.addRelation(
-            from_object=s2, to_object=p2,
-            from_attribute='current_syndication_targets')
+        s2_form = behaviors.SyndicationSourceEditForm(s2)
+        s2_form.applyChanges(dict(current_syndication_targets=[p2]))
 
         self.portal.manage_delObjects(ids=['p2'])
-        self.assertFalse(utils.getRelations(
-            from_object=s2, from_attribute='current_syndication_targets'))
+        self.assertFalse(s2_form.get_data('current_syndication_targets'))
 
 
 def test_suite():

@@ -9,7 +9,7 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
 from resonate import MessageFactory as _
-from .. import utils
+from .. import behaviors
 
 
 class ISyndicationStatusPortlet(IPortletDataProvider):
@@ -41,14 +41,12 @@ class Renderer(base.Renderer):
     render = ViewPageTemplateFile('syndicationstatus.pt')
 
     def _get_targets_by_state(self, state):
-        proxy_relations = utils.getRelations(
-            from_object=self.context,
-            from_attribute='current_syndication_targets')
+        source_form = behaviors.SyndicationSourceEditForm(self.context)
+        proxies = source_form.get_data('current_syndication_targets')
 
         organization_paths = set()
         wft = getToolByName(self.context, 'portal_workflow')
-        for proxy_relation in proxy_relations:
-            proxy = proxy_relation.to_object
+        for proxy in proxies:
             status = wft.getInfoFor(proxy, 'review_state')
             if status != state:
                 continue
@@ -73,11 +71,9 @@ class Renderer(base.Renderer):
         return self._get_targets_by_state('pending')
 
     def rejected_syndications(self):
-        return [
-            rejected_relation.to_object
-            for rejected_relation in utils.getRelations(
-                    from_object=self.context,
-                    from_attribute='rejected_syndication_sites')]
+        source_form = behaviors.SyndicationSourceEditForm(self.context)
+        proxies = source_form.get_data('rejected_syndication_sites')
+        return proxies
 
     @property
     def available(self):

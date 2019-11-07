@@ -13,6 +13,7 @@ from plone.app import testing as plone_testing
 
 from .. import utils
 from resonate.utils import update_payload
+from .. import behaviors
 
 from .. import testing
 
@@ -48,12 +49,12 @@ class TestSyndication(testing.TestCase):
         types = [
             ('Event',
              'events',
-             lambda x: utils.getRelations(
-                 from_object=x, from_attribute='current_syndication_targets')),
+             lambda x: behaviors.SyndicationSourceEditForm(x).get_data(
+                 'current_syndication_targets')),
             ('News Item',
              'news',
-             lambda x: utils.getRelations(
-                 from_object=x, from_attribute='current_syndication_targets')),
+             lambda x: behaviors.SyndicationSourceEditForm(x).get_data(
+                 'current_syndication_targets')),
         ]
 
         for idx, _type in enumerate(types):
@@ -92,12 +93,12 @@ class TestSyndication(testing.TestCase):
         types = [
             ('Event',
              'events',
-             lambda x: utils.getRelations(
-                 from_object=x, from_attribute='rejected_syndication_sites')),
+             lambda x: behaviors.SyndicationSourceEditForm(x).get_data(
+                 'rejected_syndication_sites')),
             ('News Item',
              'news',
-             lambda x: utils.getRelations(
-                 from_object=x, from_attribute='rejected_syndication_sites')),
+             lambda x: behaviors.SyndicationSourceEditForm(x).get_data(
+                 'rejected_syndication_sites')),
         ]
 
         for idx, _type in enumerate(types):

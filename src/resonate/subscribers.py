@@ -1,7 +1,6 @@
 import email
 import logging
 
-import six
 from six import moves
 
 from Acquisition import aq_parent
@@ -125,20 +124,13 @@ def send_syndication_notification(obj, event):
 def update_proxy_fields(obj, event):
     """Update proxy title when source title is modified
     """
-    proxy_relations = utils.getRelations(
-        from_object=obj, from_attribute='current_syndication_targets')
-    if not proxy_relations:
+    source_form = behaviors.SyndicationSourceEditForm(obj)
+    proxies = source_form.get_data('current_syndication_targets')
+    if not proxies:
         return
 
-    portal_properties = getToolByName(obj, 'portal_properties')
-    encoding = portal_properties.site_properties.getProperty('default_charset',
-                                                             'utf-8')
-
     source_title = obj.title_or_id()
-    if not isinstance(source_title, six.string_types):
-        source_title = unicode(obj.title_or_id(), encoding)
-    for proxy_relation in proxy_relations:
-        proxy = proxy_relation.to_object
+    for proxy in proxies:
         reindex = False
         if not IProxy.providedBy(proxy):
             continue
@@ -160,20 +152,23 @@ def remove_proxy_relations(obj, event):
     """
     Remove a source's relations after proxy object is deleted.
     """
-    utils.removeRelations(
-        to_object=obj,
-        from_attribute='current_syndication_targets')
+    for relation in utils.getRelations(
+            to_object=obj,
+            from_attribute='current_syndication_targets'):
+        source = relation.from_object
+        source_form = behaviors.SyndicationSourceEditForm(source)
+        proxies = source_form.get_data('current_syndication_targets')
+        proxies.remove(obj)
+        source_form.applyChanges(dict(current_syndication_targets=proxies))
 
 
 def remove_source_proxies(obj, event):
     """
     Remove a sources proxies after source object is deleted.
     """
-    proxy_relations = utils.getRelations(
-        from_object=obj,
-        from_attribute='current_syndication_targets')
-    for proxy_relation in proxy_relations:
-        proxy = proxy_relation.to_object
+    source_form = behaviors.SyndicationSourceEditForm(obj)
+    proxies = source_form.get_data('current_syndication_targets')
+    for proxy in proxies:
         parent = aq_parent(proxy)
         parent.manage_delObjects(ids=[proxy.getId()])
 
@@ -181,10 +176,9 @@ def remove_source_proxies(obj, event):
 def unpublish_proxy(obj, event):
     """Unpublish proxy after source object is unpublished
     """
-    proxy_relations = utils.getRelations(
-        from_object=obj,
-        from_attribute='current_syndication_targets')
-    if not proxy_relations:
+    source_form = behaviors.SyndicationSourceEditForm(obj)
+    proxies = source_form.get_data('current_syndication_targets')
+    if not proxies:
         return
 
     old_state = event.old_state.id
@@ -192,8 +186,7 @@ def unpublish_proxy(obj, event):
         return
 
     wft = getToolByName(obj, 'portal_workflow')
-    for proxy_relation in proxy_relations:
-        proxy = proxy_relation.to_object
+    for proxy in proxies:
         if wft.getInfoFor(proxy, "review_state") == "published":
             sudo(wft.doActionFor, proxy, 'retract')
 
@@ -244,12 +237,16 @@ def reject_syndication(obj, event):
 
     source = utils.get_proxy_source(obj)
 
-    utils.addRelation(
-        from_object=source, to_object=organization,
-        from_attribute='rejected_syndication_sites')
-    utils.removeRelations(
-        from_object=source, to_object=obj,
-        from_attribute='current_syndication_targets')
+    source_form = behaviors.SyndicationSourceEditForm(source)
+    current_syndication_targets = source_form.get_data(
+        'current_syndication_targets')
+    current_syndication_targets.remove(obj)
+    rejected_syndication_sites = source_form.get_data(
+        'rejected_syndication_sites')
+    rejected_syndication_sites.append(organization)
+    source_form.applyChanges(dict(
+        current_syndication_targets=current_syndication_targets,
+        rejected_syndication_sites=rejected_syndication_sites))
 
     # Use the workflow object's doActionFor so that IAfterTransitionEvent
     # gets fired correctly
