@@ -21,12 +21,12 @@
 
   <subscriber
       for=".content.proxy.IProxy
-           zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+           zope.intid.interfaces.IntIdRemovedEvent"
       handler=".subscribers.remove_proxy_relations"
       />
   <subscriber
       for=".behaviors.ISyndicationSource
-           zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+           zope.intid.interfaces.IntIdRemovedEvent"
       handler=".subscribers.remove_source_proxies"
       />
 

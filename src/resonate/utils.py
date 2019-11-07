@@ -93,14 +93,13 @@ def upgrade_logger(logger_name, level,
 def get_organizations_by_target(context, uids):
     members = getToolByName(context, 'portal_membership').getMembersFolder()
     portal_catalog = getToolByName(context, 'portal_catalog')
-    uid_catalog = getToolByName(context, 'uid_catalog')
     home_folder_path = members is not None and '/'.join(
         members.getPhysicalPath())
     context_path = '/'.join(context.getPhysicalPath())
 
     organizations = [
         brain.getObject()
-        for brain in uid_catalog(UID=uids)
+        for brain in portal_catalog(UID=uids)
     ]
     result = {}
     for organization in organizations:
@@ -267,9 +266,6 @@ def make_proxy(
     """
     Create a proxy in a target for a given syndication action.
     """
-    portal_properties = getToolByName(obj, 'portal_properties')
-    encoding = portal_properties.site_properties.getProperty(
-        'default_charset', 'utf-8')
     workflow = getToolByName(obj, 'portal_workflow')
 
     unique_id = INameChooser(target)._findUniqueName(
@@ -278,8 +274,8 @@ def make_proxy(
                  type_name='resonate.proxy',
                  id=unique_id)
     proxy = target[proxy]
-    proxy.title = obj.Title().decode(encoding)
-    proxy.description = obj.Description().decode(encoding)
+    proxy.title = obj.Title()
+    proxy.description = obj.Description()
     proxy.source_type = obj.portal_type
     # Submit for publication, so the item shows up in the review list
     sudo(workflow.doActionFor, proxy, 'submit')
