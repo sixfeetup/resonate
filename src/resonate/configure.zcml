@@ -22,6 +22,7 @@
   <interface interface=".behaviors.ISyndicationTarget" />
   <plone:behavior
       title="Syndication source"
+      name="resonate.syndicationsource"
       description="Content that is the source for syndication to other sites"
       provides=".behaviors.ISyndicationSource"
       />

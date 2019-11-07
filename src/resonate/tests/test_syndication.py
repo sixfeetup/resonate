@@ -337,7 +337,7 @@ class TestSyndication(testing.TestCase):
             'plone.namefromtitle', behaviors,
             'Default behaviors removed')
         self.assertIn(
-            'resonate.behaviors.ISyndicationSource', behaviors,
+            'resonate.syndicationsource', behaviors,
             'Missing the syndication source behavior')
 
     def test_choosing_child_sites(self):

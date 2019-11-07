@@ -5,6 +5,6 @@
     name="Event"
     xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="behaviors" purge="false">
-  <element value="resonate.behaviors.ISyndicationSource"/>
+  <element value="resonate.syndicationsource"/>
   </property>
 </object>
